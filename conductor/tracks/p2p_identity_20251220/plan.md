@@ -14,7 +14,7 @@
     - **Acceptance Criteria:** A unit test simulating a handshake between Alice and Bob passes verification. A test with a tampered signature fails.
 
 ## Phase 3: Access Control & Permissions
-- [ ] Task: Implement ACL Structures
+- [x] Task: Implement ACL Structures (a1ab864)
     - **Description:** Create `src/acl.rs`. Define `ProjectPermission` struct (role, is_revoked) and `AccessControlList` to manage a list of peers for a project.
     - **Acceptance Criteria:** Unit tests verify adding a peer, checking their permission, and revoking them (ensuring `is_revoked` blocks access).
 
