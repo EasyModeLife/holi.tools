@@ -4,7 +4,7 @@
 - [x] Task: Add Cryptography Dependencies (dc2b5dc)
     - **Description:** Add `ed25519-dalek`, `chacha20poly1305`, `rand`, `getrandom`, and `serde` to `packages/wasm-core/Cargo.toml`. Ensure `getrandom` enables the `js` feature.
     - **Acceptance Criteria:** `wasm-pack build` succeeds with the new dependencies.
-- [ ] Task: Implement Identity Module
+- [x] Task: Implement Identity Module (357854f)
     - **Description:** Create `src/identity.rs`. Implement `IdentityKey` struct with generation and serialization capabilities.
     - **Acceptance Criteria:** Unit tests in Rust verify key generation and signing.
 - [ ] Task: Implement Crypto Module
