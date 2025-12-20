@@ -1,7 +1,7 @@
 # Plan: Sandbox Environment (test.holi.tools)
 
 ## Phase 1: Infrastructure & Setup
-- [ ] Task: Initialize `apps/test` application
+- [x] Task: Initialize `apps/test` application (618d77c)
     - **Description:** Use the existing `scripts/create-app.js` or manual creation to set up the Astro project structure in `apps/test`.
     - **Acceptance Criteria:** `apps/test` exists with `package.json`, `astro.config.mjs`, and runs locally.
 - [ ] Task: Configure Monorepo & Build Pipeline
