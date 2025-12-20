@@ -8,6 +8,7 @@ use wgpu::util::DeviceExt;
 pub mod identity;
 pub mod crypto;
 pub mod storage;
+pub mod vault;
 
 // --- Estructuras de Datos ---
 
