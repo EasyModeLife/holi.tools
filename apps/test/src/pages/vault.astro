@@ -1,0 +1,136 @@
+---
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>Vault & Crypto - Holi.tools</title>
+	</head>
+	<body class="bg-background text-foreground min-h-screen p-8 max-w-2xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold">Vault & Crypto Lab</h1>
+      <p class="text-muted-foreground mt-2">Testing Identity (Ed25519) and Project Encryption (XChaCha20-Poly1305)</p>
+    </header>
+
+    <div class="space-y-6">
+      <!-- Identity Section -->
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Identity (Ed25519)</h2>
+        <div class="flex items-center gap-4">
+          <button id="gen-id-btn" class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">
+            Generate New Identity
+          </button>
+          <div id="identity-output" class="font-mono text-xs bg-muted p-2 rounded flex-1 break-all">
+            No identity loaded.
+          </div>
+        </div>
+      </div>
+
+      <!-- Encryption Section -->
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Project Encryption (XChaCha20)</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Project ID</label>
+            <input type="text" id="project-id" value="my-secret-project" class="w-full px-3 py-2 bg-background border rounded-md" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Data to Encrypt</label>
+            <textarea id="plaintext" class="w-full h-24 px-3 py-2 bg-background border rounded-md" placeholder="Enter sensitive data here..."></textarea>
+          </div>
+          <div class="flex gap-2">
+            <button id="encrypt-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:opacity-90">Encrypt</button>
+            <button id="decrypt-btn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:opacity-90">Decrypt</button>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Ciphertext (Hex)</label>
+            <textarea id="ciphertext" class="w-full h-24 px-3 py-2 bg-muted border rounded-md font-mono text-xs" readonly></textarea>
+          </div>
+          <div>
+             <label class="block text-sm font-medium mb-1">Decrypted Output</label>
+             <div id="decrypted-output" class="p-3 bg-muted border rounded-md min-h-[40px]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      import init, { Vault } from "@holi/wasm-core";
+
+      let vault = null;
+
+      function toHex(buffer) {
+        return Array.from(new Uint8Array(buffer))
+          .map(b => b.toString(16).padStart(2, "0"))
+          .join("");
+      }
+
+      function fromHex(hexString) {
+        return new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+      }
+
+      async function run() {
+        await init();
+        
+        const genIdBtn = document.getElementById('gen-id-btn');
+        const idOutput = document.getElementById('identity-output');
+        const encryptBtn = document.getElementById('encrypt-btn');
+        const decryptBtn = document.getElementById('decrypt-btn');
+        const projectIdInput = document.getElementById('project-id');
+        const plaintextInput = document.getElementById('plaintext');
+        const ciphertextOutput = document.getElementById('ciphertext');
+        const decryptedOutput = document.getElementById('decrypted-output');
+
+        // Initialize Vault
+        vault = Vault.new();
+        idOutput.textContent = "Vault Initialized. Public Key: " + vault.get_identity_public_key();
+
+        // Generate Identity Handler
+        genIdBtn.onclick = () => {
+          vault = Vault.new(); // Re-generate
+          idOutput.textContent = "New Identity Generated. Public Key: " + vault.get_identity_public_key();
+          // Also create the project in the new vault
+          const pid = projectIdInput.value;
+          vault.create_project(pid);
+        };
+
+        // Pre-create the default project
+        vault.create_project(projectIdInput.value);
+
+        // Encrypt Handler
+        encryptBtn.onclick = () => {
+          const pid = projectIdInput.value;
+          const text = plaintextInput.value;
+          const encoder = new TextEncoder();
+          const data = encoder.encode(text);
+
+          try {
+            const encrypted = vault.encrypt_project_data(pid, data);
+            ciphertextOutput.value = toHex(encrypted);
+            decryptedOutput.textContent = ""; // clear previous
+          } catch (e) {
+            alert("Encryption failed: " + e);
+          }
+        };
+
+        // Decrypt Handler
+        decryptBtn.onclick = () => {
+          const pid = projectIdInput.value;
+          const hex = ciphertextOutput.value;
+          if (!hex) return;
+
+          try {
+            const encryptedData = fromHex(hex);
+            const decrypted = vault.decrypt_project_data(pid, encryptedData);
+            const decoder = new TextDecoder();
+            decryptedOutput.textContent = decoder.decode(decrypted);
+          } catch (e) {
+            alert("Decryption failed: " + e);
+          }
+        };
+      }
+
+      run();
+    </script>
+	</body>
+</html>
