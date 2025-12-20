@@ -6,7 +6,7 @@
     - **Acceptance Criteria:** Unit tests verify creating a user, serializing to JSON, and deserializing back correctly.
 
 ## Phase 2: Secure Handshake Protocol (Challenge/Response)
-- [ ] Task: Implement Challenge Logic
+- [x] Task: Implement Challenge Logic (539d5be)
     - **Description:** Create `src/handshake.rs`. Implement functions to:
         1. Generate a random 32-byte challenge (Nonce).
         2. Sign the challenge with `UserIdentity`.
