@@ -18,7 +18,7 @@ importers:
         specifier: ^3.19.0
         version: 3.114.16
 
-  apps/main-hub:
+  apps/calculator:
     dependencies:
       '@astrojs/react':
         specifier: ^3.0.0
@@ -45,7 +45,7 @@ importers:
         specifier: ^3.4.0
         version: 3.4.19(yaml@2.8.2)
 
-  apps/paint-online:
+  apps/main:
     dependencies:
       '@astrojs/react':
         specifier: ^3.0.0
@@ -72,7 +72,34 @@ importers:
         specifier: ^3.4.0
         version: 3.4.19(yaml@2.8.2)
 
-  apps/typst-live:
+  apps/paint:
+    dependencies:
+      '@astrojs/react':
+        specifier: ^3.0.0
+        version: 3.6.3(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@astrojs/tailwind':
+        specifier: ^5.0.0
+        version: 5.1.5(astro@4.16.19(rollup@4.53.5)(typescript@5.9.3))(tailwindcss@3.4.19(yaml@2.8.2))
+      '@holi/configs':
+        specifier: workspace:*
+        version: link:../../packages/shared-configs
+      '@holi/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      astro:
+        specifier: ^4.0.0
+        version: 4.16.19(rollup@4.53.5)(typescript@5.9.3)
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      tailwindcss:
+        specifier: ^3.4.0
+        version: 3.4.19(yaml@2.8.2)
+
+  apps/typst:
     dependencies:
       '@astrojs/react':
         specifier: ^3.0.0

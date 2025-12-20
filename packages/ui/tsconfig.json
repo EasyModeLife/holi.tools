@@ -1,5 +1,5 @@
 {
-    "extends": "@holi/configs/tsconfig.base.json",
+    "extends": "@holi/configs/tsconfig.json",
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
