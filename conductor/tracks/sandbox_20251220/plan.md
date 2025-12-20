@@ -11,7 +11,7 @@
     - **Description:** Configure `apps/test` to consume `packages/ui`, `packages/shared-configs`, and `packages/wasm-core`. Setup Tailwind and TSConfig.
     - **Acceptance Criteria:** Imports from `@holi/ui` and `@holi/wasm-core` resolve correctly in the new app.
 
-## Phase 2: Core Tech Validation
+## Phase 2: Core Tech Validation [checkpoint: c665fe8]
 - [x] Task: WebGPU "Hello Triangle" (42ddb33)
     - **Description:** Create a page `/webgpu` in the test app. Implement a simple component that initializes a `wgpu` surface via WASM and renders a colored triangle.
     - **Acceptance Criteria:** Navigating to `/webgpu` shows a rendered triangle (or an error message if WebGPU is unsupported on the device).
