@@ -12,6 +12,9 @@
     "deploy:calculator": "turbo run build --filter=holi-calculator && wrangler pages deploy ./apps/calculator/dist --project-name calculator-holi"
   },
   "devDependencies": {
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "@webgpu/types": "^0.1.68",
     "pnpm": "^10.26.1",
     "turbo": "^2.3.3",
     "wrangler": "^3.19.0"

@@ -11,12 +11,15 @@ Holi.tools is designed as a "blinded" architecture for sustainable growth and ma
 - **pnpm Workspaces:** Defines the boundaries of apps and shared libraries.
 - **Turbo Pipeline:** Orchestrates `dev` and `build` tasks across the workspace with intelligent caching.
 - **Static First:** Astro is used without SSR where possible to ensure maximum speed and simple hosting.
+- **WASM Acceleration:** Critical logic and graphics are offloaded to Rust to bypass JavaScript performance bottlenecks.
+- **WebGPU/WebGL:** Dual-backend support for state-of-the-art visuals with a safe fallback for older devices.
 
 ## Current Applications
-- **Main Hub:** The gateway to the ecosystem.
+- **Main Hub:** The gateway to the ecosystem, featuring a real-time WebGPU background.
 - **Typst Live:** A real-time editor for the Typst language.
-- **Paint Online:** A drawing utility for quick sketches.
+- **Paint Online:** A high-performance drawing utility using Lyon & WebGPU.
 - **Calculator:** A mathematical utility.
+- **WASM Core:** The central Rust engine powering graphics and computation across apps.
 
 ## Maintenance
 To keep the monorepo healthy:

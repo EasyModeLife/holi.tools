@@ -10,4 +10,5 @@ The **Main Hub** is the central landing page for the Holi.tools ecosystem. It se
 ## Tech Stack
 - **Framework:** Astro (Static)
 - **Styling:** Tailwind CSS (via `@holi/configs`)
+- **Graphics Core:** Rust/WASM via `@holi/wasm-core` (WebGPU)
 - **UI Components:** Shared via `@holi/ui`

@@ -39,3 +39,9 @@ pnpm-debug.log*
 
 # App specific
 .astro/
+
+# Rust / WASM
+target/
+**/target/
+pkg/
+**/pkg/

@@ -1,0 +1,17 @@
+{
+  "name": "@holi/wasm-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "pkg/**",
+    "README.md"
+  ],
+  "main": "./pkg/holi_wasm_core.js",
+  "module": "./pkg/holi_wasm_core.js",
+  "types": "./pkg/holi_wasm_core.d.ts",
+  "scripts": {
+    "build": "wasm-pack build --release --target web --out-dir pkg",
+    "dev": "wasm-pack build --dev --target web --out-dir pkg"
+  }
+}

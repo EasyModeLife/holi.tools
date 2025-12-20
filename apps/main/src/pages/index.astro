@@ -1,5 +1,7 @@
 ---
+import { ShaderBackground as WebGpuBackground } from "@holi/ui";
 ---
+
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -8,10 +10,21 @@
 		<meta name="generator" content={Astro.generator} />
 		<title>Holi.tools</title>
 	</head>
-	<body class="bg-background text-foreground min-h-screen flex items-center justify-center">
-		<div class="text-center">
-      <h1 class="text-4xl font-bold mb-4">Holi.tools Main Hub</h1>
-      <p class="text-muted-foreground">Under Construction</p>
-    </div>
+	<body
+		class="bg-background text-foreground min-h-screen flex items-center justify-center overflow-hidden"
+	>
+		<WebGpuBackground client:only="react" />
+		<div class="relative z-10 w-full flex flex-col items-center justify-center gap-10 px-6">
+			<div class="text-center pointer-events-none">
+			<h1
+				class="text-6xl font-black mb-4 tracking-tighter text-white drop-shadow-2xl"
+			>
+				Holi.tools
+			</h1>
+			<p class="text-xl text-white/70 font-medium">
+				Mathematical Beauty in Real-Time
+			</p>
+			</div>
+		</div>
 	</body>
 </html>
