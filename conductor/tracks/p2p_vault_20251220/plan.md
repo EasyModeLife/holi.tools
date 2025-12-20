@@ -15,7 +15,7 @@
 - [x] Task: Define Storage Traits (8ff3882)
     - **Description:** Create `src/storage.rs` defining a `StorageTrait` for async read/write operations. Implement a basic `InMemoryStorage` for testing.
     - **Acceptance Criteria:** The trait compiles and can be mocked.
-- [ ] Task: Implement Vault Coordinator
+- [x] Task: Implement Vault Coordinator (1e4515c)
     - **Description:** Create `src/vault.rs`. Implement the `Vault` struct that holds the Identity and manages Projects. Expose a `create_vault()` function to WASM.
     - **Acceptance Criteria:** The `Vault` struct can be initialized from WASM.
 
