@@ -15,7 +15,7 @@
 - [x] Task: WebGPU "Hello Triangle" (42ddb33)
     - **Description:** Create a page `/webgpu` in the test app. Implement a simple component that initializes a `wgpu` surface via WASM and renders a colored triangle.
     - **Acceptance Criteria:** Navigating to `/webgpu` shows a rendered triangle (or an error message if WebGPU is unsupported on the device).
-- [ ] Task: UI Component Playground
+- [x] Task: UI Component Playground (1790594)
     - **Description:** Create a page `/ui-lab`. Import and display key components (buttons, sliders, inputs) from `packages/ui`.
     - **Acceptance Criteria:** A gallery of styled components is visible and interactive.
 - [ ] Task: P2P Connectivity Test (Basic)
