@@ -12,7 +12,7 @@
     - **Acceptance Criteria:** Unit tests verify that data encrypted with a key can be decrypted with the same key.
 
 ## Phase 2: The Vault & Storage Structure
-- [ ] Task: Define Storage Traits
+- [x] Task: Define Storage Traits (8ff3882)
     - **Description:** Create `src/storage.rs` defining a `StorageTrait` for async read/write operations. Implement a basic `InMemoryStorage` for testing.
     - **Acceptance Criteria:** The trait compiles and can be mocked.
 - [ ] Task: Implement Vault Coordinator
