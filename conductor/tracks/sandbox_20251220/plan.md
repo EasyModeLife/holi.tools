@@ -4,10 +4,10 @@
 - [x] Task: Initialize `apps/test` application (618d77c)
     - **Description:** Use the existing `scripts/create-app.js` or manual creation to set up the Astro project structure in `apps/test`.
     - **Acceptance Criteria:** `apps/test` exists with `package.json`, `astro.config.mjs`, and runs locally.
-- [ ] Task: Configure Monorepo & Build Pipeline
+- [x] Task: Configure Monorepo & Build Pipeline (618d77c)
     - **Description:** Update `pnpm-workspace.yaml`, `turbo.json`, and root `package.json` to include the new app. Add `deploy:test` script.
     - **Acceptance Criteria:** `pnpm install` works, and `pnpm run deploy:test` (dry-run) triggers the build command for `apps/test`.
-- [ ] Task: Integrate Shared Packages
+- [x] Task: Integrate Shared Packages (fe96b53)
     - **Description:** Configure `apps/test` to consume `packages/ui`, `packages/shared-configs`, and `packages/wasm-core`. Setup Tailwind and TSConfig.
     - **Acceptance Criteria:** Imports from `@holi/ui` and `@holi/wasm-core` resolve correctly in the new app.
 
