@@ -1,0 +1,135 @@
+---
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>P2P Test - Holi.tools</title>
+	</head>
+	<body class="bg-background text-foreground min-h-screen p-8 max-w-2xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold">P2P Connectivity Test</h1>
+      <p class="text-muted-foreground mt-2">Basic WebRTC DataChannel handshake</p>
+    </header>
+
+    <div class="space-y-6">
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Step 1: Create Offer</h2>
+        <p class="text-sm text-muted-foreground mb-4">Tab A: Click Create Offer and copy the text below to Tab B.</p>
+        <button id="create-offer" class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">Create Offer</button>
+        <textarea id="local-offer" class="w-full h-32 mt-4 p-2 bg-muted rounded border font-mono text-xs" readonly placeholder="Offer will appear here..."></textarea>
+      </div>
+
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Step 2: Accept Offer & Create Answer</h2>
+        <p class="text-sm text-muted-foreground mb-4">Tab B: Paste the offer from Tab A and click Create Answer.</p>
+        <textarea id="remote-offer" class="w-full h-32 p-2 bg-muted rounded border font-mono text-xs" placeholder="Paste offer here..."></textarea>
+        <button id="create-answer" class="px-4 py-2 mt-4 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">Create Answer</button>
+        <textarea id="local-answer" class="w-full h-32 mt-4 p-2 bg-muted rounded border font-mono text-xs" readonly placeholder="Answer will appear here..."></textarea>
+      </div>
+
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Step 3: Connect</h2>
+        <p class="text-sm text-muted-foreground mb-4">Tab A: Paste the answer from Tab B to complete the connection.</p>
+        <textarea id="remote-answer" class="w-full h-32 p-2 bg-muted rounded border font-mono text-xs" placeholder="Paste answer here..."></textarea>
+        <button id="connect" class="px-4 py-2 mt-4 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity">Connect</button>
+      </div>
+
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Chat</h2>
+        <div id="chat-log" class="h-48 overflow-y-auto p-4 bg-muted rounded border mb-4 space-y-2 text-sm font-mono">
+          <div class="text-muted-foreground italic">Waiting for connection...</div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="chat-input" class="flex-1 px-4 py-2 bg-background border rounded-md" placeholder="Type a message..." disabled />
+          <button id="send-btn" class="px-4 py-2 bg-primary text-primary-foreground rounded-md disabled:opacity-50" disabled>Send</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let pc = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+      });
+      let dc = null;
+
+      const localOffer = document.getElementById('local-offer');
+      const remoteOffer = document.getElementById('remote-offer');
+      const localAnswer = document.getElementById('local-answer');
+      const remoteAnswer = document.getElementById('remote-answer');
+      const chatLog = document.getElementById('chat-log');
+      const chatInput = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      function appendLog(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.textContent = `[${type}] ${msg}`;
+        if (type === 'sent') div.className = 'text-blue-500';
+        if (type === 'received') div.className = 'text-green-500';
+        chatLog.appendChild(div);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+
+      function setupDataChannel() {
+        dc.onopen = () => {
+          appendLog('Connection Open!', 'success');
+          chatInput.disabled = false;
+          sendBtn.disabled = false;
+        };
+        dc.onmessage = e => appendLog(e.data, 'received');
+      }
+
+      document.getElementById('create-offer').onclick = async () => {
+        dc = pc.createDataChannel('chat');
+        setupDataChannel();
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        
+        pc.onicecandidate = (e) => {
+          if (!e.candidate) {
+            localOffer.value = btoa(JSON.stringify(pc.localDescription));
+            appendLog('Offer created and ICE gathered.');
+          }
+        };
+      };
+
+      document.getElementById('create-answer').onclick = async () => {
+        const offerDesc = new RTCSessionDescription(JSON.parse(atob(remoteOffer.value)));
+        await pc.setRemoteDescription(offerDesc);
+        
+        pc.ondatachannel = (e) => {
+          dc = e.channel;
+          setupDataChannel();
+        };
+
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+
+        pc.onicecandidate = (e) => {
+          if (!e.candidate) {
+            localAnswer.value = btoa(JSON.stringify(pc.localDescription));
+            appendLog('Answer created.');
+          }
+        };
+      };
+
+      document.getElementById('connect').onclick = async () => {
+        const answerDesc = new RTCSessionDescription(JSON.parse(atob(remoteAnswer.value)));
+        await pc.setRemoteDescription(answerDesc);
+        appendLog('Remote description set.');
+      };
+
+      const sendMessage = () => {
+        const msg = chatInput.value;
+        if (msg && dc && dc.readyState === 'open') {
+          dc.send(msg);
+          appendLog(msg, 'sent');
+          chatInput.value = '';
+        }
+      };
+
+      sendBtn.onclick = sendMessage;
+      chatInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    </script>
+	</body>
+</html>
