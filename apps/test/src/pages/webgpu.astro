@@ -13,10 +13,10 @@
       <div id="status" class="mt-2 text-xs font-mono">Initializing...</div>
     </div>
     
-		<canvas id="gpu-canvas" class="fixed inset-0 w-full h-full touch-none"></canvas>
+		<canvas id="gpu-canvas" class="fixed inset-0 w-full h-full block touch-none"></canvas>
 
     <script>
-      import init, { start } from "@holi/wasm-core";
+      import init from "@holi/wasm-core"; // removed start
 
       async function run() {
         const statusEl = document.getElementById('status');
@@ -31,9 +31,9 @@
         try {
           await init();
           // Canvas resizing is handled by the WASM module
-          await start(canvas);
-          statusEl.innerText = "✅ WebGPU Initialized & Running";
-          statusEl.classList.add('text-green-500');
+          // await start(canvas); // TODO: Restore this once wgpu build is fixed
+          statusEl.innerText = "⚠️ WebGPU Disabled (Maintenance)"; // Updated status
+          statusEl.classList.add('text-yellow-500');
         } catch (e) {
           console.error(e);
           statusEl.innerText = "💥 Error: " + e.message;
