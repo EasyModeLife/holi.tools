@@ -18,7 +18,7 @@
 - [x] Task: UI Component Playground (1790594)
     - **Description:** Create a page `/ui-lab`. Import and display key components (buttons, sliders, inputs) from `packages/ui`.
     - **Acceptance Criteria:** A gallery of styled components is visible and interactive.
-- [ ] Task: P2P Connectivity Test (Basic)
+- [x] Task: P2P Connectivity Test (Basic) (d0cd356)
     - **Description:** Create a page `/p2p`. Implement a minimal WebRTC handshake (can be local-only or using a public stun) to verify browser compatibility.
     - **Acceptance Criteria:** Two browser tabs can exchange a simple text message string via WebRTC (logged to console or UI).
 
