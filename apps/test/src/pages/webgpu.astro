@@ -13,7 +13,7 @@
       <div id="status" class="mt-2 text-xs font-mono">Initializing...</div>
     </div>
     
-		<canvas id="gpu-canvas" class="w-full h-full touch-none"></canvas>
+		<canvas id="gpu-canvas" class="fixed inset-0 w-full h-full touch-none -z-10"></canvas>
 
     <script>
       import init, { start } from "@holi/wasm-core";
@@ -30,10 +30,7 @@
 
         try {
           await init();
-          // Set canvas size to match display size
-          canvas.width = window.innerWidth * window.device_pixel_ratio;
-          canvas.height = window.innerHeight * window.device_pixel_ratio;
-          
+          // Canvas resizing is handled by the WASM module
           await start(canvas);
           statusEl.innerText = "✅ WebGPU Initialized & Running";
           statusEl.classList.add('text-green-500');

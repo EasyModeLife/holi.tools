@@ -132,8 +132,11 @@ impl State {
     fn resize_if_needed(&mut self, window: &Window, canvas: &HtmlCanvasElement) {
         // Corrección DPI: Obtener el pixel ratio real
         let pixel_ratio = window.device_pixel_ratio();
-        let width = (canvas.client_width() as f64 * pixel_ratio) as u32;
-        let height = (canvas.client_height() as f64 * pixel_ratio) as u32;
+        let limits = self.device.limits();
+        let max_dim = limits.max_texture_dimension_2d;
+
+        let width = ((canvas.client_width() as f64 * pixel_ratio) as u32).min(max_dim);
+        let height = ((canvas.client_height() as f64 * pixel_ratio) as u32).min(max_dim);
         
         // Ajustar tamaño físico del canvas si no coincide
         if canvas.width() != width || canvas.height() != height {
