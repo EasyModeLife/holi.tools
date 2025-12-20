@@ -8,6 +8,7 @@ use wgpu::util::DeviceExt;
 pub mod identity;
 pub mod identity_core;
 pub mod handshake;
+pub mod acl;
 pub mod crypto;
 pub mod storage;
 pub mod vault;

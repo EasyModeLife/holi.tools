@@ -19,7 +19,12 @@ impl UserIdentity {
         
         // Simple User ID derivation: "u_" + first 16 chars of pubkey hex
         let user_id = format!("u_{}", &pub_key[0..16]);
-        let created_at = js_sys::Date::now() as u64; // In pure Rust unit tests this might panic? No, Date::now() calls JS.
+        
+        let created_at = if cfg!(target_arch = "wasm32") {
+            js_sys::Date::now() as u64
+        } else {
+            0
+        };
 
         UserIdentity {
             user_id,
