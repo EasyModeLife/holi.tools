@@ -19,6 +19,6 @@
     - **Acceptance Criteria:** Unit tests verify adding a peer, checking their permission, and revoking them (ensuring `is_revoked` blocks access).
 
 ## Phase 4: Integration & Validation
-- [ ] Task: Update Vault Page for Identity
+- [x] Task: Update Vault Page for Identity (d2e0fa7)
     - **Description:** Update `apps/test/src/pages/vault.astro` (or create `identity.astro`) to include a "Handshake Simulation" section where the user can simulate authentication between two generated identities.
     - **Acceptance Criteria:** UI allows creating two identities and clicking "Test Handshake" to see the challenge/response flow log.

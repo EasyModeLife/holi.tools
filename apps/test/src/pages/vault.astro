@@ -26,6 +26,29 @@
         </div>
       </div>
 
+      <!-- Handshake Simulator -->
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">P2P Handshake Simulation</h2>
+        <p class="text-sm text-muted-foreground mb-4">Simulate Alice verifying Bob via Challenge/Response.</p>
+        
+        <div class="space-y-4">
+          <button id="hs-init-btn" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:opacity-90">1. Initialize Peers (Alice & Bob)</button>
+          <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+             <div class="p-2 bg-muted rounded">Alice Pub: <span id="hs-alice-pub">...</span></div>
+             <div class="p-2 bg-muted rounded">Bob Pub: <span id="hs-bob-pub">...</span></div>
+          </div>
+
+          <button id="hs-challenge-btn" class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:opacity-90" disabled>2. Alice Generates Challenge</button>
+          <div class="p-2 bg-muted rounded text-xs font-mono break-all">Challenge: <span id="hs-challenge">...</span></div>
+
+          <button id="hs-sign-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:opacity-90" disabled>3. Bob Signs Challenge</button>
+          <div class="p-2 bg-muted rounded text-xs font-mono break-all">Signature: <span id="hs-signature">...</span></div>
+
+          <button id="hs-verify-btn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:opacity-90" disabled>4. Alice Verifies</button>
+          <div id="hs-result" class="font-bold"></div>
+        </div>
+      </div>
+
       <!-- Encryption Section -->
       <div class="p-6 rounded-xl border bg-card">
         <h2 class="text-xl font-semibold mb-4">Project Encryption (XChaCha20)</h2>
@@ -55,9 +78,10 @@
     </div>
 
     <script>
-      import init, { Vault } from "@holi/wasm-core";
+      import init, { Vault, HandshakeSimulator } from "@holi/wasm-core";
 
       let vault = null;
+      let hsSim = null;
 
       function toHex(buffer) {
         return Array.from(new Uint8Array(buffer))
@@ -72,6 +96,7 @@
       async function run() {
         await init();
         
+        // --- Vault Logic ---
         const genIdBtn = document.getElementById('gen-id-btn');
         const idOutput = document.getElementById('identity-output');
         const encryptBtn = document.getElementById('encrypt-btn');
@@ -81,23 +106,18 @@
         const ciphertextOutput = document.getElementById('ciphertext');
         const decryptedOutput = document.getElementById('decrypted-output');
 
-        // Initialize Vault
         vault = Vault.new();
         idOutput.textContent = "Vault Initialized. Public Key: " + vault.get_identity_public_key();
 
-        // Generate Identity Handler
         genIdBtn.onclick = () => {
-          vault = Vault.new(); // Re-generate
+          vault = Vault.new();
           idOutput.textContent = "New Identity Generated. Public Key: " + vault.get_identity_public_key();
-          // Also create the project in the new vault
           const pid = projectIdInput.value;
           vault.create_project(pid);
         };
 
-        // Pre-create the default project
         vault.create_project(projectIdInput.value);
 
-        // Encrypt Handler
         encryptBtn.onclick = () => {
           const pid = projectIdInput.value;
           const text = plaintextInput.value;
@@ -107,13 +127,12 @@
           try {
             const encrypted = vault.encrypt_project_data(pid, data);
             ciphertextOutput.value = toHex(encrypted);
-            decryptedOutput.textContent = ""; // clear previous
+            decryptedOutput.textContent = "";
           } catch (e) {
             alert("Encryption failed: " + e);
           }
         };
 
-        // Decrypt Handler
         decryptBtn.onclick = () => {
           const pid = projectIdInput.value;
           const hex = ciphertextOutput.value;
@@ -126,6 +145,54 @@
             decryptedOutput.textContent = decoder.decode(decrypted);
           } catch (e) {
             alert("Decryption failed: " + e);
+          }
+        };
+
+        // --- Handshake Simulation Logic ---
+        const hsInitBtn = document.getElementById('hs-init-btn');
+        const hsChalBtn = document.getElementById('hs-challenge-btn');
+        const hsSignBtn = document.getElementById('hs-sign-btn');
+        const hsVerBtn = document.getElementById('hs-verify-btn');
+        const hsAlicePub = document.getElementById('hs-alice-pub');
+        const hsBobPub = document.getElementById('hs-bob-pub');
+        const hsChallenge = document.getElementById('hs-challenge');
+        const hsSignature = document.getElementById('hs-signature');
+        const hsResult = document.getElementById('hs-result');
+
+        hsInitBtn.onclick = () => {
+          hsSim = HandshakeSimulator.new();
+          hsAlicePub.innerText = hsSim.get_alice_pub().substring(0, 16) + "...";
+          hsBobPub.innerText = hsSim.get_bob_pub().substring(0, 16) + "...";
+          hsChalBtn.disabled = false;
+          hsChallenge.innerText = "...";
+          hsSignature.innerText = "...";
+          hsResult.innerText = "";
+        };
+
+        hsChalBtn.onclick = () => {
+          if(!hsSim) return;
+          const c = hsSim.alice_generates_challenge();
+          hsChallenge.innerText = c;
+          hsSignBtn.disabled = false;
+        };
+
+        hsSignBtn.onclick = () => {
+          if(!hsSim) return;
+          const s = hsSim.bob_signs_challenge();
+          hsSignature.innerText = s;
+          hsVerBtn.disabled = false;
+        };
+
+        hsVerBtn.onclick = () => {
+          if(!hsSim) return;
+          const sig = hsSignature.innerText;
+          const valid = hsSim.alice_verifies_bob(sig);
+          if (valid) {
+            hsResult.innerText = "✅ Verification SUCCESS! Bob is authenticated.";
+            hsResult.className = "font-bold text-green-600";
+          } else {
+            hsResult.innerText = "❌ Verification FAILED!";
+            hsResult.className = "font-bold text-red-600";
           }
         };
       }
