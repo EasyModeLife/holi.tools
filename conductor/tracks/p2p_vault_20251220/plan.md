@@ -7,7 +7,7 @@
 - [x] Task: Implement Identity Module (357854f)
     - **Description:** Create `src/identity.rs`. Implement `IdentityKey` struct with generation and serialization capabilities.
     - **Acceptance Criteria:** Unit tests in Rust verify key generation and signing.
-- [ ] Task: Implement Crypto Module
+- [x] Task: Implement Crypto Module (a57d534)
     - **Description:** Create `src/crypto.rs`. Implement `ProjectKey` generation and helper functions for `encrypt` (XChaCha20) and `decrypt`.
     - **Acceptance Criteria:** Unit tests verify that data encrypted with a key can be decrypted with the same key.
 
