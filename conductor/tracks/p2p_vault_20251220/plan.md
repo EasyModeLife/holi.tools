@@ -19,7 +19,7 @@
     - **Description:** Create `src/vault.rs`. Implement the `Vault` struct that holds the Identity and manages Projects. Expose a `create_vault()` function to WASM.
     - **Acceptance Criteria:** The `Vault` struct can be initialized from WASM.
 
-## Phase 3: Integration & Validation
+## Phase 3: Integration & Validation [checkpoint: 1096fff]
 - [x] Task: Create Vault Test Page (2fb4874)
     - **Description:** Create `apps/test/src/pages/vault.astro`.
     - **Acceptance Criteria:** The page should:
