@@ -1,0 +1,14 @@
+{
+    "extends": "@holi/configs/tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@ui/*": [
+                "./src/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

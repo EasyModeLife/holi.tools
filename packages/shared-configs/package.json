@@ -1,0 +1,13 @@
+{
+    "name": "@holi/configs",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        "./tailwind.config": "./tailwind.config.js",
+        "./tsconfig.base.json": "./tsconfig.base.json"
+    },
+    "peerDependencies": {
+        "tailwindcss": "^3.0.0",
+        "typescript": "^5.0.0"
+    }
+}
