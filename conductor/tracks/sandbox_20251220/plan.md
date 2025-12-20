@@ -23,6 +23,6 @@
     - **Acceptance Criteria:** Two browser tabs can exchange a simple text message string via WebRTC (logged to console or UI).
 
 ## Phase 3: Final Verification
-- [ ] Task: Verify Deployment Build
+- [x] Task: Verify Deployment Build (c665fe8)
     - **Description:** Run a full production build of `apps/test` and ensure the output directory is generated correctly for Wrangler.
     - **Acceptance Criteria:** `apps/test/dist` contains the static assets ready for upload.
