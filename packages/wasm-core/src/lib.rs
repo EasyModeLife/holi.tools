@@ -6,6 +6,7 @@ use web_sys::{HtmlCanvasElement, Window};
 use wgpu::util::DeviceExt;
 
 pub mod identity;
+pub mod crypto;
 
 // --- Estructuras de Datos ---
 
