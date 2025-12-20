@@ -14,7 +14,7 @@
 - **Styling:** Tailwind CSS + Shadcn/UI for consistent, premium design.
 
 ## Graphics & Performance
-- **WebGPU (wgpu):** High-performance graphics rendering.
+- **WebGPU (wgpu):** High-performance graphics rendering (Validated in Sandbox).
 - **WebAssembly (WASM):** Primary compilation target for Rust core logic.
 - **Rust Libraries:**
   - `wgpu`: Cross-platform graphics abstraction.
@@ -28,7 +28,7 @@
 - **File System Access API:** Support for direct, user-selected folder access.
 
 ## Networking (P2P)
-- **WebRTC:** Peer-to-peer communication for collaborative features.
+- **WebRTC:** Peer-to-peer communication for collaborative features (Connectivity validated in Sandbox).
 - **Matchbox:** WebRTC signaling service (compatible with Cloudflare environment) for P2P connection establishment.
 
 ## Infrastructure

@@ -17,17 +17,15 @@ struct Vertex {
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 struct Uniforms {
-    view_proj: [[f32; 4]; 4], // Matriz combinada 4x4
-    time: f32,
-    _pad: [f32; 3],           // Padding para alineación de 16 bytes
+    view_proj: [[f32; 4]; 4], // Matriz combinada 4x4 (64 bytes)
+    time: [f32; 4],           // Time + Padding (16 bytes)
 }
 
 // --- Shader WGSL ---
 const SHADER: &str = r#"
 struct Uniforms {
     view_proj: mat4x4<f32>,
-    time: f32,
-    _pad: vec3<f32>,
+    time: vec4<f32>, // .x = time
 }
 @group(0) @binding(0) var<uniform> u: Uniforms;
 
@@ -45,7 +43,7 @@ struct VertexOutput {
 fn vs_main(model: VertexInput) -> VertexOutput {
     var out: VertexOutput;
     
-    let t = u.time;
+    let t = u.time.x;
     var pos = model.position;
     
     // Deformación (Onda)
@@ -214,8 +212,7 @@ impl State {
 
         let input = Uniforms {
             view_proj,
-            time: time_s,
-            _pad: [0.0; 3],
+            time: [time_s, 0.0, 0.0, 0.0],
         };
         self.queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[input]));
 

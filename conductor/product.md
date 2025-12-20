@@ -3,6 +3,10 @@ Holi.tools es un monorepo ultra eficiente para utilidades web especializadas (ca
 
 # Product Guide: Holi.tools
 
+## Ecosystem
+- **Main Apps:** Collection of production-ready tools (Calculator, Paint, etc.).
+- **Sandbox (`test.holi.tools`):** A dedicated experimental environment for validating bleeding-edge technologies (WebGPU, P2P, experimental UI) before they reach production apps.
+
 ## Vision & Mission
 Holi.tools busca democratizar el acceso a herramientas web de alto rendimiento y grado profesional, funcionando simultáneamente como una plataforma educativa de vanguardia. La misión es demostrar que la web moderna puede manejar cargas de trabajo pesadas (gráficos, computación) de forma fluida, limpia y gratuita.
 
