@@ -6,8 +6,8 @@ const { execSync } = require('child_process');
 const appName = process.argv[2];
 
 if (!appName) {
-    console.error('Please provide an app name: node scripts/create-app.js <app-name>');
-    process.exit(1);
+  console.error('Please provide an app name: node scripts/create-app.js <app-name>');
+  process.exit(1);
 }
 
 const rootDir = path.join(__dirname, '..');
@@ -18,8 +18,8 @@ const projectName = `${appName}-holi`; // Cloudflare project name
 const domainName = `${appName}.holi.tools`;
 
 if (fs.existsSync(targetDir)) {
-    console.error(`App ${appName} already exists at ${targetDir}`);
-    process.exit(1);
+  console.error(`App ${appName} already exists at ${targetDir}`);
+  process.exit(1);
 }
 
 console.log(`Creating app: ${appName} in ${targetDir}`);
@@ -28,26 +28,26 @@ fs.mkdirSync(path.join(targetDir, 'src', 'pages'), { recursive: true });
 
 // 1. Create package.json
 const packageJson = {
-    "name": packageName,
-    "type": "module",
-    "version": "0.0.1",
-    "scripts": {
-        "dev": "astro dev",
-        "start": "astro dev",
-        "build": "astro build",
-        "preview": "astro preview",
-        "astro": "astro"
-    },
-    "dependencies": {
-        "astro": "^4.0.0",
-        "@astrojs/react": "^3.0.0",
-        "@astrojs/tailwind": "^5.0.0",
-        "@holi/ui": "workspace:*",
-        "@holi/configs": "workspace:*",
-        "tailwindcss": "^3.4.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
-    }
+  "name": packageName,
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.0.0",
+    "@astrojs/react": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "@holi/ui": "workspace:*",
+    "@holi/configs": "workspace:*",
+    "tailwindcss": "^3.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
 };
 fs.writeFileSync(path.join(targetDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
@@ -97,7 +97,22 @@ const indexAstro = `---
 `;
 fs.writeFileSync(path.join(targetDir, 'src/pages/index.astro'), indexAstro);
 
-// 5. Update root package.json with deploy script
+// 5. Create about.md
+const aboutMd = `# About ${appName}
+
+This tool was automatically generated as part of the Holi.tools ecosystem.
+
+## Purpose
+- Describe the purpose of ${appName} here.
+
+## Tech Stack
+- Astro
+- Tailwind CSS via @holi/configs
+- Components via @holi/ui
+`;
+fs.writeFileSync(path.join(targetDir, 'about.md'), aboutMd);
+
+// 6. Update root package.json with deploy script
 const rootPackageJsonPath = path.join(rootDir, 'package.json');
 const rootPackageJson = require(rootPackageJsonPath);
 
