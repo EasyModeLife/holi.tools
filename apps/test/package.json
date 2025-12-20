@@ -15,6 +15,7 @@
     "@astrojs/tailwind": "^5.0.0",
     "@holi/ui": "workspace:*",
     "@holi/configs": "workspace:*",
+    "@holi/wasm-core": "workspace:*",
     "tailwindcss": "^3.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
