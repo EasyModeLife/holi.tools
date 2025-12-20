@@ -1,0 +1,50 @@
+---
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>WebGPU Test - Holi.tools</title>
+	</head>
+	<body class="bg-black text-white min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <div class="absolute top-4 left-4 z-10 bg-black/50 p-4 rounded-lg border border-white/20 backdrop-blur-md">
+      <h1 class="text-xl font-bold">WebGPU Test</h1>
+      <p class="text-sm text-gray-400">Rendering via @holi/wasm-core</p>
+      <div id="status" class="mt-2 text-xs font-mono">Initializing...</div>
+    </div>
+    
+		<canvas id="gpu-canvas" class="w-full h-full touch-none"></canvas>
+
+    <script>
+      import init, { start } from "@holi/wasm-core";
+
+      async function run() {
+        const statusEl = document.getElementById('status');
+        const canvas = document.getElementById('gpu-canvas');
+        
+        if (!navigator.gpu) {
+          statusEl.innerText = "❌ WebGPU not supported in this browser.";
+          statusEl.classList.add('text-red-500');
+          return;
+        }
+
+        try {
+          await init();
+          // Set canvas size to match display size
+          canvas.width = window.innerWidth * window.device_pixel_ratio;
+          canvas.height = window.innerHeight * window.device_pixel_ratio;
+          
+          await start(canvas);
+          statusEl.innerText = "✅ WebGPU Initialized & Running";
+          statusEl.classList.add('text-green-500');
+        } catch (e) {
+          console.error(e);
+          statusEl.innerText = "💥 Error: " + e.message;
+          statusEl.classList.add('text-red-500');
+        }
+      }
+
+      run();
+    </script>
+	</body>
+</html>
