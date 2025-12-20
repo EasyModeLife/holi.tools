@@ -26,6 +26,9 @@
 - **OPFS (Origin Private File System):** High-performance local file storage for app-specific data.
 - **SQLite (WASM):** Client-side relational database for structured metadata and state.
 - **File System Access API:** Support for direct, user-selected folder access.
+- **Cryptography (Vault):**
+  - **Identity:** `ed25519-dalek` for signing and verification.
+  - **Encryption:** `chacha20poly1305` for authenticated encryption of project data.
 
 ## Networking (P2P)
 - **WebRTC:** Peer-to-peer communication for collaborative features (Connectivity validated in Sandbox).

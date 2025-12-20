@@ -19,7 +19,8 @@ Holi.tools busca democratizar el acceso a herramientas web de alto rendimiento y
 1. **Foundation First:** Establecer una arquitectura de monorepo robusta, legible y mantenible con una separación estricta entre la UI y la lógica.
 2. **Educational Reference:** Documentar el "cómo funciona" interno de cada herramienta mediante secciones de laboratorio y papers técnicos.
 3. **High Performance:** Utilizar WebGPU y Rust/WASM para garantizar latencia mínima y procesamiento eficiente en el cliente.
-4. **Premium UX:** Ofrecer una interfaz limpia, agradable y de alta calidad de forma gratuita.
+4. **Premium UX:** Ofrecer una interfaz limpia, a
+5. **Sovereign Data:** Garantizar que el usuario sea el único dueño de sus datos mediante criptografía local (Vault) y almacenamiento descentralizado.gradable y de alta calidad de forma gratuita.
 
 ## Key Features (Initial Focus: Paint Tool)
 - **Real-time WebGPU Rendering:** Pipeline de renderizado de baja latencia para una experiencia de dibujo fluida.

@@ -1,6 +1,7 @@
 use rand::RngCore;
 use rand::rngs::OsRng;
 use crate::identity::IdentityKey;
+use wasm_bindgen::prelude::*;
 
 /// Generates a random 32-byte challenge (Nonce).
 pub fn generate_challenge() -> [u8; 32] {
@@ -22,6 +23,63 @@ pub fn verify_challenge_response(
     signature_bytes: &[u8; 64]
 ) -> bool {
     IdentityKey::verify(public_key_bytes, challenge, signature_bytes)
+}
+
+// --- WASM Bindings for Simulation ---
+
+#[wasm_bindgen]
+pub struct HandshakeSimulator {
+    alice: IdentityKey,
+    bob: IdentityKey,
+    current_challenge: Option<Vec<u8>>,
+}
+
+#[wasm_bindgen]
+impl HandshakeSimulator {
+    pub fn new() -> Self {
+        HandshakeSimulator {
+            alice: IdentityKey::generate(),
+            bob: IdentityKey::generate(),
+            current_challenge: None,
+        }
+    }
+
+    pub fn get_alice_pub(&self) -> String {
+        hex::encode(self.alice.public_key_bytes())
+    }
+
+    pub fn get_bob_pub(&self) -> String {
+        hex::encode(self.bob.public_key_bytes())
+    }
+
+    pub fn alice_generates_challenge(&mut self) -> String {
+        let c = generate_challenge();
+        self.current_challenge = Some(c.to_vec());
+        hex::encode(c)
+    }
+
+    pub fn bob_signs_challenge(&self) -> String {
+        if let Some(c) = &self.current_challenge {
+            let sig = sign_challenge(&self.bob, c);
+            hex::encode(sig)
+        } else {
+            "No challenge".to_string()
+        }
+    }
+
+    pub fn alice_verifies_bob(&self, signature_hex: &str) -> bool {
+        if let Some(c) = &self.current_challenge {
+            if let Ok(sig_bytes) = hex::decode(signature_hex) {
+                if sig_bytes.len() == 64 {
+                    let mut sig_arr = [0u8; 64];
+                    sig_arr.copy_from_slice(&sig_bytes);
+                    let bob_pub = self.bob.public_key_bytes();
+                    return verify_challenge_response(&bob_pub, c, &sig_arr);
+                }
+            }
+        }
+        false
+    }
 }
 
 #[cfg(test)]
