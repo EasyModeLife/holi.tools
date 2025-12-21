@@ -23,6 +23,6 @@
 
 ## Phase 4: Code Quality
 
-- [ ] Task: Basic Linting Setup
+- [x] Task: Basic Linting Setup (639c50d)
   - **Description:** Ensure `eslint` config is present and consistent.
   - **Acceptance Criteria:** `pnpm lint` runs.
