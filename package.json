@@ -2,6 +2,7 @@
   "name": "holi-monorepo",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -10,14 +11,22 @@
     "deploy:paint": "turbo run build --filter=holi-paint && wrangler pages deploy ./apps/paint/dist --project-name paint-holi",
     "create-app": "node scripts/create-app.js",
     "deploy:calculator": "turbo run build --filter=holi-calculator && wrangler pages deploy ./apps/calculator/dist --project-name calculator-holi",
-    "deploy:test": "turbo run build --filter=holi-test && wrangler pages deploy ./apps/test/dist --project-name test-holi"
+    "deploy:test": "turbo run build --filter=holi-test && wrangler pages deploy ./apps/test/dist --project-name test-holi",
+    "format": "prettier --write .",
+    "lint": "eslint ."
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.7",
     "@webgpu/types": "^0.1.68",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26",
     "pnpm": "^10.26.1",
+    "prettier": "^3.7.4",
     "turbo": "^2.3.3",
+    "typescript-eslint": "^8.50.0",
     "wrangler": "^3.19.0"
   },
   "packageManager": "pnpm@9.15.0"
