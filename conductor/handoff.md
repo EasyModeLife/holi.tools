@@ -13,7 +13,7 @@
 
 ## Next Step
 - **Themes**: Removed bright themes. Added dark/calming palettes: **Nord**, **Sage**, and **Lavender**.
-- **Randomization**: Implemented persistent-free randomization on entry (always random new look unless manually toggled).
+- **Randomization**: Implemented **forced randomization** on entry. The site ignores previous session preferences on reload to ensure a fresh, random theme every time, as requested.
 - **UI Polish**: Overlays now feature a transparent glassmorphism backdrop and utilize theme variables for seamless integration. Language menu buttons adjusted for better contrast.
 - **Layout**: Refactored `HeroValues` to a strict 3-column matrix. Removed unstable `cq` and `cqh` units in favor of `clamp()` and `rem` for more reliable rendering across all devices. Added `min-height` to ValueCards to prevent squashing.
 - **Content**: Updated value propositions to "Simple" (was Quality), "True Local" (was No Limits), and added "Open Source" (AGPL 3.0).

@@ -98,28 +98,8 @@
     applyTheme(currentThemeIndex, true);
   };
 
-  // Initialize: Random if no saved theme, otherwise load saved
-  // User requested random on entry -> Actually, let's respect persistence ONLY if explicitly saved.
-  // But if they want "random on entry", maybe I should just ALWAYS do random unless they toggle?
-  // The user complained "no está cargando uno random".
-  // I'll make it random by default, but if there's a saved theme, I'll load it?
-  // No, I'll allow the random logic to take precedence if the user hasn't explicitly set it THIS SESSION?
-  // Actually, standard behavior: If I set a theme, I expect it to stay.
-  // But maybe the previous logic was bugged because `applyTheme` saved it immediately.
-  // Now that `applyTheme` doesn't save on init, a refresh will NOT see a saved theme (unless one was saved before).
-  // I will check if there is a saved theme. if NOT, random.
-  // If the user clears cache, they get random.
-
-  const savedThemeName = localStorage.getItem("selectedTheme");
-  if (savedThemeName) {
-    const index = themes.findIndex((t) => t.name === savedThemeName);
-    if (index !== -1) {
-      applyTheme(index, false); // Don't re-save, just apply
-    } else {
-      applyTheme(Math.floor(Math.random() * themes.length), false);
-    }
-  } else {
-    // First time: RANDOM and DO NOT SAVE yet.
-    applyTheme(Math.floor(Math.random() * themes.length), false);
-  }
+  // Initialize: Always Random to satisfy "Uno random al entrar"
+  // We ignore localStorage on initialization so it's fresh every time.
+  const randomIndex = Math.floor(Math.random() * themes.length);
+  applyTheme(randomIndex, false); // false = do not save to localStorage, so reload is still random
 </script>
