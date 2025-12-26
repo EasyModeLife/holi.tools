@@ -57,23 +57,23 @@ const t = getTranslations(lang);
         flex-direction: column;
         min-height: 100dvh;
       }
+        transition: background-color 0.3s ease;
+      }
       header {
         background: var(--color-bg);
         width: 100%;
-        height: 50dvh;
-        display: grid;
-        grid-template-rows: 1fr 1fr;
+        min-height: 50dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         position: relative;
         overflow: hidden;
         transition: background-color 0.3s ease;
+        padding-bottom: 2rem;
+        gap: 2rem;
       }
-      @media (max-width: 640px) {
-        header {
-          height: auto;
-          min-height: 50dvh;
-          grid-template-rows: 25dvh auto;
-        }
-      }
+
     </style>
     <style is:global>
       /* Global Overlay Content Styles (Must be global because they are injected via JS) */
