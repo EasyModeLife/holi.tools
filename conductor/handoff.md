@@ -12,7 +12,7 @@
 - **Tool Integration**: The "Launch" buttons currently point to placeholders or internal routes that might not be fully linked yet.
 
 ## Next Step
-- **Layout**: Refactored `HeroValues` to a strict 3-column matrix (center-aligned, max-width 900px) on all devices. Removed `MainLayout` fixed header height to allow dynamic sizing.
+- **Layout**: Refactored `HeroValues` to a strict 3-column matrix. Removed unstable `cq` and `cqh` units in favor of `clamp()` and `rem` for more reliable rendering across all devices. Added `min-height` to ValueCards to prevent squashing.
 - **Content**: Updated value propositions to "Simple" (was Quality), "True Local" (was No Limits), and added "Open Source" (AGPL 3.0).
 - **i18n**: Updated EN/ES translations for new values.
 - **Easter Egg**: Implemented theme switcher triggering via 🖌️ emoji with 5 premium palettes (Default, Tokyo Night, Sunset, Forest, Cyberpunk).
