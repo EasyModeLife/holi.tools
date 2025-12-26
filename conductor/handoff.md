@@ -12,9 +12,9 @@
 - **Tool Integration**: The "Launch" buttons currently point to placeholders or internal routes that might not be fully linked yet.
 
 ## Next Step
+- **Layout**: Refactored `HeroValues` to a strict 3-column matrix (center-aligned, max-width 900px) on all devices. Removed `MainLayout` fixed header height to allow dynamic sizing.
 - **Content**: Updated value propositions to "Simple" (was Quality), "True Local" (was No Limits), and added "Open Source" (AGPL 3.0).
 - **i18n**: Updated EN/ES translations for new values.
-- **Multilanguage Icon**: Fixed mobile layout issue where `HeroValues` overflowed the header.
 - **Easter Egg**: Implemented theme switcher triggering via 🖌️ emoji with 5 premium palettes (Default, Tokyo Night, Sunset, Forest, Cyberpunk).
 - **Mobile**: Optimized "Tools Explorer" layout for small screens.
 - **SEO**: Fixed "invalid robots.txt" by creating the file.
