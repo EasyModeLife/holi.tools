@@ -6,4 +6,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] i18n Implementation (conductor/tracks/i18n_implementation/plan.md)
 - [x] Mobile Fixes (conductor/tracks/mobile_fixes/plan.md)
 - [x] Landing Content Updates (conductor/tracks/landing_content_updates/plan.md)
-- [ ] Layout Refinements (conductor/tracks/layout_refinements/plan.md)
+- [x] Layout Refinements (conductor/tracks/layout_refinements/plan.md)
+- [x] Theme Refinement (conductor/tracks/theme_refinement/plan.md)
