@@ -1,0 +1,39 @@
+---
+import { getTranslations } from "../i18n/translations";
+const lang = Astro.currentLocale || "es";
+const t = getTranslations(lang);
+---
+
+<div id="HeroTitle" class="title-section">
+  <h1 data-i18n="hero_title">{t.hero_title}</h1>
+  <p class="slogan" data-i18n="hero_slogan">{t.hero_slogan}</p>
+</div>
+
+<style>
+  .title-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 18vw, 12rem);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    margin: 0;
+    line-height: 0.8;
+    text-transform: lowercase;
+  }
+
+  .slogan {
+    font-size: clamp(0.8rem, 3.5vw, 1.5rem);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 1rem 0 0 0;
+    letter-spacing: -0.02em;
+  }
+</style>

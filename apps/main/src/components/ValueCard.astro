@@ -1,0 +1,113 @@
+---
+import { getTranslations } from "../i18n/translations";
+
+interface Props {
+  title: string;
+  desc: string;
+  i18nTitle: string;
+  i18nDesc: string;
+  id?: string;
+  clickable?: boolean;
+  icon?: string;
+}
+
+const {
+  title,
+  desc,
+  i18nTitle,
+  i18nDesc,
+  id,
+  clickable = true,
+  icon,
+} = Astro.props;
+const lang = Astro.currentLocale || "es";
+const t = getTranslations(lang);
+
+// Use the passed title/desc as fallback, but prefer server-side translation if key matches
+const displayTitle = t[i18nTitle as keyof typeof t] || title;
+const displayDesc = t[i18nDesc as keyof typeof t] || desc;
+---
+
+<div
+  id={id}
+  class={`prop-item ${clickable ? "clickable" : ""}`}
+  data-action={id}
+>
+  {icon && <div class="prop-icon" set:html={icon} />}
+  <span class="prop-title" data-i18n={i18nTitle}>{displayTitle}</span>
+  <span class="prop-desc" data-i18n={i18nDesc}>{displayDesc}</span>
+</div>
+
+<style>
+  .prop-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    border: 2px solid var(--color-border);
+    min-height: 180px;
+    height: 100%;
+    position: relative;
+    background: var(--color-card-bg);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .prop-icon {
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prop-icon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .prop-item:hover {
+    z-index: 10;
+    transform: translate(-4px, -4px);
+    box-shadow: 8px 8px 0px var(--color-border);
+    border-color: var(--color-border);
+  }
+
+  .prop-title {
+    text-transform: lowercase;
+    font-weight: 900;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    overflow-wrap: break-word;
+    transition: all 0.2s ease;
+  }
+
+  .prop-desc {
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    opacity: 0.8;
+    line-height: 1.2;
+    max-width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .prop-item {
+      padding: 1rem;
+      min-height: 140px;
+    }
+    .prop-title {
+      font-size: 1.1rem;
+    }
+    .prop-desc {
+      font-size: 0.8rem;
+    }
+  }
+</style>
