@@ -1,0 +1,113 @@
+---
+/*
+  ThemeManager.astro
+  Handles client-side theme switching.
+  Exposes window.toggleTheme() for the easter egg.
+*/
+---
+
+<script>
+  declare global {
+    interface Window {
+      toggleTheme: () => void;
+    }
+  }
+
+  // Palettes Definition
+  const themes = [
+    {
+      name: "default",
+      colors: {
+        "--color-bg": "#ffffff",
+        "--color-text": "#1a1a1a",
+        "--color-border": "#1a1a1a",
+        "--color-accent": "#5B21B6",
+        "--color-card-bg": "#ffffff",
+      },
+    },
+    {
+      name: "tokyo-night",
+      colors: {
+        "--color-bg": "#1a1b26",
+        "--color-text": "#c0caf5",
+        "--color-border": "#7aa2f7",
+        "--color-accent": "#bb9af7",
+        "--color-card-bg": "#24283b",
+      },
+    },
+    {
+      name: "nord",
+      colors: {
+        "--color-bg": "#ECEFF4",
+        "--color-text": "#2E3440",
+        "--color-border": "#81A1C1",
+        "--color-accent": "#88C0D0",
+        "--color-card-bg": "#E5E9F0",
+      },
+    },
+    {
+      name: "forest",
+      colors: {
+        "--color-bg": "#064E3B",
+        "--color-text": "#D1FAE5",
+        "--color-border": "#34D399",
+        "--color-accent": "#10B981",
+        "--color-card-bg": "#065F46",
+      },
+    },
+    {
+      name: "sage",
+      colors: {
+        "--color-bg": "#F1F5F2",
+        "--color-text": "#2D3A3A",
+        "--color-border": "#7A9E7E",
+        "--color-accent": "#A3C4BC",
+        "--color-card-bg": "#E8EFEA",
+      },
+    },
+    {
+      name: "lavender",
+      colors: {
+        "--color-bg": "#F5F3FF",
+        "--color-text": "#4C1D95",
+        "--color-border": "#A78BFA",
+        "--color-accent": "#C4B5FD",
+        "--color-card-bg": "#EDE9FE",
+      },
+    },
+  ];
+
+  let currentThemeIndex = 0;
+
+  function applyTheme(index) {
+    const theme = themes[index];
+    const root = document.documentElement;
+    Object.entries(theme.colors).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+    localStorage.setItem("selectedTheme", theme.name);
+    currentThemeIndex = index;
+    console.log(`[ThemeManager] Applied theme: ${theme.name}`);
+  }
+
+  // Expose global toggle function
+  window.toggleTheme = () => {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    applyTheme(currentThemeIndex);
+  };
+
+  // Initialize: Random if no saved theme, otherwise load saved
+  const savedThemeName = localStorage.getItem("selectedTheme");
+  if (savedThemeName) {
+    const index = themes.findIndex((t) => t.name === savedThemeName);
+    if (index !== -1) {
+      applyTheme(index);
+    } else {
+      // If theme name changed/removed, pick random
+      applyTheme(Math.floor(Math.random() * themes.length));
+    }
+  } else {
+    // First time or session without preference: RANDOM
+    applyTheme(Math.floor(Math.random() * themes.length));
+  }
+</script>
