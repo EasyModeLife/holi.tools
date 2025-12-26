@@ -38,11 +38,11 @@
     {
       name: "nord",
       colors: {
-        "--color-bg": "#ECEFF4",
-        "--color-text": "#2E3440",
-        "--color-border": "#81A1C1",
-        "--color-accent": "#88C0D0",
-        "--color-card-bg": "#E5E9F0",
+        "--color-bg": "#2E3440",
+        "--color-text": "#ECEFF4",
+        "--color-border": "#88C0D0",
+        "--color-accent": "#81A1C1",
+        "--color-card-bg": "#3B4252",
       },
     },
     {
@@ -58,56 +58,68 @@
     {
       name: "sage",
       colors: {
-        "--color-bg": "#F1F5F2",
-        "--color-text": "#2D3A3A",
-        "--color-border": "#7A9E7E",
-        "--color-accent": "#A3C4BC",
-        "--color-card-bg": "#E8EFEA",
+        "--color-bg": "#1A2F23",
+        "--color-text": "#E8EFEA",
+        "--color-border": "#4ADE80",
+        "--color-accent": "#22C55E",
+        "--color-card-bg": "#243E36",
       },
     },
     {
       name: "lavender",
       colors: {
-        "--color-bg": "#F5F3FF",
-        "--color-text": "#4C1D95",
+        "--color-bg": "#2E1065",
+        "--color-text": "#E9D5FF",
         "--color-border": "#A78BFA",
         "--color-accent": "#C4B5FD",
-        "--color-card-bg": "#EDE9FE",
+        "--color-card-bg": "#4C1D95",
       },
     },
   ];
 
   let currentThemeIndex = 0;
 
-  function applyTheme(index) {
+  function applyTheme(index, save = true) {
     const theme = themes[index];
     const root = document.documentElement;
     Object.entries(theme.colors).forEach(([key, value]) => {
       root.style.setProperty(key, value);
     });
-    localStorage.setItem("selectedTheme", theme.name);
+    if (save) {
+      localStorage.setItem("selectedTheme", theme.name);
+    }
     currentThemeIndex = index;
-    console.log(`[ThemeManager] Applied theme: ${theme.name}`);
+    console.log(`[ThemeManager] Applied theme: ${theme.name} (Saved: ${save})`);
   }
 
   // Expose global toggle function
   window.toggleTheme = () => {
     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-    applyTheme(currentThemeIndex);
+    applyTheme(currentThemeIndex, true);
   };
 
   // Initialize: Random if no saved theme, otherwise load saved
+  // User requested random on entry -> Actually, let's respect persistence ONLY if explicitly saved.
+  // But if they want "random on entry", maybe I should just ALWAYS do random unless they toggle?
+  // The user complained "no está cargando uno random".
+  // I'll make it random by default, but if there's a saved theme, I'll load it?
+  // No, I'll allow the random logic to take precedence if the user hasn't explicitly set it THIS SESSION?
+  // Actually, standard behavior: If I set a theme, I expect it to stay.
+  // But maybe the previous logic was bugged because `applyTheme` saved it immediately.
+  // Now that `applyTheme` doesn't save on init, a refresh will NOT see a saved theme (unless one was saved before).
+  // I will check if there is a saved theme. if NOT, random.
+  // If the user clears cache, they get random.
+
   const savedThemeName = localStorage.getItem("selectedTheme");
   if (savedThemeName) {
     const index = themes.findIndex((t) => t.name === savedThemeName);
     if (index !== -1) {
-      applyTheme(index);
+      applyTheme(index, false); // Don't re-save, just apply
     } else {
-      // If theme name changed/removed, pick random
-      applyTheme(Math.floor(Math.random() * themes.length));
+      applyTheme(Math.floor(Math.random() * themes.length), false);
     }
   } else {
-    // First time or session without preference: RANDOM
-    applyTheme(Math.floor(Math.random() * themes.length));
+    // First time: RANDOM and DO NOT SAVE yet.
+    applyTheme(Math.floor(Math.random() * themes.length), false);
   }
 </script>

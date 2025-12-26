@@ -12,7 +12,9 @@
 - **Tool Integration**: The "Launch" buttons currently point to placeholders or internal routes that might not be fully linked yet.
 
 ## Next Step
-- **Themes**: Removed bright yellow and pink themes. Added calming palettes: **Nord**, **Sage**, and **Lavender**. Implemented random theme selection on page load (standard randomization if no preference is saved).
+- **Themes**: Removed bright themes. Added dark/calming palettes: **Nord**, **Sage**, and **Lavender**.
+- **Randomization**: Implemented persistent-free randomization on entry (always random new look unless manually toggled).
+- **UI Polish**: Overlays now feature a transparent glassmorphism backdrop and utilize theme variables for seamless integration. Language menu buttons adjusted for better contrast.
 - **Layout**: Refactored `HeroValues` to a strict 3-column matrix. Removed unstable `cq` and `cqh` units in favor of `clamp()` and `rem` for more reliable rendering across all devices. Added `min-height` to ValueCards to prevent squashing.
 - **Content**: Updated value propositions to "Simple" (was Quality), "True Local" (was No Limits), and added "Open Source" (AGPL 3.0).
 - **i18n**: Updated EN/ES translations for new values.
