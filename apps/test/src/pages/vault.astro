@@ -75,10 +75,17 @@
           </div>
         </div>
       </div>
+      <!-- ProjectKey Test Section -->
+      <div class="p-6 rounded-xl border bg-card">
+        <h2 class="text-xl font-semibold mb-4">Direct ProjectKey Test (Experimental)</h2>
+        <p class="text-sm text-muted-foreground mb-4">Test the raw ProjectKey WASM binding.</p>
+        <button id="raw-key-gen-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:opacity-90">Generate & Test Raw Key</button>
+        <div id="raw-key-output" class="mt-4 p-3 bg-muted rounded text-xs font-mono break-all"></div>
+      </div>
     </div>
 
     <script>
-      import init, { Vault, HandshakeSimulator } from "@holi/wasm-core";
+      import init, { Vault, HandshakeSimulator, ProjectKey } from "@holi/wasm-core";
 
       let vault = null;
       let hsSim = null;
@@ -96,6 +103,28 @@
       async function run() {
         await init();
         
+        // --- Raw ProjectKey Logic ---
+        const rawKeyBtn = document.getElementById('raw-key-gen-btn');
+        const rawKeyOut = document.getElementById('raw-key-output');
+
+        rawKeyBtn.onclick = () => {
+          try {
+            const key = new ProjectKey();
+            const bytes = key.to_bytes();
+            const text = "Secret Message 123";
+            const encrypted = key.encrypt(new TextEncoder().encode(text));
+            const decrypted = key.decrypt(encrypted);
+            const decoded = new TextDecoder().decode(decrypted);
+
+            rawKeyOut.innerHTML = `
+              <div>Key Bytes: ${toHex(bytes)}</div>
+              <div class="mt-2 text-green-500">Encryption/Decryption Loop: ${decoded === text ? "PASSED" : "FAILED"}</div>
+            `;
+          } catch (e) {
+            rawKeyOut.innerText = "Error: " + e;
+          }
+        };
+
         // --- Vault Logic ---
         const genIdBtn = document.getElementById('gen-id-btn');
         const idOutput = document.getElementById('identity-output');

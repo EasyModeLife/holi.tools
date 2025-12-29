@@ -3,9 +3,11 @@
 This tool was automatically generated as part of the Holi.tools ecosystem.
 
 ## Purpose
+
 - Describe the purpose of test here.
 
 ## Tech Stack
+
 - Astro
 - Tailwind CSS via @holi/configs
 - Components via @holi/ui

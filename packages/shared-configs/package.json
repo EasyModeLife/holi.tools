@@ -1,16 +1,16 @@
 {
-    "name": "@holi/configs",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./package.json",
-    "exports": {
-        ".": "./package.json",
-        "./tailwind.config": "./tailwind.config.js",
-        "./tsconfig.json": "./tsconfig.json",
-        "./*": "./*"
-    },
-    "peerDependencies": {
-        "tailwindcss": "^3.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "@holi/configs",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./package.json",
+  "exports": {
+    ".": "./package.json",
+    "./tailwind.config": "./tailwind.config.js",
+    "./tsconfig.json": "./tsconfig.json",
+    "./*": "./*"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
 }

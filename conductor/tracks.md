@@ -8,4 +8,4 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] Landing Content Updates (conductor/tracks/landing_content_updates/plan.md)
 - [x] Layout Refinements (conductor/tracks/layout_refinements/plan.md)
 - [x] Theme Refinement (conductor/tracks/theme_refinement/plan.md)
-- [ ] Theme Polish (conductor/tracks/theme_polish/plan.md)
+- [ ] QR Generator Implementation (conductor/tracks/qr_generator/plan.md)

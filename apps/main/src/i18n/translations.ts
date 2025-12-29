@@ -3,13 +3,13 @@ export const translations = {
         hero_title: "holi tools",
         hero_slogan: "We can do it, we will.",
         val1_title: "privacy",
-        val1_desc: "Your data never leaves your device.",
+        val1_desc: "We collect as little data as possible.",
         val2_title: "simple",
         val2_desc: "Intuitive and modern tools.",
         val3_title: "no cost",
         val3_desc: "Free forever, no subscriptions.",
-        val4_title: "true local",
-        val4_desc: "Your data stays in your browser.",
+        val4_title: "high speed",
+        val4_desc: "Zero latency, offline ready.",
         val5_title: "multilanguage",
         val5_desc: "Available in 10 languages.",
         val6_title: "open source",
@@ -24,16 +24,16 @@ export const translations = {
         tool4_desc: "Complex calculations and instant visualization.",
         info_privacy_title: "privacy first",
         info_privacy_text:
-            "Your data is yours. Holi.tools uses local-first architecture, meaning your files and data never reach our servers. We use WebGPU and WASM for heavy processing right on your hardware.",
+            "We strive to ensure the browser and page collect the least amount of information possible, from packages to the provider (Cloudflare). Your data is yours.",
         info_simple_title: "simple is better",
         info_simple_text:
             "We focus on clean, intuitive interfaces that let you focus on your work. No clutter, just modern tools that feel native.",
         info_nocost_title: "always free",
         info_nocost_text:
             "Holi.tools is a public good. No ads, no tracking, no 'freemium' tricks. We believe premium tools should be accessible to everyone, powered by the community.",
-        "info_truelocal_title": "true local execution",
+        "info_truelocal_title": "instant & offline",
         "info_truelocal_text":
-            "We only transmit the tool code. Once loaded, everything runs 100% in your browser. Your data never leaves your device. No cloud processing, no hidden uploads.",
+            "Since it runs locally, there is no server latency. It is also Offline Ready: works seamlessly without internet.",
         info_opensource_title: "open source",
         info_opensource_text:
             "Transparency is key. Our code is open source under the AGPL 3.0 license. You can audit, fork, and contribute. We believe in open knowledge.",
@@ -43,13 +43,13 @@ export const translations = {
         hero_title: "holi tools",
         hero_slogan: "Podemos lograrlo, lo haremos",
         val1_title: "privacidad",
-        val1_desc: "Tus datos nunca salen de tu dispositivo.",
+        val1_desc: "Recopilamos la mínima información posible.",
         val2_title: "simple",
         val2_desc: "Intuitivo y moderno.",
         val3_title: "sin costo",
         val3_desc: "Gratis para siempre, sin suscripciones.",
-        val4_title: "100% local",
-        val4_desc: "Tus datos se quedan en tu navegador.",
+        val4_title: "alta velocidad",
+        val4_desc: "Sin latencia, funciona offline.",
         val5_title: "multilenguaje",
         val5_desc: "Disponible en 10 idiomas.",
         val6_title: "open source",
@@ -64,16 +64,16 @@ export const translations = {
         tool4_desc: "Cálculos complejos y visualización instantánea.",
         info_privacy_title: "privacidad absoluta",
         info_privacy_text:
-            "Tus datos son tuyos. Holi.tools utiliza una arquitectura local-first, lo que significa que tus archivos y datos nunca llegan a nuestros servidores. Usamos WebGPU y WASM para el procesamiento pesado directamente en tu hardware.",
+            "Nos esforzamos para que el navegador y la página recopilen la menor información posible, desde las paqueterías hasta el proveedor (Cloudflare). Tus datos son tuyos.",
         info_simple_title: "la simplicidad es clave",
         info_simple_text:
             "Nos enfocamos en interfaces limpias e intuitivas que te permiten concentrarte en tu trabajo. Sin desorden, solo herramientas modernas que se sienten nativas.",
         info_nocost_title: "siempre gratis",
         info_nocost_text:
             "Holi.tools es un bien público. Sin anuncios, sin rastreo, sin trucos 'freemium'. Creemos que las herramientas premium deben ser accesibles para todos, impulsadas por la comunidad.",
-        "info_truelocal_title": "ejecución real local",
+        "info_truelocal_title": "velocidad y disponibilidad",
         "info_truelocal_text":
-            "Solo transmitimos el código de la herramienta. Una vez cargada, todo se ejecuta 100% en tu navegador. Tus datos nunca salen de tu dispositivo. Sin procesamiento en la nube, sin subidas ocultas.",
+            "Al ser local, no hay latencia de servidor. Además, es 'Offline Ready': funciona perfectamente sin conexión a internet.",
         info_opensource_title: "código abierto",
         info_opensource_text:
             "La transparencia es fundamental. Nuestro código es open source bajo la licencia AGPL 3.0. Puedes auditarlo, bifurcarlo y contribuir. Creemos en el conocimiento abierto.",

@@ -1,0 +1,14 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { languages } from "../../i18n/translations";
+
+export function getStaticPaths() {
+  return languages
+    .filter((l) => l.code !== "en")
+    .map((l) => ({
+      params: { lang: l.code },
+    }));
+}
+---
+
+<MainLayout />

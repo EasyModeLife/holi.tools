@@ -1,3 +1,3 @@
 export * from "./lib/utils";
-// Components will be exported here
-export * from "./components/ShaderBackground";
+// Components are now Web Components
+export * from "./components/button";

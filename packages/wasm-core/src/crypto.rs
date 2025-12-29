@@ -4,13 +4,18 @@ use chacha20poly1305::{
 };
 use serde::{Serialize, Deserialize};
 use std::fmt;
+use wasm_bindgen::prelude::*;
 
-#[derive(Serialize, Deserialize)]
+#[wasm_bindgen]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ProjectKey {
+    #[wasm_bindgen(skip)]
     pub key_bytes: [u8; 32],
 }
 
+#[wasm_bindgen]
 impl ProjectKey {
+    #[wasm_bindgen(constructor)]
     pub fn generate() -> Self {
         let key = XChaCha20Poly1305::generate_key(&mut OsRng);
         ProjectKey {
@@ -18,8 +23,17 @@ impl ProjectKey {
         }
     }
 
-    pub fn from_bytes(bytes: [u8; 32]) -> Self {
-        ProjectKey { key_bytes: bytes }
+    pub fn from_bytes(bytes: &[u8]) -> Result<ProjectKey, String> {
+        if bytes.len() != 32 {
+            return Err("Key must be 32 bytes".into());
+        }
+        let mut key_bytes = [0u8; 32];
+        key_bytes.copy_from_slice(bytes);
+        Ok(ProjectKey { key_bytes })
+    }
+
+    pub fn to_bytes(&self) -> Vec<u8> {
+        self.key_bytes.to_vec()
     }
 
     /// Encrypts data using XChaCha20-Poly1305.

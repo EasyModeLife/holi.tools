@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
-    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"
+    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
   ],
   theme: {
     extend: {
@@ -46,7 +46,7 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-    }
+    },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

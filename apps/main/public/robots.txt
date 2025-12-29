@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://holi.tools/sitemap-index.xml
