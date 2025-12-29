@@ -1,29 +1,31 @@
-# Handoff - Landing Page Implementation
+# Handoff Note
+**Date:** 2025-12-29
+**Agent:** Antigravity (Gemini)
 
-## Current Context
-**Changes Implemented**:
-- **i18n**: Full support for 10 languages (en, es, fr, de, pt, it, zh, ja, ko, ru) with server-side routing (`/es/`, `/en/`) and automatic root redirection.
-- **Audio**: Enhanced `SoundEngine` with MasterGain (+200% volume) and new sine-wave hover effects.
-- **Assets**: New black favicon (`favicon.svg`) derived from "Solar Icons" with attribution.
-- **Content**: Updated "No Limits" messaging to emphasize local-first architecture.
-- **UX**: Improved root redirection (English default, invisible) and added language icon to value card.
+## Context: Migration to Vanilla JS & Web Standards
+We have successfully pivoted the project from a React-heavy stack to a **"Zero-Framework" / Vanilla JS + WASM** standard. This aligns with the user's goal of "True Local", maximum privacy, and extreme performance.
 
-## Blocked/Pending
-- **Tool Integration**: The "Launch" buttons currently point to placeholders or internal routes that might not be fully linked yet.
+## Status Summary
 
-## Next Step
-- **Themes**: Removed bright themes. Added dark/calming palettes: **Nord**, **Sage**, and **Lavender**.
-- **Randomization**: Implemented **forced randomization** on entry. The site ignores previous session preferences on reload to ensure a fresh, random theme every time, as requested.
-- **UI Polish**: Overlays now feature a transparent glassmorphism backdrop and utilize theme variables for seamless integration. Language menu buttons adjusted for better contrast.
-- **Layout**: Refactored `HeroValues` to a strict 3-column matrix. Removed unstable `cq` and `cqh` units in favor of `clamp()` and `rem` for more reliable rendering across all devices. Added `min-height` to ValueCards to prevent squashing.
-- **Content**: Updated value propositions to "Simple" (was Quality), "True Local" (was No Limits), and added "Open Source" (AGPL 3.0).
-- **i18n**: Updated EN/ES translations for new values.
-- **Easter Egg**: Implemented theme switcher triggering via 🖌️ emoji with 5 premium palettes (Default, Tokyo Night, Sunset, Forest, Cyberpunk).
-- **Mobile**: Optimized "Tools Explorer" layout for small screens.
-- **SEO**: Fixed "invalid robots.txt" by creating the file.
-- **Performance**: Configured `inlineStylesheets: 'always'` to remove render-blocking CSS.
-- **Deploy**: Verify the deployment on Cloudflare.
-- **Tools**: Proceed with the specific tool implementations (Paint, Typst, etc.).
+### ✅ Completed
+1.  **Apps:**
+    *   **Main (`apps/main`):** Verified as heavily optimized (19KB production build). No React runtime.
+    *   **QR (`apps/qr`):** Migrated from React. Now uses `fast_qr` (Rust via `wasm-core`) and Vanilla JS. Inputs generate SVGs instantly.
+2.  **Core Libraries:**
+    *   **UI (`packages/ui`):** Started migration to Web Components. Created `<holi-button>`.
+    *   **WASM (`packages/wasm-core`):** Integrated `fast_qr` and successfully compiling to WASM.
+    *   **Tech Stack:** Updated `conductor/tech-stack.md` to deprecate React and promote Vanilla/WASM.
+3.  **Documentation:** Updated plans for `qr_generator` and `landing_content_updates`.
 
-## Deviations
-- **Performance First**: Removed the WebGPU background from the main landing page to optimize loading speed and lighthouse scores as requested.
+### 🚧 Works in Progress / Blocked
+-   `apps/paint`: Currently an empty Astro skeleton. Ready for "Day 1" implementation of the new standard.
+-   `apps/calculator`: Currently an empty Astro skeleton. Ready for "Day 1" implementation.
+
+## Next Steps for Next Agent
+1.  **Standardize New Apps:** Do **NOT** install React in `apps/paint` or `apps/calculator`. Build them using the pattern established in `apps/qr` (Astro + Vanilla JS + WASM).
+2.  **Enhance `packages/ui`:** The UI library needs more Web Components (Inputs, Cards, Toggles) to support the new apps without frameworks.
+3.  **QR Polish:** Add "Download as PNG" to `apps/qr` (requires Canvas rasterization of the SVG).
+
+## Critical Protocol
+*   **Zero Dependencies:** Reject any request to add UI frameworks (`react`, `vue`, etc) unless absolutely critical.
+*   **WASM First:** If it's math or graphics, write it in Rust (`packages/wasm-core`).

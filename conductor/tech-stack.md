@@ -11,10 +11,11 @@
 - **Runtime:** Node.js (Development), Browser (Production).
 
 ## Frontend
-
-- **Astro:** Static site generation and routing.
-- **React:** Interactive UI components within Astro pages.
-- **Styling:** Tailwind CSS + Shadcn/UI for consistent, premium design.
+- **Astro:** Static site generation, routing, and HTML orchestration.
+- **Vanilla JS:** Primary runtime for client-side logic. Zero-framework approach.
+- **Web Components:** Standard Custom Elements for reusable UI (e.g., `<holi-button>`).
+- **Styling:** Tailwind CSS for utility-first styling.
+- **Legacy/Deprecated:** React (Migration in progress to remove it completely).
 
 ## Graphics & Performance
 
@@ -25,10 +26,12 @@
   - `lyon`: 2D vector tessellation for complex shape rendering.
   - `winit`: Windowing and event handling in WASM context.
   - `bytemuck`: Safe casting for data buffers.
+  - `fast_qr`: High-speed, WASM-ready QR code generation.
 
 ## Data & Storage (Offline-First)
 
 - **OPFS (Origin Private File System):** High-performance local file storage for app-specific data.
+- **Service Workers (Vanilla):** Manual, zero-dependency caching strategies for True Local (Offline) support.
 - **SQLite (WASM):** Client-side relational database for structured metadata and state.
 - **File System Access API:** Support for direct, user-selected folder access.
 - **Cryptography (Vault):**

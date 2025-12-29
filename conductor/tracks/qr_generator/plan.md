@@ -1,18 +1,18 @@
-# Plan: QR Generator Implementation
+# Plan: QR Generator Implementation (Migrated to Vanilla/WASM)
+[Track: qr_generator/2025-12-29]
 
-## Phase 1: Core Logic & Basic UI
-- [ ] Install `qrcode` and types. `[install_deps]`
-- [ ] Create `QrEngine` component (React). `[core_component]`
-    - [ ] Implement basic text-to-QR rendering.
-- [ ] Create basic page layout in `apps/qr/src/pages/index.astro` using `MainLayout` (if available) or standard layout. `[page_layout]`
+## Phase 1: Migration & Core Engine [COMPLETED]
+- [x] **Remove React Dependency:** Uninstall `react`, `react-dom`, `@astrojs/react` from `apps/qr`. `[remove_react]`
+- [x] **Rust Integration:** Add `fast_qr` to `packages/wasm-core` and implement `generate_qr_svg`. `[rust_impl]`
+- [x] **WASM Bridge:** Update `lib.rs` to expose the generator to JS via `wasm-bindgen`. `[wasm_bridge]`
+- [x] **Web Component UI:** Create `<holi-button>` in `packages/ui` as the foundational UI element. `[web_component]`
+- [x] **Integration:** Connect `apps/qr` input to WASM engine using Vanilla JS and verify SVG rendering. `[integration]`
 
-## Phase 2: Customization & Features
-- [ ] Add controls for Error Correction Level. `[feature_ecl]`
-- [ ] Add color pickers for Foreground/Background. `[feature_color]`
-- [ ] Implement Download as PNG. `[download_png]`
-- [ ] Implement Download as SVG. `[download_svg]`
+## Phase 2: Feature Parity & Polish [PENDING]
+- [ ] **Download Options:** Implement Canvas rasterization to download as PNG/JPEG. `[download_raster]`
+- [ ] **Customization UI:** Add vanilla JS color pickers and sliders for customization variables. `[ui_controls]`
+- [ ] **Data Persistance:** Save user preferences to `localStorage`. `[persistence]`
+- [ ] **PWA/Offline:** Verify service worker caching for offline generation. `[offline_mode]`
 
-## Phase 3: Polish & Integration
-- [ ] Style using `holi-ui` cards and inputs. `[styling]`
-- [ ] Add "About" section content explaining client-side privacy. `[content]`
-- [ ] Verify offline functionality. `[verify_offline]`
+## Phase 3: Expansion & Standards
+- [ ] **Standardize Components:** Extract Input and Card components to `packages/ui` (Web Components). `[ui_library]`

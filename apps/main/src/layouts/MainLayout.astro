@@ -15,6 +15,7 @@ const t = getTranslations(lang);
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={t.info_privacy_text} />
     <meta name="generator" content={Astro.generator} />
@@ -141,6 +142,18 @@ const t = getTranslations(lang);
     <Overlay />
     <SoundEngine />
     <ThemeManager />
+
+    <script>
+      // Service Worker Registration (Manual PWA)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js", { type: "module" })
+            .then((reg) => console.log("Holi.tools PWA: Ready", reg.scope))
+            .catch((err) => console.error("Holi.tools PWA: Error", err));
+        });
+      }
+    </script>
 
     <script define:vars={{ t, languages, lang }}>
       // Clientside logic for the overlay and simple I18N bridges

@@ -9,3 +9,8 @@
 ## 2. Update Layout
 - [x] Add 6th ValueCard to `HeroValues.astro` `[add_card]`
 - [x] Adjust grid layout in `HeroValues.astro` to accommodate 6 items (likely 3x2 or 6x1) `[adjust_grid]`
+
+## 3. Privacy & Performance Update (2025-12-29)
+- [x] Refine "Privacy" value proposition (100% clean analysis). `[privacy_refinement]`
+- [x] Merge "No Limits" into "True Local". `[merge_values]`
+- [x] Update "True Local" to "High Speed" to emphasize performance benefits. `[high_speed]`
