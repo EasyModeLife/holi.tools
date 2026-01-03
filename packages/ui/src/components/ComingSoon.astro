@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  appName: string;
+  slogan: string;
+  metaTitle: string;
+  metaDescription: string;
+  lang: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  languages: any[];
+  comingSoonText: string;
+  backHomeText: string;
+  colorScheme: "default" | "qr" | "paint" | "calculator" | "labs" | "typst";
+}
+
+const {
+  appName,
+  slogan,
+  metaTitle,
+  metaDescription,
+  lang,
+  languages,
+  comingSoonText,
+  backHomeText,
+  colorScheme,
+} = Astro.props;
+---
+
+<BaseLayout
+  title={metaTitle}
+  description={metaDescription}
+  lang={lang}
+  languages={languages}
+  colorScheme={colorScheme}
+  showLanguageMenu={true}
+  showCanvasGrid={true}
+>
+  <main
+    class="flex flex-col items-center justify-center min-h-[100dvh] p-4 text-center"
+  >
+    <div
+      class="relative p-12 rounded-3xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] backdrop-blur-md overflow-hidden max-w-2xl w-full"
+    >
+      <!-- Decoratiive glow -->
+      <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[var(--color-accent)] opacity-20 blur-[100px] pointer-events-none rounded-full"
+      >
+      </div>
+
+      <div class="relative z-10 flex flex-col items-center">
+        <h1
+          class="text-6xl md:text-8xl font-black mb-6 lowercase tracking-tighter"
+        >
+          holi <span class="text-[var(--color-accent)]">{appName}</span>
+        </h1>
+
+        <div
+          class="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-sm font-bold uppercase tracking-[0.2em] border border-[var(--color-border)] rounded-full text-[var(--color-text)] bg-[rgba(255,255,255,0.05)]"
+        >
+          <span
+            class="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse"
+          ></span>
+          {comingSoonText}
+        </div>
+
+        <p
+          class="text-lg md:text-xl opacity-80 max-w-md mb-10 leading-relaxed text-balance"
+        >
+          {slogan}
+        </p>
+
+        <a
+          href="https://holi.tools"
+          class="group relative inline-flex items-center gap-2 px-8 py-3.5 font-bold rounded-xl bg-[var(--color-text)] text-[var(--color-bg)] hover:scale-105 transition-all duration-300"
+        >
+          <span>{backHomeText}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="transition-transform group-hover:translate-x-1"
+            ><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+          >
+        </a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,145 @@
+---
+/**
+ * ColorPanel.astro - Color customization for QR Code
+ *
+ * Includes:
+ * - Foreground color picker
+ * - Background color picker
+ * - Color presets
+ * - Transparent background toggle
+ */
+---
+
+<div class="color-row">
+  <label>Foreground</label>
+  <input
+    type="color"
+    id="color-fg"
+    value="#000000"
+    onchange="updateColor('fg', this.value)"
+  />
+</div>
+<div class="color-row">
+  <label>Background</label>
+  <input
+    type="color"
+    id="color-bg"
+    value="#ffffff"
+    onchange="updateColor('bg', this.value)"
+  />
+</div>
+<div class="color-presets">
+  <button
+    class="preset"
+    style="--preset-fg:#000;--preset-bg:#fff"
+    onclick="applyPreset('#000000','#ffffff')"></button>
+  <button
+    class="preset"
+    style="--preset-fg:#fff;--preset-bg:#000"
+    onclick="applyPreset('#ffffff','#000000')"></button>
+  <button
+    class="preset"
+    style="--preset-fg:#1a73e8;--preset-bg:#fff"
+    onclick="applyPreset('#1a73e8','#ffffff')"></button>
+  <button
+    class="preset"
+    style="--preset-fg:#34a853;--preset-bg:#fff"
+    onclick="applyPreset('#34a853','#ffffff')"></button>
+  <button
+    class="preset"
+    style="--preset-fg:#ea4335;--preset-bg:#fff"
+    onclick="applyPreset('#ea4335','#ffffff')"></button>
+  <button
+    class="preset"
+    style="--preset-fg:#fbbc04;--preset-bg:#000"
+    onclick="applyPreset('#fbbc04','#000000')"></button>
+</div>
+<div class="section-divider"></div>
+<div class="option-row">
+  <label>
+    <input
+      type="checkbox"
+      id="chk-bg-transparent"
+      onchange="toggleBgTransparent(this.checked)"
+    />
+    Transparent Background
+  </label>
+</div>
+
+<style>
+  /* Color Panel Styles */
+  .color-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .color-row label {
+    font-size: 13px;
+    color: var(--text-main, rgba(255, 255, 255, 0.8));
+    /* Fallback for light mode is handled by global styles or var */
+  }
+
+  /* Make sure labels are readable on both dark/light modes given the glass background */
+  @media (prefers-color-scheme: dark) {
+    .color-row label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .color-row input[type="color"] {
+    width: 40px;
+    height: 32px;
+    border: 2px solid rgba(127, 127, 127, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+    padding: 2px;
+  }
+
+  .color-presets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .preset {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 2px solid rgba(127, 127, 127, 0.2);
+    cursor: pointer;
+    background: linear-gradient(
+      135deg,
+      var(--preset-fg) 50%,
+      var(--preset-bg) 50%
+    );
+    transition: all 0.2s;
+  }
+
+  .preset:hover {
+    transform: scale(1.1);
+  }
+
+  .section-divider {
+    height: 1px;
+    background: rgba(127, 127, 127, 0.1);
+    margin: 4px 0;
+  }
+
+  .option-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-main, rgba(255, 255, 255, 0.8));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .option-row label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+</style>

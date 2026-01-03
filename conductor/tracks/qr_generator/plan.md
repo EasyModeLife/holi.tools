@@ -9,8 +9,8 @@
 - [x] **Integration:** Connect `apps/qr` input to WASM engine using Vanilla JS and verify SVG rendering. `[integration]`
 
 ## Phase 2: Feature Parity & Polish [PENDING]
-- [ ] **Download Options:** Implement Canvas rasterization to download as PNG/JPEG. `[download_raster]`
-- [ ] **Customization UI:** Add vanilla JS color pickers and sliders for customization variables. `[ui_controls]`
+- [x] **Download Options:** Implement Canvas rasterization to download as PNG/JPEG. `[download_raster]`
+- [x] **Customization UI:** Add vanilla JS color pickers, sliders, and 3-layer shape system. `[ui_controls]`
 - [ ] **Data Persistance:** Save user preferences to `localStorage`. `[persistence]`
 - [ ] **PWA/Offline:** Verify service worker caching for offline generation. `[offline_mode]`
 

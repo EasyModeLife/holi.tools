@@ -1,41 +1,55 @@
 ---
+import GlassCard from "@holi/ui/components/GlassCard.astro";
 import { getTranslations } from "../i18n/translations";
+
 const lang = Astro.currentLocale || "es";
 const t = getTranslations(lang);
+
+// Tools data
+const tools = [
+  {
+    name: t.tool1_name,
+    desc: t.tool1_desc,
+    icon: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19l7-7 3 3-7 7-3-3z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 2l7.586 7.586" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  },
+  {
+    name: t.tool2_name,
+    desc: t.tool2_desc,
+    icon: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 2v7.31" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v7.31" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 2h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  },
+  {
+    name: t.tool3_name,
+    desc: t.tool3_desc,
+    icon: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  },
+  {
+    name: t.tool4_name,
+    desc: t.tool4_desc,
+    icon: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="6" x2="16" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 14h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 18h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  },
+];
 ---
 
 <main id="ToolsExplorer" class="tools-menu-section">
   <div class="tools-grid">
-    <div class="tool-card">
-      <span class="tool-name" data-i18n="tool1_name">
-        {t.tool1_name}
-        <span
-          class="theme-trigger"
-          onclick="event.stopPropagation(); window.toggleTheme && window.toggleTheme()"
-          >🖌️</span
-        >
-      </span>
-      <span class="tool-desc" data-i18n="tool1_desc">{t.tool1_desc}</span>
-    </div>
-    <div class="tool-card">
-      <span class="tool-name" data-i18n="tool2_name">{t.tool2_name}</span>
-      <span class="tool-desc" data-i18n="tool2_desc">{t.tool2_desc}</span>
-    </div>
-    <div class="tool-card">
-      <span class="tool-name" data-i18n="tool3_name">{t.tool3_name}</span>
-      <span class="tool-desc" data-i18n="tool3_desc">{t.tool3_desc}</span>
-    </div>
-    <div class="tool-card">
-      <span class="tool-name" data-i18n="tool4_name">{t.tool4_name}</span>
-      <span class="tool-desc" data-i18n="tool4_desc">{t.tool4_desc}</span>
-    </div>
+    {
+      tools.map((tool) => (
+        <GlassCard clickable class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon" set:html={tool.icon} />
+            <span class="tool-name">{tool.name}</span>
+          </div>
+          <span class="tool-desc">{tool.desc}</span>
+        </GlassCard>
+      ))
+    }
   </div>
 </main>
 
 <style>
   .tools-menu-section {
     min-height: 50dvh;
-    background: var(--color-bg);
+    background: transparent;
     padding: 4rem 5%;
     display: flex;
     justify-content: center;
@@ -46,38 +60,50 @@ const t = getTranslations(lang);
   .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    gap: 1.5rem;
     width: 100%;
-    max-width: 1400px;
+    max-width: 1200px;
   }
 
+  /* Override GlassCard defaults for tool cards */
   .tool-card {
-    background: var(--color-card-bg);
-    border: 2px solid var(--color-border);
-    padding: 2.5rem;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
+    align-items: flex-start !important;
+    text-align: left !important;
+    padding: 2rem !important;
+    border-radius: 20px !important;
     gap: 1rem;
-    position: relative;
-    text-decoration: none;
-    color: var(--color-text);
   }
 
-  .tool-card:hover {
-    transform: translate(-4px, -4px);
-    box-shadow: 8px 8px 0px var(--color-border);
-    border-color: var(--color-border);
+  .tool-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .tool-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .tool-icon :global(svg) {
+    width: 100%;
+    height: 100%;
   }
 
   .tool-name {
     font-weight: 900;
-    font-size: 3rem;
+    font-size: 2.5rem;
     letter-spacing: -0.04em;
     line-height: 0.9;
     text-transform: lowercase;
     color: var(--color-text);
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .tool-desc {
@@ -85,19 +111,6 @@ const t = getTranslations(lang);
     color: var(--color-text);
     font-weight: 400;
     opacity: 0.8;
-  }
-
-  .theme-trigger {
-    cursor: pointer;
-    font-size: 0.6em;
-    margin-left: 10px;
-    vertical-align: middle;
-    transition: transform 0.2s;
-    display: inline-block;
-  }
-
-  .theme-trigger:hover {
-    transform: scale(1.3) rotate(15deg);
   }
 
   @media (max-width: 640px) {
@@ -108,7 +121,8 @@ const t = getTranslations(lang);
       gap: 1rem;
     }
     .tool-card {
-      padding: 1.5rem;
+      padding: 1.5rem !important;
+      border-radius: 16px !important;
     }
     .tool-name {
       font-size: 2rem;

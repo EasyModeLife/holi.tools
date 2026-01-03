@@ -1,0 +1,19 @@
+[package]
+name = "holi-qr"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance QR code generation library"
+license = "AGPL-3.0"
+repository = "https://github.com/EasyModeLife/holi.tools"
+keywords = ["qr", "qrcode", "svg", "generator"]
+categories = ["encoding", "graphics"]
+
+# This is a PURE Rust library - no wasm-bindgen here
+# Can be used in CLI, WASM, FFI, etc.
+
+[dependencies]
+fast_qr = { version = "0.12", features = ["svg"] }
+thiserror = "1.0"
+
+[dev-dependencies]
+# For testing

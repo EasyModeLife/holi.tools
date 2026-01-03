@@ -1,0 +1,248 @@
+---
+import BaseLayout from "@holi/ui/layouts/BaseLayout.astro";
+import GlassHeader from "@holi/ui/components/GlassHeader.astro";
+import GlassCard from "@holi/ui/components/GlassCard.astro";
+
+interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: any;
+  lang: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  languages: any[];
+}
+
+const { t, lang, languages } = Astro.props;
+
+// Demo data
+const colors = [
+  { name: "bg", var: "--color-bg" },
+  { name: "text", var: "--color-text" },
+  { name: "accent", var: "--color-accent" },
+  { name: "border", var: "--color-border" },
+];
+---
+
+<BaseLayout
+  title={t.meta_title}
+  description={t.meta_description}
+  lang={lang}
+  languages={languages}
+  colorScheme="default"
+  showLanguageMenu={true}
+  showCanvasGrid={true}
+>
+  <GlassHeader client:load />
+
+  <main class="min-h-[100dvh] pt-32 pb-20 px-4 md:px-12">
+    <div class="max-w-5xl mx-auto space-y-24">
+      <!-- Header -->
+      <header class="text-center space-y-4">
+        <h1 class="text-6xl md:text-8xl font-black lowercase tracking-tighter">
+          {t.title}
+        </h1>
+        <p class="text-xl text-muted-foreground">{t.subtitle}</p>
+      </header>
+
+      <!-- Typography -->
+      <section class="space-y-8">
+        <h2
+          class="text-3xl font-bold border-b border-[var(--color-border)] pb-4"
+        >
+          {t.sections.typography}
+        </h2>
+        <div class="grid gap-6">
+          <div class="space-y-1">
+            <span class="text-xs opacity-50">H1</span>
+            <h1 class="text-5xl font-black">The quick brown fox</h1>
+          </div>
+          <div class="space-y-1">
+            <span class="text-xs opacity-50">H2</span>
+            <h2 class="text-3xl font-bold">Jumps over the lazy dog</h2>
+          </div>
+          <div class="space-y-1">
+            <span class="text-xs opacity-50">Body</span>
+            <p class="text-lg leading-relaxed max-w-2xl opacity-80">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Colors -->
+      <section class="space-y-8">
+        <h2
+          class="text-3xl font-bold border-b border-[var(--color-border)] pb-4"
+        >
+          {t.sections.colors}
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {
+            colors.map((c) => (
+              <div class="space-y-2">
+                <div
+                  class="h-20 rounded-xl border border-[var(--color-border)]"
+                  style={`background: var(${c.var})`}
+                />
+                <div class="px-1">
+                  <p class="font-bold text-sm">{c.name}</p>
+                  <code class="text-xs opacity-50">{c.var}</code>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- GlassCard Component -->
+      <section class="space-y-8">
+        <h2
+          class="text-3xl font-bold border-b border-[var(--color-border)] pb-4"
+        >
+          {t.sections.cards}
+        </h2>
+
+        <!-- Props Table -->
+        <div class="overflow-x-auto text-sm">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-[var(--color-border)]">
+                <th class="py-2 px-3 font-bold">Prop</th>
+                <th class="py-2 px-3 font-bold">Type</th>
+                <th class="py-2 px-3 font-bold">Description</th>
+              </tr>
+            </thead>
+            <tbody class="opacity-80">
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>clickable</code></td>
+                <td class="py-2 px-3"><code>boolean</code></td>
+                <td class="py-2 px-3">Hover effects + cursor</td>
+              </tr>
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>variant</code></td>
+                <td class="py-2 px-3"><code>'active'</code></td>
+                <td class="py-2 px-3">Always shows accent border</td>
+              </tr>
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>glow</code></td>
+                <td class="py-2 px-3"><code>boolean</code></td>
+                <td class="py-2 px-3">Subtle accent background tint</td>
+              </tr>
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>href</code></td>
+                <td class="py-2 px-3"><code>string</code></td>
+                <td class="py-2 px-3">Makes card a link</td>
+              </tr>
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>backgroundColor</code></td>
+                <td class="py-2 px-3"><code>string</code></td>
+                <td class="py-2 px-3">Custom background</td>
+              </tr>
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>borderColor</code></td>
+                <td class="py-2 px-3"><code>string</code></td>
+                <td class="py-2 px-3">Custom border</td>
+              </tr>
+              <tr class="border-b border-[rgba(127,127,127,0.2)]">
+                <td class="py-2 px-3"><code>accentColor</code></td>
+                <td class="py-2 px-3"><code>string</code></td>
+                <td class="py-2 px-3">Custom hover/glow color</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Examples Grid -->
+        <h3 class="text-xl font-bold mt-10">Examples</h3>
+        <div class="grid md:grid-cols-3 gap-5">
+          <!-- 1. Basic -->
+          <GlassCard>
+            <p class="font-bold">Basic</p>
+            <code class="text-xs opacity-50 mt-2">&lt;GlassCard&gt;</code>
+          </GlassCard>
+
+          <!-- 2. Clickable -->
+          <GlassCard clickable>
+            <p class="font-bold">Clickable</p>
+            <code class="text-xs opacity-50 mt-2">clickable</code>
+          </GlassCard>
+
+          <!-- 3. Active -->
+          <GlassCard variant="active">
+            <p class="font-bold text-[var(--color-accent)]">Active</p>
+            <code class="text-xs opacity-50 mt-2">variant="active"</code>
+          </GlassCard>
+
+          <!-- 4. Active + Clickable -->
+          <GlassCard variant="active" clickable>
+            <p class="font-bold text-[var(--color-accent)]">Active + Click</p>
+            <code class="text-xs opacity-50 mt-2">variant + clickable</code>
+          </GlassCard>
+
+          <!-- 5. Glow -->
+          <GlassCard glow clickable>
+            <p class="font-bold">Glow</p>
+            <code class="text-xs opacity-50 mt-2">glow</code>
+          </GlassCard>
+
+          <!-- 6. Link -->
+          <GlassCard clickable href="/">
+            <p class="font-bold">Link →</p>
+            <code class="text-xs opacity-50 mt-2">href="/"</code>
+          </GlassCard>
+
+          <!-- 7. Custom BG -->
+          <GlassCard backgroundColor="rgba(99, 102, 241, 0.15)" clickable>
+            <p class="font-bold">Custom BG</p>
+            <code class="text-xs opacity-50 mt-2">backgroundColor</code>
+          </GlassCard>
+
+          <!-- 8. Custom Border -->
+          <GlassCard borderColor="#f59e0b" clickable>
+            <p class="font-bold">Custom Border</p>
+            <code class="text-xs opacity-50 mt-2">borderColor</code>
+          </GlassCard>
+
+          <!-- 9. Full Custom -->
+          <GlassCard
+            backgroundColor="rgba(34, 197, 94, 0.1)"
+            borderColor="#22c55e"
+            accentColor="#f59e0b"
+            glow
+            clickable
+          >
+            <p class="font-bold" style="color: #22c55e">Full Custom</p>
+            <code class="text-xs opacity-50 mt-2"
+              >bg + border + accent + glow</code
+            >
+          </GlassCard>
+        </div>
+      </section>
+
+      <!-- Buttons -->
+      <section class="space-y-8">
+        <h2
+          class="text-3xl font-bold border-b border-[var(--color-border)] pb-4"
+        >
+          {t.sections.buttons}
+        </h2>
+        <div class="flex flex-wrap gap-4">
+          <button
+            class="px-6 py-3 rounded-xl bg-[var(--color-text)] text-[var(--color-bg)] font-bold hover:opacity-90 transition-opacity"
+          >
+            Primary
+          </button>
+          <button
+            class="px-6 py-3 rounded-xl border border-[var(--color-border)] font-bold hover:bg-[var(--color-text)] hover:text-[var(--color-bg)] transition-colors"
+          >
+            Secondary
+          </button>
+          <button
+            class="px-6 py-3 rounded-xl bg-[var(--color-accent)] text-white font-bold hover:brightness-110 transition-all"
+          >
+            Accent
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>

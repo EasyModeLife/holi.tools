@@ -7,6 +7,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./components/*": "./src/components/*",
+    "./layouts/*": "./src/layouts/*",
+    "./styles/*": "./src/styles/*",
     "./lib/*": "./src/lib/*"
   },
   "dependencies": {

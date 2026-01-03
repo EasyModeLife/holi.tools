@@ -1,0 +1,678 @@
+---
+/**
+ * QRInputArea.astro - Input handling for QR Code content
+ *
+ * Includes:
+ * - content type switcher (URL, Text, WiFi, vCard)
+ * - input forms for each type
+ * - generate button
+ */
+---
+
+<div class="shared-input-container">
+  <!-- Type Switcher Button -->
+  <div class="type-switcher-wrapper">
+    <button
+      class="type-switcher-btn"
+      id="type-switcher-btn"
+      title="Change content type"
+    >
+      <span class="icon type-icon" id="current-type-icon">link</span>
+      <span class="type-label" id="current-type-label">URL</span>
+      <span class="icon dropdown-arrow">expand_more</span>
+    </button>
+
+    <!-- Dropdown -->
+    <div class="type-dropdown" id="type-dropdown">
+      <button class="type-option active" data-type="url">
+        <span class="icon">link</span>
+        <span>URL</span>
+      </button>
+      <button class="type-option" data-type="text">
+        <span class="icon">text_fields</span>
+        <span>Text</span>
+      </button>
+      <button class="type-option" data-type="wifi">
+        <span class="icon">wifi</span>
+        <span>WiFi</span>
+      </button>
+      <button class="type-option" data-type="vcard">
+        <span class="icon">contact_page</span>
+        <span>vCard</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Input Templates Container -->
+  <div class="input-templates">
+    <!-- URL Template (Default) -->
+    <div class="input-template active" id="template-url">
+      <input
+        type="text"
+        id="input-url"
+        class="input-field"
+        placeholder="https://your-site.com"
+        autofocus
+      />
+    </div>
+
+    <!-- Text Template -->
+    <div class="input-template" id="template-text">
+      <textarea
+        id="input-text"
+        class="input-field textarea"
+        placeholder="Enter your text here..."
+        rows="3"></textarea>
+    </div>
+
+    <!-- WiFi Template -->
+    <div class="input-template" id="template-wifi">
+      <div class="input-group">
+        <input
+          type="text"
+          id="input-wifi-ssid"
+          class="input-field"
+          placeholder="Network Name (SSID)"
+        />
+        <input
+          type="password"
+          id="input-wifi-pass"
+          class="input-field"
+          placeholder="Password"
+        />
+        <select id="input-wifi-enc" class="input-field select">
+          <option value="WPA">WPA/WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="nopass">No Password</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- vCard Template -->
+    <div class="input-template" id="template-vcard">
+      <div class="input-group">
+        <input
+          type="text"
+          id="input-vcard-name"
+          class="input-field"
+          placeholder="Full Name"
+        />
+        <input
+          type="tel"
+          id="input-vcard-phone"
+          class="input-field"
+          placeholder="Phone Number"
+        />
+        <input
+          type="email"
+          id="input-vcard-email"
+          class="input-field"
+          placeholder="Email Address"
+        />
+        <input
+          type="text"
+          id="input-vcard-company"
+          class="input-field"
+          placeholder="Company (optional)"
+        />
+      </div>
+    </div>
+    <!-- Email Template -->
+    <div class="input-template" id="template-email">
+      <div class="input-group">
+        <input
+          type="email"
+          id="input-email-addr"
+          class="input-field"
+          placeholder="Email Address"
+        />
+        <input
+          type="text"
+          id="input-email-sub"
+          class="input-field"
+          placeholder="Subject"
+        />
+        <textarea
+          id="input-email-body"
+          class="input-field textarea"
+          rows="2"
+          placeholder="Message Body"></textarea>
+      </div>
+    </div>
+
+    <!-- Phone Template -->
+    <div class="input-template" id="template-phone">
+      <input
+        type="tel"
+        id="input-phone"
+        class="input-field"
+        placeholder="Phone Number (e.g. +1 555 123 4567)"
+      />
+    </div>
+
+    <!-- SMS Template -->
+    <div class="input-template" id="template-sms">
+      <div class="input-group">
+        <input
+          type="tel"
+          id="input-sms-phone"
+          class="input-field"
+          placeholder="Phone Number"
+        />
+        <textarea
+          id="input-sms-msg"
+          class="input-field textarea"
+          rows="2"
+          placeholder="Message"></textarea>
+      </div>
+    </div>
+
+    <!-- Location Template -->
+    <div class="input-template" id="template-location">
+      <div class="input-group">
+        <input
+          type="text"
+          id="input-loc-lat"
+          class="input-field"
+          placeholder="Latitude (e.g. 40.7128)"
+        />
+        <input
+          type="text"
+          id="input-loc-long"
+          class="input-field"
+          placeholder="Longitude (e.g. -74.0060)"
+        />
+      </div>
+    </div>
+
+    <!-- Event Template -->
+    <div class="input-template" id="template-event">
+      <div class="input-group">
+        <input
+          type="text"
+          id="input-event-title"
+          class="input-field"
+          placeholder="Event Title"
+        />
+        <input
+          type="datetime-local"
+          id="input-event-start"
+          class="input-field"
+          style="color-scheme: dark;"
+        />
+        <input
+          type="datetime-local"
+          id="input-event-end"
+          class="input-field"
+          style="color-scheme: dark;"
+        />
+        <input
+          type="text"
+          id="input-event-loc"
+          class="input-field"
+          placeholder="Location"
+        />
+      </div>
+    </div>
+
+    <!-- Bitcoin Template -->
+    <div class="input-template" id="template-bitcoin">
+      <div class="input-group">
+        <input
+          type="text"
+          id="input-btc-addr"
+          class="input-field"
+          placeholder="Bitcoin Address"
+        />
+        <input
+          type="text"
+          id="input-btc-amount"
+          class="input-field"
+          placeholder="Amount (BTC) - Optional"
+        />
+      </div>
+    </div>
+
+    <!-- App Store Template -->
+    <div class="input-template" id="template-appstore">
+      <input
+        type="text"
+        id="input-appstore"
+        class="input-field"
+        placeholder="App Store URL (https://apps.apple.com/...)"
+      />
+    </div>
+
+    <!-- Play Store Template -->
+    <div class="input-template" id="template-playstore">
+      <input
+        type="text"
+        id="input-playstore"
+        class="input-field"
+        placeholder="Play Store URL (https://play.google.com/store/...)"
+      />
+    </div>
+
+    <!-- Socials/Generic URL Wrapper (Facebook, Twitter, Youtube, etc) -->
+    <!-- We reuse the URL template logic but with placeholders handled by JS? No, separate IDs for clarity -->
+    <div class="input-template" id="template-facebook">
+      <input
+        type="text"
+        id="input-fb"
+        class="input-field"
+        placeholder="Facebook Profile URL"
+      />
+    </div>
+    <div class="input-template" id="template-twitter">
+      <input
+        type="text"
+        id="input-twitter"
+        class="input-field"
+        placeholder="X / Twitter Username or URL"
+      />
+    </div>
+    <div class="input-template" id="template-youtube">
+      <input
+        type="text"
+        id="input-yt"
+        class="input-field"
+        placeholder="YouTube Video or Channel URL"
+      />
+    </div>
+  </div>
+
+  <!-- Generate Button -->
+  <button class="btn-action" id="generate-btn">
+    <span class="icon">arrow_forward</span>
+  </button>
+</div>
+
+<style>
+  /* === SCROLLABLE CONTAINER === */
+  .shared-input-container {
+    position: relative;
+    top: 20px;
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    width: 95%;
+    max-width: 700px;
+    margin-bottom: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
+    border-radius: 20px;
+    padding: 6px;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.5s ease-out;
+  }
+
+  .shared-input-container:focus-within {
+    border-color: var(--text-main);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  /* === TYPE SWITCHER === */
+  .type-switcher-wrapper {
+    position: relative;
+  }
+
+  .type-switcher-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(127, 127, 127, 0.05);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .type-switcher-btn:hover {
+    background: rgba(127, 127, 127, 0.1);
+    color: var(--text-main);
+  }
+
+  .type-switcher-btn .type-icon {
+    font-size: 20px;
+  }
+
+  .type-switcher-btn .type-label {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .type-switcher-btn .dropdown-arrow {
+    font-size: 18px;
+    opacity: 0.6;
+    transition: transform 0.2s;
+  }
+
+  .type-switcher-btn.open .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown */
+  .type-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 180px;
+    background: var(--bg-card, #202025);
+    /* Improve contrast */
+    border: 1px solid var(--border-main);
+    border-radius: 16px;
+    padding: 8px;
+    display: none;
+    z-index: 1000; /* Ensure it's above everything */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    max-height: 300px;
+    overflow-y: auto;
+
+    /* Scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+  }
+
+  .type-dropdown::-webkit-scrollbar {
+    width: 6px;
+  }
+  .type-dropdown::-webkit-scrollbar-thumb {
+    background-color: var(--border-subtle);
+    border-radius: 3px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .type-dropdown {
+      background: #18181b; /* Solid background for legibility */
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .type-dropdown {
+      background: rgba(30, 30, 35, 0.95);
+    }
+  }
+
+  .type-dropdown.open {
+    display: block;
+    animation: dropdownIn 0.2s ease-out;
+  }
+
+  @keyframes dropdownIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .type-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-main, rgba(255, 255, 255, 0.8));
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .type-option {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .type-option:hover {
+    background: rgba(127, 127, 127, 0.1);
+    color: var(--text-main, white);
+  }
+
+  .type-option.active {
+    background: var(--accent-primary, #1a73e8);
+    color: white;
+  }
+
+  .type-option .icon {
+    font-size: 20px;
+  }
+
+  .type-option span:last-child {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* === INPUT TEMPLATES === */
+  .input-templates {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .input-template {
+    display: none;
+  }
+
+  .input-template.active {
+    display: block;
+  }
+
+  .input-field {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    padding: 12px 16px;
+  }
+
+  .input-field::placeholder {
+    color: var(--text-muted);
+  }
+
+  .input-field.textarea {
+    resize: none;
+    min-height: 80px;
+    border-radius: 12px;
+    background: rgba(127, 127, 127, 0.03);
+    line-height: 1.5;
+  }
+
+  .input-field.select {
+    background: var(--bg-input, rgba(40, 40, 45, 0.95));
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-main, white);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .input-field.select {
+      background: rgba(40, 40, 45, 0.95);
+      color: white;
+    }
+  }
+
+  .input-field.select option {
+    background: var(--bg-card, #2a2a2f);
+    color: var(--text-main, white);
+    padding: 8px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .input-group .input-field {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .input-group .input-field:last-child {
+    border-bottom: none;
+  }
+
+  /* Generate Button */
+  .btn-action {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 14px;
+    background: var(--text-main);
+    color: var(--bg-body);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+  .btn-action:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .shared-input-container {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 12px;
+      gap: 16px;
+    }
+
+    .type-switcher-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .type-switcher-btn {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .input-templates {
+      width: 100%;
+    }
+
+    .btn-action {
+      width: 100%;
+      margin-top: 8px;
+    }
+  }
+</style>
+
+<script is:inline>
+  // === TYPE SWITCHER LOGIC ===
+  (function () {
+    const typeSwitcherBtn = document.getElementById("type-switcher-btn");
+    const typeDropdown = document.getElementById("type-dropdown");
+    const typeIcon = document.getElementById("current-type-icon");
+    const typeLabel = document.getElementById("current-type-label");
+    const typeOptions = document.querySelectorAll(".type-option");
+    const templates = document.querySelectorAll(".input-template");
+
+    // Type configuration
+    const typeConfig = {
+      url: { icon: "link", label: "URL" },
+      text: { icon: "text_fields", label: "Text" },
+      wifi: { icon: "wifi", label: "WiFi" },
+      vcard: { icon: "contact_page", label: "vCard" },
+      email: { icon: "email", label: "Email" },
+      phone: { icon: "phone", label: "Phone" },
+      sms: { icon: "sms", label: "SMS" },
+      appstore: { icon: "apple", label: "App Store" },
+      playstore: { icon: "shop", label: "Play Store" },
+      location: { icon: "location_on", label: "Location" },
+      event: { icon: "event", label: "Event" },
+      bitcoin: { icon: "account_balance_wallet", label: "Bitcoin" },
+      facebook: { icon: "public", label: "Facebook" },
+      twitter: { icon: "chat_bubble", label: "Twitter" },
+      youtube: { icon: "smart_display", label: "YouTube" },
+    };
+
+    // Current type state
+    window.currentContentType = "url";
+
+    // Toggle dropdown
+    if (typeSwitcherBtn) {
+      typeSwitcherBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        typeSwitcherBtn.classList.toggle("open");
+        typeDropdown.classList.toggle("open");
+      });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+      if (
+        typeDropdown &&
+        !typeDropdown.contains(e.target) &&
+        !typeSwitcherBtn.contains(e.target)
+      ) {
+        typeSwitcherBtn.classList.remove("open");
+        typeDropdown.classList.remove("open");
+      }
+    });
+
+    // Select type from dropdown
+    // Note: We need a way to support clicking on types not in the dropdown list (from TypeGrid)
+    // The existing handler is for dropdown items only.
+    // The window.setContentType function below handles external calls.
+
+    // Set content type function
+    window.setContentType = function (type) {
+      window.currentContentType = type;
+      const config = typeConfig[type];
+
+      // Fallback if type not found
+      if (!config) {
+        console.warn("Unknown type:", type);
+        return;
+      }
+
+      // Update button display
+      if (typeIcon) typeIcon.textContent = config.icon;
+      if (typeLabel) typeLabel.textContent = config.label;
+
+      // Update active states in dropdown (if it exists)
+      typeOptions.forEach(function (opt) {
+        opt.classList.toggle("active", opt.getAttribute("data-type") === type);
+      });
+
+      // Switch template
+      templates.forEach(function (tpl) {
+        tpl.classList.toggle("active", tpl.id === "template-" + type);
+      });
+
+      // Focus first input in active template
+      var activeTemplate = document.getElementById("template-" + type);
+      // Dispatch event for parent components to handle logic (like logo injection)
+      const event = new CustomEvent("qr-type-changed", {
+        detail: { type: type },
+      });
+      window.dispatchEvent(event);
+
+      // Also update global state for legacy support if needed
+      window.currentContentType = type;
+    };
+  })();
+</script>

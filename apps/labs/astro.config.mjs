@@ -7,4 +7,11 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "es", "fr", "de", "pt", "it", "zh", "ja", "ko", "ru"],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
 });

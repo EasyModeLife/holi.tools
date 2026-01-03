@@ -1,0 +1,159 @@
+---
+/**
+ * GlassCard.astro - Shared glass morphism card component
+ *
+ * Props:
+ * - variant: 'default' | 'active' — Card style (active shows accent border always)
+ * - clickable: boolean — Enables hover effects
+ * - href: string — Makes the card a link
+ * - id: string — Element ID
+ * - class: string — Additional CSS classes
+ * - backgroundColor: string — Custom background color
+ * - borderColor: string — Custom default border color
+ * - accentColor: string — Border color on hover
+ * - glow: boolean — Adds subtle accent-colored background tint (default: false)
+ */
+
+interface Props {
+  variant?: "default" | "active";
+  clickable?: boolean;
+  href?: string;
+  id?: string;
+  class?: string;
+  accentColor?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  glow?: boolean;
+}
+
+const {
+  variant = "default",
+  clickable = false,
+  href,
+  id,
+  class: className,
+  accentColor,
+  backgroundColor,
+  borderColor,
+  glow = false,
+} = Astro.props;
+
+const Tag = href ? "a" : "div";
+const baseClasses = [
+  "glass-card",
+  `glass-card--${variant}`,
+  clickable ? "glass-card--clickable" : "",
+  glow ? "glass-card--glow" : "",
+  className || "",
+]
+  .filter(Boolean)
+  .join(" ");
+
+// Build inline styles for custom colors
+const customStyles = [
+  accentColor ? `--card-accent: ${accentColor}` : "",
+  backgroundColor ? `--card-bg: ${backgroundColor}` : "",
+  borderColor ? `--card-border: ${borderColor}` : "",
+]
+  .filter(Boolean)
+  .join("; ");
+---
+
+<Tag
+  id={id}
+  class={baseClasses}
+  href={href}
+  target={href ? "_blank" : undefined}
+  rel={href ? "noopener noreferrer" : undefined}
+  role={clickable && !href ? "button" : undefined}
+  tabindex={clickable && !href ? 0 : undefined}
+  style={customStyles || undefined}
+>
+  <slot />
+</Tag>
+
+<style>
+  .glass-card {
+    /* Custom color CSS vars with fallbacks */
+    --card-accent: var(--color-accent);
+    --card-bg: rgba(255, 255, 255, 0.02);
+    --card-border: rgba(255, 255, 255, 0.3);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+
+    /* Use custom vars */
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+
+    border-radius: 16px;
+    min-height: 180px;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-card {
+      --card-bg: rgba(24, 24, 27, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Clickable - hover changes border to accent */
+  .glass-card--clickable {
+    cursor: pointer;
+  }
+
+  .glass-card--clickable:hover {
+    z-index: 10;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border-color: var(--card-accent);
+    border-width: 2px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-card--clickable:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  /* Active - always shows accent border */
+  .glass-card--active {
+    border-color: var(--card-accent);
+  }
+
+  /* Glow - adds subtle accent-colored background tint */
+  .glass-card--glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--card-accent);
+    opacity: 0.05;
+    border-radius: inherit;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .glass-card--glow:hover::before {
+    opacity: 0.1;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .glass-card {
+      padding: 1rem;
+      min-height: 140px;
+    }
+  }
+</style>

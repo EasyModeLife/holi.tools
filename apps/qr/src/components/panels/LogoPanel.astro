@@ -1,0 +1,106 @@
+---
+/**
+ * LogoPanel.astro - Logo customization for QR Code
+ *
+ * Includes:
+ * - Logo file upload
+ * - Logo size slider
+ * - Remove logo button
+ */
+---
+
+<div class="logo-upload">
+  <label class="upload-btn">
+    <span class="icon">upload</span>
+    <span>Upload Logo</span>
+    <input
+      type="file"
+      accept="image/*"
+      onchange="window.handleLogoUpload && window.handleLogoUpload(event)"
+      hidden
+    />
+  </label>
+</div>
+<div class="logo-size">
+  <label>Size <span id="logo-size-value">20%</span></label>
+  <input
+    type="range"
+    min="5"
+    max="25"
+    value="20"
+    oninput="window.setLogoSize && window.setLogoSize(this.value / 100); document.getElementById('logo-size-value').innerText = this.value + '%'"
+  />
+</div>
+<button class="btn-text" onclick="window.removeLogo && window.removeLogo()"
+  >Remove Logo</button
+>
+
+<style>
+  /* Logo Panel Styles */
+  .logo-upload {
+    text-align: center;
+  }
+
+  .upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(127, 127, 127, 0.1);
+    border: 2px dashed rgba(127, 127, 127, 0.3);
+    border-radius: 12px;
+    color: var(--text-main, white);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .upload-btn {
+      color: white;
+    }
+  }
+
+  .upload-btn:hover {
+    background: rgba(127, 127, 127, 0.15);
+    border-color: rgba(127, 127, 127, 0.5);
+  }
+
+  .logo-size {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .logo-size label {
+    font-size: 13px;
+    color: var(--text-main, rgba(255, 255, 255, 0.8));
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .logo-size label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .logo-size input {
+    width: 100%;
+  }
+
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--text-muted, #9ca3af);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 8px;
+    text-decoration: underline;
+  }
+
+  .btn-text:hover {
+    color: var(--text-main, white);
+  }
+</style>

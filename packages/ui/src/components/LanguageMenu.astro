@@ -1,0 +1,253 @@
+---
+/**
+ * LanguageMenu.astro - Shared language selector with glassmorphism
+ *
+ * Props:
+ * - languages: Array of language objects with { code, name }
+ * - currentLang: Current language code
+ * - onLanguageChange: Optional callback name
+ */
+
+interface Language {
+  readonly code: string;
+  readonly name: string;
+}
+
+interface Props {
+  languages: readonly Language[];
+  currentLang: string;
+  onLanguageChange?: string;
+}
+
+const { languages, currentLang, onLanguageChange } = Astro.props;
+---
+
+<div class="language-menu" id="language-menu">
+  <button
+    class="lang-trigger"
+    id="lang-trigger"
+    aria-label="Select language"
+    aria-haspopup="true"
+    aria-expanded="false"
+  >
+    <span class="icon">language</span>
+    <span class="current-lang">{currentLang.toUpperCase()}</span>
+    <span class="icon dropdown-arrow">expand_more</span>
+  </button>
+
+  <div class="lang-dropdown" id="lang-dropdown" role="menu">
+    {
+      languages.map((lang) => (
+        <a
+          href={lang.code === "en" ? "/" : `/${lang.code}/`}
+          class={`lang-option ${lang.code === currentLang ? "active" : ""}`}
+          data-lang={lang.code}
+          role="menuitem"
+          aria-current={lang.code === currentLang ? "page" : undefined}
+        >
+          <span class="lang-name">{lang.name}</span>
+          {lang.code === currentLang && <span class="icon check">check</span>}
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .language-menu {
+    position: relative;
+    display: inline-block;
+  }
+
+  .lang-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    gap: 8px;
+    padding: 6px 12px; /* Reduced padding */
+    line-height: 1; /* Force compact line-height */
+    height: 36px; /* Explicit height to match icon buttons */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: var(--color-text, #1a1a1a);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lang-trigger {
+      background: rgba(24, 24, 27, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .lang-trigger:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(127, 127, 127, 0.3);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lang-trigger:hover {
+      background: rgba(24, 24, 27, 0.8);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  .lang-trigger .icon {
+    font-family: "Material Icons", sans-serif;
+    font-size: 18px;
+  }
+
+  .current-lang {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .dropdown-arrow {
+    transition: transform 0.2s;
+    opacity: 0.7;
+  }
+
+  .lang-trigger[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 200px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lang-dropdown {
+      background: rgba(24, 24, 27, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .lang-dropdown.show {
+    display: flex;
+    animation: dropdownIn 0.2s ease-out;
+  }
+
+  @keyframes dropdownIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text, #1a1a1a);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lang-option {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .lang-option:hover {
+    background: rgba(127, 127, 127, 0.1);
+  }
+
+  .lang-option.active {
+    background: var(--color-accent, #8f00ff);
+    color: white;
+    font-weight: 600;
+  }
+
+  .lang-name {
+    font-size: 14px;
+  }
+
+  .lang-option .icon.check {
+    font-family: "Material Icons", sans-serif;
+    font-size: 18px;
+  }
+
+  @media (max-width: 640px) {
+    .lang-dropdown {
+      min-width: 160px;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Language menu toggle logic
+  document.addEventListener("DOMContentLoaded", function () {
+    const trigger = document.getElementById("lang-trigger");
+    const dropdown = document.getElementById("lang-dropdown");
+
+    if (!trigger || !dropdown) return;
+
+    trigger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+      trigger.setAttribute("aria-expanded", (!isExpanded).toString());
+      dropdown.classList.toggle("show");
+    });
+
+    // Close on outside click
+    document.addEventListener("click", function (e) {
+      if (!dropdown.contains(e.target) && e.target !== trigger) {
+        trigger.setAttribute("aria-expanded", "false");
+        dropdown.classList.remove("show");
+      }
+    });
+
+    // Save language preference
+    dropdown.querySelectorAll(".lang-option").forEach(function (option) {
+      option.addEventListener("click", function () {
+        const lang = option.getAttribute("data-lang");
+        if (lang) {
+          localStorage.setItem("selectedLang", lang);
+        }
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && dropdown.classList.contains("show")) {
+        trigger.setAttribute("aria-expanded", "false");
+        dropdown.classList.remove("show");
+        trigger.focus();
+      }
+    });
+  });
+</script>

@@ -13,3 +13,10 @@
 - [x] Fix Hero visibility by removing unstable `cqh` units `[fix_hero_visibility]`
 - [x] Fix squashed ValueCards by replacing `cq` units and adding `min-height` `[fix_squash]`
 - [x] Improve header spacing in `MainLayout` `[improve_spacing]`
+
+## 4. Icon Standardization
+- [x] consistency: Add inline SVG icons to all `HeroValues` cards matching existing style `[hero_icons]`
+- [x] consistency: Add inline SVG icons to `ToolsExplorer` for all apps `[tool_icons]`
+- [x] style: Ensure consistent stroke width (1.5px) and sizing across all icons `[icon_style]`
+- [x] layout: Normalize icon placement (horizontal) in ToolsExplorer `[layout_fix]`
+- [x] interaction: Make Open Source icon a functional link and maintain theme toggle `[interaction]`

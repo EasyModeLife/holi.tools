@@ -1,31 +1,46 @@
 # Handoff Note
-**Date:** 2025-12-29
+**Date:** 2026-01-02
 **Agent:** Antigravity (Gemini)
 
-## Context: Migration to Vanilla JS & Web Standards
-We have successfully pivoted the project from a React-heavy stack to a **"Zero-Framework" / Vanilla JS + WASM** standard. This aligns with the user's goal of "True Local", maximum privacy, and extreme performance.
+## 🎨 QR Generator UX Overhaul
 
-## Status Summary
+### ✅ Completed Today
 
-### ✅ Completed
-1.  **Apps:**
-    *   **Main (`apps/main`):** Verified as heavily optimized (19KB production build). No React runtime.
-    *   **QR (`apps/qr`):** Migrated from React. Now uses `fast_qr` (Rust via `wasm-core`) and Vanilla JS. Inputs generate SVGs instantly.
-2.  **Core Libraries:**
-    *   **UI (`packages/ui`):** Started migration to Web Components. Created `<holi-button>`.
-    *   **WASM (`packages/wasm-core`):** Integrated `fast_qr` and successfully compiling to WASM.
-    *   **Tech Stack:** Updated `conductor/tech-stack.md` to deprecate React and promote Vanilla/WASM.
-3.  **Documentation:** Updated plans for `qr_generator` and `landing_content_updates`.
+#### 1. Tabbed Controls Panel
+Consolidated 6 bento sections into 3 logical tabs:
+- **Style Tab**: Colors, Pattern (shapes), Settings (ECC)
+- **Brand Tab**: Logo upload, Frame style, CTA
+- **Export Tab**: Quality slider, SVG/PNG/PDF buttons
 
-### 🚧 Works in Progress / Blocked
--   `apps/paint`: Currently an empty Astro skeleton. Ready for "Day 1" implementation of the new standard.
--   `apps/calculator`: Currently an empty Astro skeleton. Ready for "Day 1" implementation.
+#### 2. Collapsible Sidebar
+- Default: 56px width (icons only)
+- Expands to 200px on toggle
+- Smooth CSS transitions
 
-## Next Steps for Next Agent
-1.  **Standardize New Apps:** Do **NOT** install React in `apps/paint` or `apps/calculator`. Build them using the pattern established in `apps/qr` (Astro + Vanilla JS + WASM).
-2.  **Enhance `packages/ui`:** The UI library needs more Web Components (Inputs, Cards, Toggles) to support the new apps without frameworks.
-3.  **QR Polish:** Add "Download as PNG" to `apps/qr` (requires Canvas rasterization of the SVG).
+#### 3. Enhanced Canvas
+- Clean dark background (no dot pattern)
+- Zoom controls (+/- buttons)
+- Background toggle (white/dark/transparency grid)
+- Undo/Redo history buttons
 
-## Critical Protocol
-*   **Zero Dependencies:** Reject any request to add UI frameworks (`react`, `vue`, etc) unless absolutely critical.
-*   **WASM First:** If it's math or graphics, write it in Rust (`packages/wasm-core`).
+#### 4. Progressive Disclosure
+- Controls panel muted until URL entered
+- Export tab pulses when content is ready
+- Larger, emphasized URL input field
+
+### Files Changed
+- `apps/qr/src/components/ControlsPanel.astro` — Complete rewrite
+- `apps/qr/src/components/Sidebar.astro` — Collapsible structure
+- `apps/qr/src/components/EditorCanvas.astro` — Canvas controls
+- `apps/qr/src/styles/app.css` — +250 lines new CSS
+- `apps/qr/src/pages/index.astro` — +180 lines JS functions
+
+### Codebase Status
+- Build: ✅ Passing
+- Browser Tests: ✅ All features verified
+- No breaking changes to existing QR generation logic
+
+### 🚧 Future Enhancements
+1. **Persist preferences**: Save tab state, zoom level to localStorage
+2. **Keyboard shortcuts**: Ctrl+Z/Y for undo/redo
+3. **rMQR support**: Backend still pending

@@ -1,0 +1,116 @@
+---
+/**
+ * BaseLayout.astro - Shared base layout for all Holi.tools apps
+ *
+ * Provides:
+ * - Canvas grid background
+ * - Language menu positioning
+ * - Color palette system
+ * - SEO meta tags
+ * - Material Icons
+ *
+ * Props:
+ * - title: Page title (required)
+ * - description: Meta description
+ * - lang: Current language code (required)
+ * - languages: Available languages array (required)
+ * - colorScheme: Color palette to use ('default' | 'qr' | 'paint' | 'calculator')
+ * - showLanguageMenu: Show/hide language menu (default: true)
+ * - showCanvasGrid: Show/hide canvas background (default: true)
+ * - gridSize: Grid dot size ('sm' | 'md' | 'lg', default: 'md')
+ */
+
+interface Language {
+  readonly code: string;
+  readonly name: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  lang: string;
+  languages: readonly Language[];
+  colorScheme?: "default" | "qr" | "paint" | "calculator" | "labs" | "typst";
+  showLanguageMenu?: boolean;
+  showCanvasGrid?: boolean;
+  gridSize?: "sm" | "md" | "lg";
+}
+
+const {
+  title,
+  description,
+  lang,
+  languages,
+  colorScheme = "default",
+  showLanguageMenu = true,
+  showCanvasGrid = true,
+  gridSize = "md",
+} = Astro.props;
+
+import LanguageMenu from "../components/LanguageMenu.astro";
+
+// Import styles as Astro modules
+import "../styles/design-system.css";
+import "../styles/palettes.css";
+
+// Build body classes
+const bodyClasses = [
+  `palette-${colorScheme}`,
+  showCanvasGrid ? "canvas-background" : "",
+  showCanvasGrid ? `canvas-dots-${gridSize}` : "",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+
+    <!-- Material Icons for components -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <slot name="head" />
+
+    <style>
+      /* Base styles */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        color: var(--color-text);
+        overflow-x: hidden;
+      }
+    </style>
+  </head>
+
+  <body class={bodyClasses}>
+    <!-- Language Menu (if enabled) -->
+    {
+      showLanguageMenu && (
+        <div class="language-menu-container">
+          <LanguageMenu languages={languages} currentLang={lang} />
+        </div>
+      )
+    }
+
+    <!-- Main content slot -->
+    <slot />
+  </body>
+</html>

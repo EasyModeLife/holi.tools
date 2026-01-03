@@ -1,0 +1,17 @@
+{
+    "name": "@holi/wasm-crypto",
+    "version": "0.1.0",
+    "type": "module",
+    "description": "Holi.tools cryptographic primitives (WASM)",
+    "main": "pkg/holi_wasm_crypto.js",
+    "types": "pkg/holi_wasm_crypto.d.ts",
+    "scripts": {
+        "build": "wasm-pack build --target web --release",
+        "build:dev": "wasm-pack build --target web --dev",
+        "test": "cargo test"
+    },
+    "files": [
+        "pkg"
+    ],
+    "license": "AGPL-3.0"
+}

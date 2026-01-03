@@ -1,14 +1,21 @@
 ---
+import ComingSoon from "@holi/ui/components/ComingSoon.astro";
+import { getTranslations, languages } from "../i18n/translations";
 
+import "../styles/app.css";
+
+const lang = Astro.currentLocale || "en";
+const t = getTranslations(lang);
 ---
 
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <title>Paint Online</title>
-    </head>
-    <body class="bg-background text-foreground">
-        <h1>Paint Online</h1>
-    </body>
-</html>
+<ComingSoon
+  appName="paint"
+  slogan={t.hero_slogan}
+  metaTitle={t.meta_title}
+  metaDescription={t.meta_description}
+  lang={lang}
+  languages={languages}
+  comingSoonText={t.coming_soon}
+  backHomeText={t.back_home}
+  colorScheme="paint"
+/>

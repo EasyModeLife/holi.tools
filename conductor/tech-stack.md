@@ -1,51 +1,92 @@
 # Tech Stack: Holi.tools
 
+## Core Philosophy
+- **Rust First**: All business logic in pure Rust crates
+- **Web = UI Only**: Browser apps are thin UI layers over WASM
+- **Zero Dependencies**: No JavaScript frameworks (React, Vue, etc.)
+
+## Architecture: Core + Adapters
+
+```
+packages/
+├── core/                    # 🦀 Pure Rust Libraries
+│   ├── holi-qr/            # QR code generation
+│   ├── holi-crypto/        # Ed25519 + ChaCha20 (future)
+│   ├── holi-math/          # Vector math, matrices (future)
+│   └── holi-renderer/      # Rendering logic (future)
+│
+├── wasm/                    # 🌐 WASM Adapters (thin wrappers)
+│   ├── wasm-qr/            # Exposes holi-qr to JS
+│   ├── wasm-crypto/        # Exposes holi-crypto to JS
+│   └── wasm-renderer/      # Exposes holi-renderer + wgpu to JS
+│
+├── ui/                      # Web Components library
+└── shared-configs/          # Shared TS/ESLint configs
+```
+
 ## Core Languages
 
-- **TypeScript:** Primary language for UI and glue code.
-- **Rust:** Core logic, heavy computation, and graphics engine.
+- **Rust**: All business logic, heavy computation, graphics
+- **TypeScript**: Type definitions, build scripts
+- **Vanilla JS**: Browser runtime (no frameworks)
 
-## Architecture & Build
+## Core Libraries (Pure Rust)
 
-- **Monorepo:** pnpm Workspaces + Turborepo.
-- **Runtime:** Node.js (Development), Browser (Production).
+| Crate | Purpose | Dependencies |
+|-------|---------|--------------|
+| `holi-qr` | QR code generation | fast_qr, thiserror |
+| `holi-crypto` | Identity + encryption | ed25519-dalek, chacha20poly1305 |
+| `holi-renderer` | WebGPU rendering | (none - GPU bindings in adapter) |
+
+## WASM Adapters
+
+| Crate | Wraps | Browser API |
+|-------|-------|-------------|
+| `wasm-qr` | holi-qr | generate_qr_svg() |
+| `wasm-crypto` | holi-crypto | Vault, IdentityKey |
+| `wasm-renderer` | holi-renderer + wgpu | start(), stop() |
 
 ## Frontend
-- **Astro:** Static site generation, routing, and HTML orchestration.
-- **Vanilla JS:** Primary runtime for client-side logic. Zero-framework approach.
-- **Web Components:** Standard Custom Elements for reusable UI (e.g., `<holi-button>`).
-- **Styling:** Tailwind CSS for utility-first styling.
-- **Legacy/Deprecated:** React (Migration in progress to remove it completely).
+
+- **Astro**: Static site generation, routing
+- **Vanilla JS**: Client-side logic
+- **Web Components**: Custom Elements for reusable UI
+- **TailwindCSS**: Utility-first styling (where needed)
 
 ## Graphics & Performance
 
-- **WebGPU (wgpu):** High-performance graphics rendering (Validated in Sandbox).
-- **WebAssembly (WASM):** Primary compilation target for Rust core logic.
-- **Rust Libraries:**
-  - `wgpu`: Cross-platform graphics abstraction.
-  - `lyon`: 2D vector tessellation for complex shape rendering.
-  - `winit`: Windowing and event handling in WASM context.
-  - `bytemuck`: Safe casting for data buffers.
-  - `fast_qr`: High-speed, WASM-ready QR code generation.
+- **WebGPU (wgpu)**: High-performance graphics
+- **WebGL 2 (fallback)**: For older devices
+- **Lyon**: 2D vector tessellation
+- **Bytemuck**: Safe buffer casting
 
 ## Data & Storage (Offline-First)
 
-- **OPFS (Origin Private File System):** High-performance local file storage for app-specific data.
-- **Service Workers (Vanilla):** Manual, zero-dependency caching strategies for True Local (Offline) support.
-- **SQLite (WASM):** Client-side relational database for structured metadata and state.
-- **File System Access API:** Support for direct, user-selected folder access.
-- **Cryptography (Vault):**
-  - **Identity:** `ed25519-dalek` for signing and verification.
-  - **Encryption:** `chacha20poly1305` for authenticated encryption of project data.
+- **OPFS**: Origin Private File System for local storage
+- **Service Workers**: Manual caching strategies
+- **IndexedDB**: Client-side structured data
 
-## Networking (P2P)
+## Cryptography
 
-- **WebRTC:** Peer-to-peer communication for collaborative features (Connectivity validated in Sandbox).
-- **Authentication Protocol:** Cryptographic Handshake (Challenge/Response) using Ed25519 signatures.
-- **Access Control:** Local ACL (Access Control Lists) with granular roles and instant revocation capabilities.
-- **Matchbox:** WebRTC signaling service (compatible with Cloudflare environment) for P2P connection establishment.
+- **Ed25519 (ed25519-dalek)**: Digital signatures
+- **ChaCha20-Poly1305**: Authenticated encryption
+- **Getrandom**: CSPRNG for WASM
 
 ## Infrastructure
 
-- **Cloudflare Pages:** Hosting for static assets and WASM bundles.
-- **Wrangler:** CLI for Cloudflare deployments.
+- **Cloudflare Pages**: Static hosting
+- **Wrangler**: Deployment CLI
+- **pnpm + Turborepo**: Monorepo management
+
+## Build Commands
+
+```bash
+# Core libraries (pure Rust)
+cd packages/core/holi-qr && cargo test
+
+# WASM adapters
+cd packages/wasm/wasm-qr && wasm-pack build --target web --release
+
+# Web apps
+pnpm --filter holi-main build
+```

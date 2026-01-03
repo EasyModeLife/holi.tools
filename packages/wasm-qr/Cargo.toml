@@ -1,0 +1,23 @@
+[package]
+name = "holi_wasm_qr"
+version = "0.1.0"
+edition = "2021"
+description = "Holi.tools QR code generator (WASM)"
+license = "AGPL-3.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+fast_qr = { version = "0.12", features = ["svg"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false

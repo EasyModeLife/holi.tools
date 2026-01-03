@@ -1,0 +1,83 @@
+---
+import ActionToolbar from "./ActionToolbar.astro";
+
+/**
+ * QRResultArea.astro - Display area for the generated QR Code
+ *
+ * Includes:
+ * - QR rendering frame
+ * - Action Toolbar (Download, Copy, Reset, Verify)
+ */
+---
+
+<div class="qr-result-wrapper" id="qr-result-wrapper">
+  <div class="qr-frame-main" id="qr-frame">
+    <!-- QR SVG rendered here -->
+  </div>
+
+  <ActionToolbar />
+</div>
+
+<style>
+  /* QR RESULT */
+  .qr-result-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+
+    /* Hidden state (default) */
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    position: absolute;
+    pointer-events: none;
+    transition: all 0.6s ease-out;
+    transition-delay: 0.4s;
+  }
+
+  /* Visible state (when parent has .generating) */
+  :global(.canvas-container.generating) .qr-result-wrapper {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    position: relative;
+    pointer-events: auto;
+  }
+
+  .qr-frame-main {
+    width: 280px;
+    height: 280px;
+    background: white;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition:
+      background 0.3s,
+      box-shadow 0.3s;
+  }
+
+  .qr-frame-main.transparent-bg {
+    background: transparent;
+    box-shadow: none;
+    background-image:
+      linear-gradient(45deg, rgba(127, 127, 127, 0.2) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(127, 127, 127, 0.2) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(127, 127, 127, 0.2) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(127, 127, 127, 0.2) 75%);
+    background-size: 16px 16px;
+    background-position:
+      0 0,
+      0 8px,
+      8px -8px,
+      -8px 0px;
+    border: 1px dashed rgba(127, 127, 127, 0.3);
+  }
+  .qr-frame-main svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>

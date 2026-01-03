@@ -1,0 +1,55 @@
+---
+// Sidebar.astro - Collapsible left navigation panel
+---
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-mark"><span class="icon">qr_code_2</span></div>
+      <span class="logo-text">Holi QR</span>
+    </div>
+    <button
+      class="sidebar-toggle"
+      onclick="toggleSidebar()"
+      title="Toggle sidebar"
+    >
+      <span class="icon">chevron_left</span>
+    </button>
+  </div>
+
+  <nav class="nav-sec">
+    <div class="nav-head">Library</div>
+    <a href="#" class="nav-item active" onclick="showCanvas()">
+      <span class="icon">edit</span>
+      <span class="nav-item-text">Editor</span>
+    </a>
+    <a href="#" class="nav-item" onclick="showRecent()">
+      <span class="icon">history</span>
+      <span class="nav-item-text">Recent</span>
+    </a>
+  </nav>
+
+  <nav class="nav-sec">
+    <div class="nav-head">
+      Collections
+      <button onclick="createCollection()" style="float:right">
+        <span class="icon" style="font-size:14px">add</span>
+      </button>
+    </div>
+    <div id="collections-list"></div>
+  </nav>
+
+  <div style="flex:1"></div>
+
+  <div
+    style="display:flex; gap:8px; padding-top:12px; border-top:1px solid var(--border-main)"
+  >
+    <button
+      class="nav-item"
+      style="flex:1; justify-content:center"
+      onclick="toggleTheme()"
+    >
+      <span class="icon">dark_mode</span>
+    </button>
+  </div>
+</aside>

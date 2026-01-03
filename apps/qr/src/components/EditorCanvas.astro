@@ -1,0 +1,250 @@
+---
+import GlassHeader from "./common/GlassHeader.astro";
+import DraggablePanelSystem from "./common/DraggablePanelSystem.astro";
+import DraggablePanel from "./common/DraggablePanel.astro";
+import ColorPanel from "./panels/ColorPanel.astro";
+import StylePanel from "./panels/StylePanel.astro";
+import LogoPanel from "./panels/LogoPanel.astro";
+import AdvancedPanel from "./panels/AdvancedPanel.astro";
+import QRInputArea from "./QRInputArea.astro";
+import QRResultArea from "./QRResultArea.astro";
+import TypeGrid from "./TypeGrid.astro";
+
+// EditorCanvas.astro - Refactored modular version
+---
+
+<!-- Hideable Glass Header -->
+<GlassHeader />
+
+<main class="canvas-container" id="canvas-container">
+  <!-- HEADER (Fades out) -->
+  <div class="hero-header">
+    <h1 class="hero-title">Create a QR Code</h1>
+    <p class="hero-subtitle">Enter your link or text below</p>
+  </div>
+
+  <!-- SHARED INPUT (Animates position) -->
+  <QRInputArea />
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+    <!-- TYPE GRID (Fades out) -->
+    <TypeGrid />
+
+    <!-- QR RESULT (Fades in) -->
+    <QRResultArea />
+  </div>
+
+  <!-- Customization Tools Toolbar -->
+  <div class="tool-bar">
+    <button class="tool-btn" id="tool-color" title="Colors">
+      <span class="icon">palette</span>
+      <span class="tool-label">Color</span>
+    </button>
+    <button class="tool-btn" id="tool-style" title="Pattern Style">
+      <span class="icon">auto_awesome</span>
+      <span class="tool-label">Style</span>
+    </button>
+    <button class="tool-btn" id="tool-logo" title="Logo">
+      <span class="icon">add_photo_alternate</span>
+      <span class="tool-label">Logo</span>
+    </button>
+    <button class="tool-btn" id="tool-advanced" title="Advanced">
+      <span class="icon">settings</span>
+      <span class="tool-label">Advanced</span>
+    </button>
+  </div>
+
+  <!-- Draggable Panels -->
+  <DraggablePanel id="color" title="Colors" initialX={100} initialY={150}>
+    <ColorPanel />
+  </DraggablePanel>
+
+  <DraggablePanel
+    id="style"
+    title="Pattern Style"
+    initialX={150}
+    initialY={180}
+  >
+    <StylePanel />
+  </DraggablePanel>
+
+  <DraggablePanel id="logo" title="Logo" initialX={200} initialY={250}>
+    <LogoPanel />
+  </DraggablePanel>
+
+  <DraggablePanel id="advanced" title="Advanced" initialX={250} initialY={300}>
+    <AdvancedPanel />
+  </DraggablePanel>
+</main>
+
+<!-- Panel System Control -->
+<DraggablePanelSystem
+  panelIds={["color", "style", "logo", "advanced"]}
+  panelSides={{
+    color: "right",
+    style: "right",
+    logo: "left",
+    advanced: "left",
+  }}
+/>
+
+<style>
+  /* Global Layout Styles */
+  .canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Changed from center to start to allow scrolling if needed */
+    height: 100vh;
+    min-height: 100vh; /* Ensure full height */
+    width: 100%;
+    padding: 120px 20px 100px; /* Increased top padding, added bottom padding for toolbar */
+    background: var(--bg-body);
+    background-image: radial-gradient(var(--border-main) 1px, transparent 1px);
+    background-size: 20px 20px;
+    position: relative;
+    overflow-y: auto; /* Allow scroll on small screens */
+    overflow-x: hidden;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .canvas-container {
+      padding: 100px 16px 120px; /* Adjust padding for mobile */
+      justify-content: flex-start;
+    }
+  }
+
+  /* === HERO HEADER === */
+  .hero-header {
+    text-align: center;
+    margin-bottom: 24px;
+    transition: all 1s ease-out;
+    position: relative;
+    z-index: 10;
+  }
+
+  .hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* Generating state: header fades */
+  .canvas-container.generating .hero-header {
+    opacity: 0;
+    transform: translateY(-30px);
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /* Generating state: input shrinks */
+  :global(.canvas-container.generating .shared-input-container) {
+    max-width: 500px;
+  }
+
+  :global(.shared-input-container) {
+    flex-shrink: 0;
+  }
+
+  /* === CONTENT AREA === */
+  .content-area {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    flex: 1; /* allow it to grow */
+    z-index: 10;
+  }
+
+  /* Tool Bar - Progressive Disclosure */
+  .tool-bar {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px); /* Initially hidden below fold */
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
+    border-radius: 16px;
+    padding: 8px 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* When generating, reveal tools */
+  .canvas-container.generating .tool-bar,
+  :global(.canvas-container.generating .tool-bar) {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (max-width: 768px) {
+    .tool-bar {
+      bottom: 20px;
+      width: 90%;
+      max-width: 400px;
+      padding: 6px 8px;
+    }
+    .tool-label {
+      display: none; /* Hide labels on mobile to save space */
+    }
+    .tool-btn {
+      padding: 10px;
+    }
+    .tool-btn .icon {
+      font-size: 20px;
+    }
+  }
+
+  .tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tool-btn:hover {
+    background: var(--bg-body);
+    color: var(--text-main);
+  }
+
+  .tool-btn.active {
+    background: var(--text-main);
+    color: var(--bg-body);
+  }
+
+  .tool-btn .icon {
+    font-size: 24px;
+  }
+
+  .tool-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+</style>
