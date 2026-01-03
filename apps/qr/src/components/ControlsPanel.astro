@@ -1,15 +1,15 @@
 ---
 // ControlsPanel.astro - Right sidebar with tabbed control sections
-import { BRAND_LOGOS } from "../lib/brand-logos";
+import { BRAND_LOGOS, BRAND_ICONS } from "../lib/brand-logos";
 
 const PRESET_LOGOS = [
-  { id: 'facebook', label: 'FB', src: BRAND_LOGOS.facebook },
-  { id: 'twitter', label: 'X', src: BRAND_LOGOS.twitter },
-  { id: 'youtube', label: 'YT', src: BRAND_LOGOS.youtube },
-  { id: 'bitcoin', label: 'BTC', src: BRAND_LOGOS.bitcoin },
-  { id: 'appstore', label: 'Apple', src: BRAND_LOGOS.appstore },
-  { id: 'playstore', label: 'Play', src: BRAND_LOGOS.playstore },
-  { id: 'wifi', label: 'WiFi', src: BRAND_LOGOS.wifi },
+  { id: 'facebook', label: 'FB', src: BRAND_LOGOS.facebook, icon: BRAND_ICONS.facebook },
+  { id: 'twitter', label: 'X', src: BRAND_LOGOS.twitter, icon: BRAND_ICONS.twitter },
+  { id: 'youtube', label: 'YT', src: BRAND_LOGOS.youtube, icon: BRAND_ICONS.youtube },
+  { id: 'bitcoin', label: 'BTC', src: BRAND_LOGOS.bitcoin, icon: BRAND_ICONS.bitcoin },
+  { id: 'appstore', label: 'Apple', src: BRAND_LOGOS.appstore, icon: BRAND_ICONS.appstore },
+  { id: 'playstore', label: 'Play', src: BRAND_LOGOS.playstore, icon: BRAND_ICONS.playstore },
+  { id: 'wifi', label: 'WiFi', src: BRAND_LOGOS.wifi, icon: BRAND_ICONS.wifi },
 ];
 ---
 
@@ -51,54 +51,66 @@ const PRESET_LOGOS = [
         <div class="block-title">QR Type</div>
         <div class="qr-type-grid">
           <button class="qr-type-btn active" onclick="showContentForm('url')">
-            <span class="icon">link</span>
+            <span class="icon material-icons">link</span>
             <span>URL</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('text')">
-            <span class="icon">text_fields</span>
+            <span class="icon material-icons">text_fields</span>
             <span>Text</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('email')">
-            <span class="icon">mail</span>
+            <span class="icon material-icons">mail</span>
             <span>Email</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('phone')">
-            <span class="icon">call</span>
+            <span class="icon material-icons">call</span>
             <span>Phone</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('sms')">
-            <span class="icon">sms</span>
+            <span class="icon material-icons">sms</span>
             <span>SMS</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('wifi')">
-            <span class="icon">wifi</span>
+            <img src={BRAND_ICONS.wifi} class="icon brand-icon" alt="WiFi" />
             <span>WiFi</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('vcard')">
-            <span class="icon">contact_page</span>
+            <span class="icon material-icons">contact_page</span>
             <span>vCard</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('location')">
-            <span class="icon">location_on</span>
+            <span class="icon material-icons">location_on</span>
             <span>Location</span>
           </button>
         </div>
       </div>
 
       <div class="control-block">
-        <div class="block-title">Social</div>
+        <div class="block-title">Social & Stores</div>
         <div class="qr-type-grid">
-          <button class="qr-type-btn" onclick="showContentForm('instagram')">
-            <span class="icon">photo_camera</span>
-            <span>Instagram</span>
-          </button>
           <button class="qr-type-btn" onclick="showContentForm('facebook')">
-            <span class="icon">thumb_up</span>
+            <img src={BRAND_ICONS.facebook} class="icon brand-icon" alt="Facebook" />
             <span>Facebook</span>
           </button>
           <button class="qr-type-btn" onclick="showContentForm('twitter')">
-            <span class="icon">tag</span>
+            <img src={BRAND_ICONS.twitter} class="icon brand-icon" alt="X" />
             <span>X (Twitter)</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('youtube')">
+            <img src={BRAND_ICONS.youtube} class="icon brand-icon" alt="YouTube" />
+            <span>YouTube</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('bitcoin')">
+            <img src={BRAND_ICONS.bitcoin} class="icon brand-icon" alt="Bitcoin" />
+            <span>Bitcoin</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('appstore')">
+            <img src={BRAND_ICONS.appstore} class="icon brand-icon" alt="App Store" />
+            <span>App Store</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('playstore')">
+            <img src={BRAND_ICONS.playstore} class="icon brand-icon" alt="Play Store" />
+            <span>Play Store</span>
           </button>
         </div>
       </div>
@@ -378,7 +390,7 @@ const PRESET_LOGOS = [
         {
           PRESET_LOGOS.map((logo) => (
             <button class="logo-btn" onclick={`setLogo('${logo.src}')`}>
-              <img src={logo.src} alt={logo.label} />
+              <img src={logo.icon} alt={logo.label} class="brand-icon" />
             </button>
           ))
         }
@@ -518,10 +530,26 @@ const PRESET_LOGOS = [
     border-color: var(--color-accent);
   }
 
-  .logo-btn img {
+  .logo-btn img,
+  .qr-type-btn img.brand-icon {
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  .qr-type-btn img.brand-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+  }
+
+  .qr-type-btn.active img.brand-icon {
+    opacity: 1;
+  }
+
+  /* Invert icons in light mode */
+  :global(body.light-theme) .brand-icon {
+    filter: invert(1);
   }
 </style>
 
