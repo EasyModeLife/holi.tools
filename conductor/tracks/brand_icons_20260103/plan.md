@@ -11,7 +11,7 @@
     - [x] Refactor existing `BRAND_LOGOS` and `BRAND_ICONS` exports to use the new raw data.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Foundation & Assets' (Protocol in workflow.md)
 
-## Phase 2: UI Implementation (Toolbox)
+## Phase 2: UI Implementation (Toolbox) [checkpoint: 5998147]
 - [x] Task: Update TypeGrid & ControlPanel Icons c0b5a89
     - [x] Update `TypeGrid.astro` to use the new monochromatic icons.
     - [x] Update `ControlsPanel.astro` (sidebar) to use the new monochromatic icons.
