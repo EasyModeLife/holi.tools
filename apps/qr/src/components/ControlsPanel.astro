@@ -1,0 +1,527 @@
+---
+// ControlsPanel.astro - Right sidebar with tabbed control sections
+import { BRAND_LOGOS } from "../lib/brand-logos";
+
+const PRESET_LOGOS = [
+  { id: 'facebook', label: 'FB', src: BRAND_LOGOS.facebook },
+  { id: 'twitter', label: 'X', src: BRAND_LOGOS.twitter },
+  { id: 'youtube', label: 'YT', src: BRAND_LOGOS.youtube },
+  { id: 'bitcoin', label: 'BTC', src: BRAND_LOGOS.bitcoin },
+  { id: 'appstore', label: 'Apple', src: BRAND_LOGOS.appstore },
+  { id: 'playstore', label: 'Play', src: BRAND_LOGOS.playstore },
+  { id: 'wifi', label: 'WiFi', src: BRAND_LOGOS.wifi },
+];
+---
+
+<aside class="controls-panel" id="controls-panel">
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <button
+      class="tab-link active"
+      data-tab="content"
+      onclick="switchTab('content')"
+    >
+      Content
+    </button>
+    <button class="tab-link" data-tab="style" onclick="switchTab('style')">
+      Style
+    </button>
+    <button
+      class="tab-link"
+      data-tab="branding"
+      onclick="switchTab('branding')"
+    >
+      Brand
+    </button>
+    <button
+      class="tab-link"
+      data-tab="export"
+      id="export-tab-btn"
+      onclick="switchTab('export')"
+    >
+      Export
+    </button>
+  </div>
+
+  <!-- CONTENT TAB (QR Type Selection & Forms) -->
+  <div class="tab-content active" id="tab-content">
+    <!-- TYPE GRID (Visible by default) -->
+    <div id="content-grid-view">
+      <div class="control-block">
+        <div class="block-title">QR Type</div>
+        <div class="qr-type-grid">
+          <button class="qr-type-btn active" onclick="showContentForm('url')">
+            <span class="icon">link</span>
+            <span>URL</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('text')">
+            <span class="icon">text_fields</span>
+            <span>Text</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('email')">
+            <span class="icon">mail</span>
+            <span>Email</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('phone')">
+            <span class="icon">call</span>
+            <span>Phone</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('sms')">
+            <span class="icon">sms</span>
+            <span>SMS</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('wifi')">
+            <span class="icon">wifi</span>
+            <span>WiFi</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('vcard')">
+            <span class="icon">contact_page</span>
+            <span>vCard</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('location')">
+            <span class="icon">location_on</span>
+            <span>Location</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="control-block">
+        <div class="block-title">Social</div>
+        <div class="qr-type-grid">
+          <button class="qr-type-btn" onclick="showContentForm('instagram')">
+            <span class="icon">photo_camera</span>
+            <span>Instagram</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('facebook')">
+            <span class="icon">thumb_up</span>
+            <span>Facebook</span>
+          </button>
+          <button class="qr-type-btn" onclick="showContentForm('twitter')">
+            <span class="icon">tag</span>
+            <span>X (Twitter)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMS (Url Form shown by default for now or toggled) -->
+    <div id="content-form-url" class="content-form" style="display:none">
+      <button class="btn-back" onclick="showContentGrid()">
+        <span class="icon">arrow_back</span> Back to Types
+      </button>
+
+      <div class="block-title" style="margin-top:16px; margin-bottom:8px">
+        Website URL
+      </div>
+
+      <div class="input-wrapper">
+        <input
+          type="text"
+          id="url-input"
+          class="main-text-input"
+          placeholder="https://your-site.com"
+          autofocus
+        />
+        <button
+          class="input-action-btn"
+          onclick="navigator.clipboard.readText().then(t => { document.getElementById('url-input').value = t; document.getElementById('url-input').dispatchEvent(new Event('input')); })"
+          title="Paste"
+        >
+          <span class="icon">content_paste</span>
+        </button>
+        <div id="url-valid-indicator" class="valid-indicator">
+          <span class="icon">check_circle</span>
+        </div>
+      </div>
+
+      <!-- Favicon Preview (Future) -->
+      <!-- <div class="favicon-preview" id="favicon-preview"></div> -->
+
+      <div class="control-row" style="margin-top:16px;">
+        <div
+          style="display:flex; justify-content:space-between; align-items:center"
+        >
+          <span class="label-text">Shorten URL</span>
+          <label class="switch">
+            <input type="checkbox" id="shorten-url-toggle" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <p class="help-text">Auto-convert to short link for trackability.</p>
+      </div>
+
+      <div class="control-row" style="margin-top:12px;">
+        <div
+          style="display:flex; justify-content:space-between; align-items:center"
+        >
+          <span class="label-text">Dynamic QR</span>
+          <label class="switch">
+            <input type="checkbox" disabled />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <p class="help-text">Update destination content later (Premium).</p>
+      </div>
+    </div>
+
+    <!-- Placeholder for other forms -->
+    <div
+      id="content-form-other"
+      class="content-form"
+      style="display:none; text-align:center; padding:40px 0; color:var(--text-muted)"
+    >
+      <span class="icon" style="font-size:32px; margin-bottom:8px">build</span>
+      <div>Form coming soon</div>
+      <button
+        class="btn-sec"
+        onclick="showContentGrid()"
+        style="margin-top:16px">Back</button
+      >
+    </div>
+  </div>
+
+  <!-- STYLE TAB -->
+  <div class="tab-content" id="tab-style" style="display:none">
+    <!-- Colors -->
+    <div class="control-block">
+      <div class="block-title">Colors</div>
+
+      <div class="color-row">
+        <span class="color-meta">Foreground</span>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div class="color-preview">
+            <input
+              type="color"
+              id="ctrl-fg"
+              value="#000000"
+              oninput="updateQR()"
+            />
+          </div>
+          <span class="color-meta" id="val-fg">#000000</span>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <span class="color-meta">Background</span>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button
+            class="transparent-toggle"
+            id="bg-transparent"
+            onclick="toggleTransparent('bg')"
+            title="Transparent"
+          >
+            <span class="icon" style="font-size:14px">grid_on</span>
+          </button>
+          <div class="color-preview">
+            <input
+              type="color"
+              id="ctrl-bg"
+              value="#ffffff"
+              oninput="updateQR()"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patterns (Reduced to only scannable shapes) -->
+    <div class="control-block">
+      <div class="block-title">Pattern</div>
+
+      <div class="shape-grid" id="body-shape-grid">
+        <div
+          class="shape-opt active"
+          data-bodyshape="square"
+          onclick="setBodyShape('square')"
+          title="Square"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect x="2" y="2" width="16" height="16" fill="currentColor"
+            ></rect></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-bodyshape="rounded"
+          onclick="setBodyShape('rounded')"
+          title="Rounded"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect x="2" y="2" width="16" height="16" rx="4" fill="currentColor"
+            ></rect></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-bodyshape="classy-rounded"
+          onclick="setBodyShape('classy-rounded')"
+          title="Classy Rounded"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect x="3" y="3" width="14" height="14" rx="2" fill="currentColor"
+            ></rect></svg
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Eye Frames -->
+    <div class="control-block">
+      <div class="block-title">Eye Frame</div>
+      <div class="shape-grid" id="eye-frame-grid">
+        <div
+          class="shape-opt active"
+          data-eyeframe="square"
+          onclick="setEyeFrame('square')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect
+              x="2"
+              y="2"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"></rect></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-eyeframe="rounded"
+          onclick="setEyeFrame('rounded')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect
+              x="2"
+              y="2"
+              width="16"
+              height="16"
+              rx="4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"></rect></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-eyeframe="circle"
+          onclick="setEyeFrame('circle')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><circle
+              cx="10"
+              cy="10"
+              r="7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"></circle></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-eyeframe="leaf"
+          onclick="setEyeFrame('leaf')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><path
+              d="M10,2 Q18,2 18,10 Q18,18 10,18 Q2,18 2,10 Q2,2 10,2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"></path></svg
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Eye Ball -->
+    <div class="control-block">
+      <div class="block-title">Eye Ball</div>
+      <div class="shape-grid" id="eye-ball-grid">
+        <div
+          class="shape-opt active"
+          data-eyeball="square"
+          onclick="setEyeBall('square')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect x="5" y="5" width="10" height="10" fill="currentColor"
+            ></rect></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-eyeball="rounded"
+          onclick="setEyeBall('rounded')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><rect x="5" y="5" width="10" height="10" rx="3" fill="currentColor"
+            ></rect></svg
+          >
+        </div>
+        <div
+          class="shape-opt"
+          data-eyeball="circle"
+          onclick="setEyeBall('circle')"
+        >
+          <svg viewBox="0 0 20 20"
+            ><circle cx="10" cy="10" r="5" fill="currentColor"></circle></svg
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRANDING TAB -->
+  <div class="tab-content" id="tab-branding" style="display:none">
+    <div class="control-block">
+      <div class="block-title">Preset Logos</div>
+      <div class="logo-grid">
+        {
+          PRESET_LOGOS.map((logo) => (
+            <button class="logo-btn" onclick={`setLogo('${logo.src}')`}>
+              <img src={logo.src} alt={logo.label} />
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="control-block">
+      <div class="block-title">Custom Upload</div>
+      <div
+        class="logo-upload-area"
+        id="logo-upload-area"
+        onclick="document.getElementById('logo-input').click()"
+      >
+        <input
+          type="file"
+          id="logo-input"
+          accept="image/*"
+          style="display:none"
+          onchange="handleLogoUpload(event)"
+        />
+        <div id="logo-preview" style="display:none">
+          <img id="logo-img" style="max-width:40px; border-radius:4px" />
+          <button
+            class="remove-logo"
+            onclick="event.stopPropagation();removeLogo()">×</button
+          >
+        </div>
+        <div
+          id="logo-placeholder"
+          style="display:flex; flex-direction:column; align-items:center; gap:4px"
+        >
+          <span class="icon">cloud_upload</span>
+          <span class="color-meta">Upload Logo</span>
+        </div>
+      </div>
+
+      <div class="color-row">
+        <span class="color-meta">Size</span>
+        <input
+          type="range"
+          id="logo-size-slider"
+          min="10"
+          max="50"
+          value="20"
+          style="width:50%"
+          oninput="setLogoSize(this.value / 100)"
+        />
+      </div>
+    </div>
+
+    <div class="control-block">
+      <div class="block-title">Error Correction</div>
+      <div class="control-row" style="display:flex; gap:8px">
+        <button
+          class="btn-sec"
+          onclick="setEcc('L')"
+          data-ecc="L"
+          style="flex:1">L</button
+        >
+        <button
+          class="btn-sec"
+          onclick="setEcc('M')"
+          data-ecc="M"
+          style="flex:1">M</button
+        >
+        <button
+          class="btn-sec"
+          onclick="setEcc('Q')"
+          data-ecc="Q"
+          style="flex:1">Q</button
+        >
+        <button
+          class="btn-sec active"
+          onclick="setEcc('H')"
+          data-ecc="H"
+          style="flex:1">H</button
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT TAB -->
+  <div class="tab-content" id="tab-export" style="display:none">
+    <div class="control-block">
+      <div class="block-title">Resolution</div>
+      <div class="color-row">
+        <input
+          type="range"
+          min="500"
+          max="4000"
+          step="100"
+          value="1000"
+          oninput="setExportSize(this.value)"
+        />
+        <span class="color-meta" id="export-size-val">1000px</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-grid">
+      <button class="btn-sec" onclick="downloadQR()">
+        <span class="icon">code</span> SVG
+      </button>
+      <button class="btn-main" onclick="downloadPNG()">
+        <span class="icon">download</span> PNG
+      </button>
+      <button class="btn-sec" onclick="downloadPDF()"> PDF </button>
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* Logo Grid Styles */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .logo-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    aspect-ratio: 1;
+  }
+
+  .logo-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: var(--color-accent);
+  }
+
+  .logo-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+</style>
+
