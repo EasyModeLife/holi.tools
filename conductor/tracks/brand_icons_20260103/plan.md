@@ -1,7 +1,7 @@
 # Plan: Brand Icon Refresh & Customization
 [Track: brand_icons_20260103]
 
-## Phase 1: Foundation & Assets
+## Phase 1: Foundation & Assets [checkpoint: 45ce873]
 - [x] Task: Create SVG Utility `colorizeSvg` and Tests 254643d
     - [x] Create `apps/qr/src/lib/svg-utils.ts` with `colorizeSvg` function.
     - [x] Create `apps/qr/src/lib/svg-utils.test.ts` to verify color replacement logic.
@@ -9,7 +9,7 @@
     - [x] Fetch official SVGs from Simple Icons (Facebook, Twitter/X, YouTube, Bitcoin, Apple, Google Play).
     - [x] Store raw SVG paths/strings in `brand-logos.ts`.
     - [x] Refactor existing `BRAND_LOGOS` and `BRAND_ICONS` exports to use the new raw data.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation & Assets' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Foundation & Assets' (Protocol in workflow.md)
 
 ## Phase 2: UI Implementation (Toolbox)
 - [ ] Task: Update TypeGrid & ControlPanel Icons
