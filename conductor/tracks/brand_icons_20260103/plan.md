@@ -19,7 +19,7 @@
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: UI Implementation (Toolbox)' (Protocol in workflow.md)
 
 ## Phase 3: QR Code Integration (Center Logo)
-- [ ] Task: Implement Center Logo Customization Logic
+- [~] Task: Implement Center Logo Customization Logic
     - [ ] Update QR generation logic (likely in `index.astro` or a dedicated hook) to handle the 3 states: Original, White, Black.
     - [ ] Implement "Custom Color" logic for generic icons (WiFi).
 - [ ] Task: Implement Background Toggle Logic

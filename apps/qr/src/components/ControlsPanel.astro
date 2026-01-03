@@ -426,8 +426,38 @@ const PRESET_LOGOS = [
           <span class="color-meta">Upload Logo</span>
         </div>
       </div>
+    </div>
 
-      <div class="color-row">
+    <div class="control-block">
+      <div class="block-title">Logo Style</div>
+      
+      <div class="control-row" style="margin-bottom: 12px;">
+        <span class="label-text">Logo Color</span>
+        <div class="style-selector-grid">
+           <button class="style-opt active" data-logocolor="original" onclick="setLogoColor('original')" title="Original Brand Color">
+             <span class="icon material-icons">palette</span>
+           </button>
+           <button class="style-opt" data-logocolor="white" onclick="setLogoColor('white')" title="White">
+             <span class="icon material-icons" style="color:white; filter: drop-shadow(0 0 1px black)">circle</span>
+           </button>
+           <button class="style-opt" data-logocolor="black" onclick="setLogoColor('black')" title="Black">
+             <span class="icon material-icons" style="color:black">circle</span>
+           </button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <span class="label-text">Background Container</span>
+          <label class="switch">
+            <input type="checkbox" id="logo-bg-toggle" checked onchange="toggleLogoBg(this.checked)" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <p class="help-text">Add a protective circle behind the logo.</p>
+      </div>
+
+      <div class="color-row" style="margin-top: 12px;">
         <span class="color-meta">Size</span>
         <input
           type="range"
@@ -535,6 +565,34 @@ const PRESET_LOGOS = [
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  .style-selector-grid {
+    display: flex;
+    gap: 8px;
+  }
+
+  .style-opt {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2;
+  }
+
+  .style-opt:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-accent);
+  }
+
+  .style-opt.active {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
   }
 
   .qr-type-btn img.brand-icon {

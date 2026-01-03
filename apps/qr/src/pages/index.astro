@@ -43,7 +43,7 @@ const lang = "es";
         exportPNG,
         exportPDF,
       } from "../lib/qr-engine";
-      import { getTypeLogo } from "../lib/brand-logos";
+      import { getTypeLogo, getColorizedTypeLogo } from "../lib/brand-logos";
 
       // View State
       let currentView = "type-selection"; // type-selection | input-form | qr-result
@@ -823,6 +823,9 @@ const lang = "es";
 
       // Centralized Logo Handler
       function setLogo(dataUrl: string) {
+        // If dataUrl is a preset (id), get the correct version based on state
+        const type = (window as any).currentContentType;
+        
         state.config.logo = dataUrl;
 
         // Auto-increase ECC for logos if not already high
@@ -833,21 +836,68 @@ const lang = "es";
           state.config.logoSize = 0.2;
         }
 
-        // Update UI Elements
+        updateLogoUI();
+        updateQR();
+      }
+
+      function updateLogoUI() {
         const preview = document.getElementById("logo-preview");
         const placeholder = document.getElementById("logo-placeholder");
         const img = document.getElementById("logo-img") as HTMLImageElement;
         const area = document.getElementById("logo-upload-area");
 
         if (preview && placeholder && img && area) {
-          img.src = dataUrl;
-          preview.style.display = "block";
-          placeholder.style.display = "none";
-          area.classList.add("has-logo");
+          if (state.config.logo) {
+            img.src = state.config.logo;
+            preview.style.display = "block";
+            placeholder.style.display = "none";
+            area.classList.add("has-logo");
+          } else {
+            preview.style.display = "none";
+            placeholder.style.display = "flex";
+            area.classList.remove("has-logo");
+          }
         }
+        
+        // Update controls
+        const bgToggle = document.getElementById("logo-bg-toggle") as HTMLInputElement;
+        if (bgToggle) bgToggle.checked = !!state.config.logoBgToggle;
+      }
 
+      function setLogoColor(color: string) {
+        state.config.logoColor = color;
+        
+        // Re-calculate the logo data URI based on color
+        const type = (window as any).currentContentType;
+        if (type) {
+           applyTypeLogo(type);
+        }
+        
         updateQR();
       }
+      (window as any).setLogoColor = setLogoColor;
+
+      function toggleLogoBg(checked: boolean) {
+        state.config.logoBgToggle = checked;
+        updateQR();
+      }
+      (window as any).toggleLogoBg = toggleLogoBg;
+
+      function applyTypeLogo(type: string) {
+        const color = state.config.logoColor || 'original';
+        let logo;
+        
+        if (color === 'original') {
+          logo = getTypeLogo(type);
+        } else {
+          logo = getColorizedTypeLogo(type, color);
+        }
+        
+        if (logo) {
+          setLogo(logo);
+        }
+      }
+      (window as any).getColorizedTypeLogo = getColorizedTypeLogo;
 
       // Auto-set logo when type changes (Event Driven)
       window.addEventListener("qr-type-changed", (e: any) => {
@@ -855,12 +905,7 @@ const lang = "es";
         if (!type) return;
 
         console.log("QR Type Changed:", type);
-
-        // Auto-inject logo if available for this type
-        const logo = getTypeLogo(type);
-        if (logo) {
-          setLogo(logo);
-        }
+        applyTypeLogo(type);
       });
 
       // Update manual upload to use same function

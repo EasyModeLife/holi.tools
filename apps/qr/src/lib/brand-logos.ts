@@ -72,3 +72,14 @@ export const getTypeLogo = (type: string) => {
 export const getTypeIcon = (type: string) => {
     return (BRAND_ICONS as any)[type] || undefined;
 };
+
+export const getColorizedTypeLogo = (type: string, color: string) => {
+    const raw = (RAW_ICONS as any)[type];
+    if (!raw) return undefined;
+
+    let finalColor = color;
+    if (color === 'white') finalColor = '#FFFFFF';
+    if (color === 'black') finalColor = '#000000';
+
+    return svgToDataUri(createCircleIcon(raw, finalColor));
+};

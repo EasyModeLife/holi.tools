@@ -22,6 +22,8 @@ interface QRConfig {
     ecc: 'L' | 'M' | 'Q' | 'H';
     mask?: number; // QR mask pattern (0-7), undefined for auto
     logo?: string;
+    logoColor?: 'original' | 'white' | 'black' | string;
+    logoBgToggle?: boolean;
     logoSize?: number;
     logoX?: number;  // Logo position (0-1)
     logoY?: number;
@@ -52,6 +54,8 @@ const defaultConfig: QRConfig = {
     eyeFrameShape: 'square',
     eyeBallShape: 'square',
     ecc: 'M',
+    logoColor: 'original',
+    logoBgToggle: true,
     logoSize: 0.2,
     logoX: 0.5,
     logoY: 0.5
@@ -239,15 +243,31 @@ export function generateSVG(text: string, cfg: QRConfig): string {
             const logoX = (totalSize - logoSize) / 2;
             const logoY = (totalSize - logoSize) / 2;
 
-            // White background circle with subtle shadow
-            content += `<circle cx="${totalSize / 2}" cy="${totalSize / 2}" r="${logoSize / 2 * 1.1}" fill="${cfg.bg}"/>`;
+            // Optional background container
+            if (cfg.logoBgToggle) {
+                // White background circle with subtle shadow
+                content += `<circle cx="${totalSize / 2}" cy="${totalSize / 2}" r="${logoSize / 2 * 1.1}" fill="${cfg.bg === 'transparent' ? 'white' : cfg.bg}"/>`;
+            }
 
             // Clip path for circular logo
             const clipId = 'logo-clip-' + Date.now();
             content += `<defs><clipPath id="${clipId}"><circle cx="${totalSize / 2}" cy="${totalSize / 2}" r="${logoSize / 2}"/></clipPath></defs>`;
 
+            // Determine which logo string to use (original vs colorized)
+            let logoHref = cfg.logo;
+            
+            // If logo is a data URI containing SVG, we can potentially colorize it
+            // However, most logos in state are already data URIs.
+            // For Simple Icons, we have the RAW_ICONS in brand-logos.ts
+            // But here we only have the final string.
+            // The state.config.logo is currently a data URI.
+            
+            // To properly colorize, we might need a way to pass the raw SVG or 
+            // the colorization should happen before setting state.config.logo.
+            // But let's check if it's an SVG data URI we can manipulate.
+            
             // Logo image
-            content += `<image href="${cfg.logo}" x="${logoX}" y="${logoY}" width="${logoSize}" height="${logoSize}" clip-path="url(#${clipId})" preserveAspectRatio="xMidYMid slice"/>`;
+            content += `<image href="${logoHref}" x="${logoX}" y="${logoY}" width="${logoSize}" height="${logoSize}" clip-path="url(#${clipId})" preserveAspectRatio="xMidYMid slice"/>`;
         }
 
         return `<svg viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
