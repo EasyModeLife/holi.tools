@@ -1,0 +1,133 @@
+---
+/**
+ * CodeDisplay.astro - A premium code block component
+ * 
+ * Props:
+ * - code: The code string to display
+ * - lang: Language for highlighting hint
+ * - title: Optional window title
+ */
+interface Props {
+  code: string;
+  lang?: string;
+  title?: string;
+}
+
+import Icon from "./Icon.astro";
+
+const { code, lang = 'ts', title } = Astro.props;
+---
+
+<div class="code-display glass-morphism">
+  <div class="code-header">
+    <div class="header-left">
+      <div class="header-dots">
+        <span></span><span></span><span></span>
+      </div>
+      {title && <span class="header-title">{title}</span>}
+    </div>
+    <div class="header-right">
+      <span class="lang-tag">{lang}</span>
+      <button class="copy-btn" onclick={`navigator.clipboard.writeText(\`${code}\`); window.showToast && window.showToast('Code copied!')`}>
+        <Icon name="content_copy" size={16} />
+      </button>
+    </div>
+  </div>
+  <div class="code-content">
+    <pre><code>{code}</code></pre>
+  </div>
+</div>
+
+<style>
+  .code-display {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(10, 10, 12, 0.4);
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .header-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .header-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .lang-tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-accent);
+    background: rgba(var(--color-accent), 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+  }
+
+  .copy-btn:hover {
+    color: white;
+    transform: scale(1.1);
+  }
+
+  .copy-btn .material-icons {
+    font-size: 16px;
+  }
+
+  .code-content {
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .code-content pre {
+    margin: 0;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.82);
+  }
+</style>

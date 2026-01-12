@@ -2,9 +2,11 @@
 /**
  * TypeGrid.astro - Grid of content types (Text, WiFi, etc.)
  * Shown when no content is entered (Zero state).
- * Refactored to be dynamic and use clean glassmorphism.
+ * Using shared GlassCard for consistent styling.
  */
 
+import GlassCard from "@holi/ui/components/GlassCard.astro";
+import Icon from "@holi/ui/components/Icon.astro";
 import { BRAND_ICONS } from "../lib/brand-logos";
 
 const QR_TYPES = [
@@ -53,42 +55,83 @@ const QR_TYPES = [
     label: "Play Store",
     image: BRAND_ICONS.playstore,
   },
+  { id: "scan", icon: "qr_code_scanner", label: "Scan QR" },
 ];
 ---
 
 <div class="type-grid-wrapper" id="type-grid-wrapper">
   <p class="helper-text">Or choose a specific type</p>
-  <div class="type-grid-large">
+  <div class="type-grid">
     {
       QR_TYPES.map((type) => (
-        <button class="glass-type-card" data-type={type.id}>
+        <GlassCard
+          as="button"
+          class="type-card"
+          padding="md"
+          rounded="md"
+          clickable
+          data-type={type.id}
+        >
           {type.image ? (
-            <img src={type.image} alt={type.label} class="icon brand-logo" />
+            <img
+              src={type.image}
+              alt={type.label}
+              class="type-icon brand-logo"
+            />
           ) : (
-            <span class="icon material-icons">{type.icon}</span>
+            <Icon name={type.icon} size={32} class="type-icon" />
           )}
-          <span>{type.label}</span>
-        </button>
+          <span class="type-label">{type.label}</span>
+        </GlassCard>
       ))
     }
   </div>
 </div>
 
+<script>
+  // Type card click handlers - wait for DOM
+  document.addEventListener("DOMContentLoaded", function () {
+    var cards = document.querySelectorAll(".type-card");
+    console.log("[TypeGrid] Found", cards.length, "type cards");
+
+    cards.forEach(function (card) {
+      card.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var type = card.getAttribute("data-type");
+        console.log("[TypeGrid] Clicked type:", type);
+
+        if (window.setContentType) {
+          window.setContentType(type);
+          // Mobile: scroll to input
+          if (window.innerWidth < 768) {
+            var input = document.querySelector(".shared-input-container");
+            if (input)
+              input.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        } else {
+          console.warn("[TypeGrid] window.setContentType not found!");
+        }
+      });
+    });
+  });
+</script>
+
 <style>
-  /* TYPE GRID */
   .type-grid-wrapper {
     text-align: center;
     transition: all 1s ease-out;
     width: 100%;
   }
-  .type-grid-wrapper .helper-text {
+
+  .helper-text {
     font-size: 14px;
     color: var(--text-muted);
     margin-bottom: 24px;
     opacity: 0.8;
   }
 
-  .type-grid-large {
+  .type-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 16px;
@@ -98,81 +141,40 @@ const QR_TYPES = [
     padding-bottom: 32px;
   }
 
-  /* New Clean Glass Style (Matches Main App) */
-  .glass-type-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 20px 12px;
-
-    /* Ultra Transparent Glass */
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    /* No blur per design system decision */
-
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text-main);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  /* GlassCard overrides for type cards */
+  :global(.type-card) {
+    flex-direction: column !important;
+    gap: 12px !important;
+    min-height: 0 !important;
+    height: auto !important;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .glass-type-card {
-      background: rgba(24, 24, 27, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  .glass-type-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--palette-qr-accent, var(--color-accent));
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .glass-type-card:hover {
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
-      background: rgba(255, 255, 255, 0.08); /* Slightly lighter on hover */
-    }
-  }
-
-  .glass-type-card .icon {
+  .type-icon {
     font-size: 32px;
-    color: inherit;
     opacity: 0.85;
     transition: all 0.2s;
   }
 
-  /* Brand Logo Specifics */
-  .glass-type-card .icon.brand-logo {
+  .type-icon.brand-logo {
     width: 32px;
     height: 32px;
     object-fit: contain;
-    border-radius: 8px; /* Slight rounding for square logos */
+    border-radius: 8px;
   }
 
-  /* Invert icons in light mode for visibility */
-  :global(body.light-theme) .glass-type-card .icon.brand-logo {
-    filter: invert(1);
-  }
-
-  .glass-type-card:hover .icon {
+  :global(.type-card:hover) .type-icon {
     opacity: 1;
     transform: scale(1.1);
-    color: var(--palette-qr-accent, var(--color-accent));
+    color: var(--color-accent);
   }
 
-  .glass-type-card span:last-child {
+  .type-label {
     font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
   }
 
-  /* Generating: grid fades out */
+  /* Fade out when generating */
   :global(.canvas-container.generating) .type-grid-wrapper {
     opacity: 0;
     transform: scale(0.8);
@@ -180,46 +182,28 @@ const QR_TYPES = [
     pointer-events: none;
   }
 
+  /* Mobile */
   @media (max-width: 640px) {
-    .type-grid-large {
+    .type-grid {
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
-    .glass-type-card {
-      padding: 16px 8px;
+
+    :global(.type-card) {
+      padding: 12px 8px !important;
     }
-    .glass-type-card .icon {
+
+    .type-icon {
       font-size: 28px;
     }
-    .glass-type-card .icon.brand-logo {
+
+    .type-icon.brand-logo {
       width: 28px;
       height: 28px;
     }
-    .glass-type-card span:last-child {
+
+    .type-label {
       font-size: 11px;
     }
   }
 </style>
-
-<script is:inline>
-  (function () {
-    const typeCards = document.querySelectorAll(".glass-type-card");
-    typeCards.forEach(function (card) {
-      card.addEventListener("click", function (e) {
-        e.preventDefault(); // Prevent accidental form submissions or jumps
-        const type = card.getAttribute("data-type");
-        if (window.setContentType) {
-          window.setContentType(type);
-
-          // Scroll to input area (optional, for mobile UX)
-          // But let's check if on mobile
-          if (window.innerWidth < 768) {
-            const inputArea = document.querySelector(".shared-input-container");
-            if (inputArea)
-              inputArea.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        }
-      });
-    });
-  })();
-</script>

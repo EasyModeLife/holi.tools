@@ -11,6 +11,8 @@
 
 :root {
     /* Default Palette (Main app) */
+    --palette-qr-bg: #f8fafc;
+    --palette-qr-text: #1e293b;
     --palette-qr-border: rgba(26, 26, 26, 0.15);
     --palette-qr-accent: #6366f1;
 
@@ -25,7 +27,7 @@
     --palette-calculator-accent: #10b981;
 
     /* Labs Palette */
-    --palette-labs-bg: #ffffff;
+    --palette-labs-bg: #000000;
     --palette-labs-text: #1a1a1a;
     --palette-labs-border: rgba(0, 0, 0, 0.1);
     --palette-labs-accent: #db2777;

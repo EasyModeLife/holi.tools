@@ -4,8 +4,10 @@ import HeroTitle from "../components/HeroTitle.astro";
 import HeroValues from "../components/HeroValues.astro";
 import ToolsExplorer from "../components/ToolsExplorer.astro";
 import Overlay from "../components/Overlay.astro";
-import SoundEngine from "../components/SoundEngine.astro";
-import GlassHeader from "../../../../packages/ui/src/components/GlassHeader.astro";
+import SimpleBackground from "../../../../packages/ui/src/components/SimpleBackground.astro";
+
+import "../styles/app.css";
+
 import { getTranslations, languages } from "../i18n/translations";
 
 const lang = Astro.currentLocale || "en";
@@ -21,6 +23,14 @@ const hreflangLinks = languages.map((l) => ({
   lang: l.code,
   href: l.code === "en" ? baseUrl + "/" : `${baseUrl}/${l.code}/`,
 }));
+
+// Props for versioning
+interface Props {
+  version?: string;
+  changelog?: { version: string; date: string; changes: string[] }[];
+}
+
+const { version, changelog } = Astro.props;
 ---
 
 <BaseLayout
@@ -29,8 +39,14 @@ const hreflangLinks = languages.map((l) => ({
   lang={lang}
   languages={languages}
   colorScheme="default"
-  showLanguageMenu={true}
-  showCanvasGrid={true}
+  showCanvasGrid={false}
+  version={version}
+  changelog={changelog}
+  changelogLabels={{
+    title: t.changelog_title,
+    current: t.changelog_current,
+    footer: t.changelog_footer
+  }}
 >
   <slot name="head" slot="head">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -93,24 +109,12 @@ const hreflangLinks = languages.map((l) => ({
     />
   </slot>
 
+  <SimpleBackground />
+
   <!-- Skip Link for Accessibility -->
   <a href="#ToolsExplorer" class="skip-link"
     >{t.skip_to_content || "Skip to main content"}</a
   >
-
-  <GlassHeader
-    leftIcon="info"
-    leftId="btn-about"
-    leftTitle="About Holi.tools"
-    leftOnClick="openOverlay('info', 'privacy')"
-    centerHref="https://holi.tools"
-    centerIcon="☭"
-    centerLabel="holi.tools"
-    rightIcon="favorite"
-    rightId="btn-donate"
-    rightTitle="Support Holi.tools"
-    rightOnClick="window.open('https://github.com/sponsors/EasyModeLife', '_blank')"
-  />
 
   <div class="dvh-container">
     <header class="main-header">
@@ -122,19 +126,7 @@ const hreflangLinks = languages.map((l) => ({
   </div>
 
   <Overlay />
-  <SoundEngine />
 
-  <script>
-    // FORCE UNREGISTER SERVICE WORKER TO CLEAR STALE CACHE
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function (registrations) {
-        for (let registration of registrations) {
-          registration.unregister();
-          console.log("Service Worker Unregistered to force update");
-        }
-      });
-    }
-  </script>
 
   <script define:vars={{ t, languages, lang }}>
     // Clientside logic for the overlay and simple I18N bridges
@@ -148,6 +140,34 @@ const hreflangLinks = languages.map((l) => ({
       const body = document.getElementById("OverlayBody");
       const container = document.getElementById("OverlaySystem");
 
+      // Handle Generic Shared Overlays (like Changelog)
+      const genericOverlay = document.getElementById(`overlay-${type}-${id}`);
+      if (genericOverlay) {
+        genericOverlay.style.display = 'flex';
+        // Animation logic derived from ChangelogOverlay shared contract
+        const drawer = genericOverlay.querySelector('.log-drawer, .strand-drawer'); // Support both legacy names just in case
+        const backdrop = genericOverlay.querySelector('.log-backdrop, .strand-backdrop, .overlay-backdrop');
+        
+        if (backdrop) {
+          backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'forwards' });
+        }
+        
+        if (drawer) {
+          drawer.animate([
+            { transform: 'translateX(-100%)', opacity: 0 },
+            { transform: 'translateX(0)', opacity: 1 }
+          ], { duration: 400, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', fill: 'forwards' });
+        } else {
+             // Fallback for centered modals if any
+             genericOverlay.animate([
+              { opacity: 0, transform: 'scale(0.95)' },
+              { opacity: 1, transform: 'scale(1)' }
+            ], { duration: 200, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'forwards' });
+        }
+        return;
+      }
+
+      // Handle Legacy/Local Info Overlays
       if (!body || !container) return;
 
       if (type === "languages") {
@@ -265,6 +285,7 @@ const hreflangLinks = languages.map((l) => ({
       line-height: 1.5;
       color: var(--color-text);
       font-weight: 400;
+      display: block; /* Ensure text display */
     }
   </style>
 </BaseLayout>

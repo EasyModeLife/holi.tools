@@ -11,9 +11,19 @@ categories = ["encoding", "graphics"]
 # This is a PURE Rust library - no wasm-bindgen here
 # Can be used in CLI, WASM, FFI, etc.
 
+[features]
+default = []
+verify = ["rxing", "resvg", "tiny-skia", "image"]
+
 [dependencies]
 fast_qr = { version = "0.12", features = ["svg"] }
 thiserror = "1.0"
+# Optional: QR verification/scanning (rxing = ZXing port)
+rxing = { version = "0.6", optional = true }
+resvg = { version = "0.44", optional = true }
+tiny-skia = { version = "0.11", optional = true }
+image = { version = "0.25", optional = true, default-features = false, features = ["png", "jpeg"] }
 
 [dev-dependencies]
 # For testing
+

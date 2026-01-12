@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "deploy:labs": "turbo run build --filter=holi-labs && wrangler pages deploy ./apps/labs/dist --project-name labs-holi",
-    "deploy:qr": "turbo run build --filter=holi-qr && wrangler pages deploy ./apps/qr/dist --project-name qr-holi"
+    "deploy:qr": "turbo run build --filter=holi-qr && wrangler pages deploy ./apps/qr/dist --project-name qr-holi",
+    "build:wasm": "cd packages/wasm-qr && wasm-pack build --target web --release"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

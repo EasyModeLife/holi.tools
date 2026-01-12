@@ -17,6 +17,18 @@ pub use state::State;
 
 thread_local! {
     static RAF_HANDLE: RefCell<Option<AnimationFrame>> = const { RefCell::new(None) };
+    static RENDERER_STATE: RefCell<Option<Rc<RefCell<State>>>> = const { RefCell::new(None) };
+}
+
+/// Update QR Code Instance Data
+/// data: Flat float32 array [x,y,scale,r,g,b, ...]
+#[wasm_bindgen]
+pub fn update_qr(data: &[f32]) {
+    RENDERER_STATE.with(|s| {
+        if let Some(state_rc) = &*s.borrow() {
+            state_rc.borrow_mut().update_instances(data);
+        }
+    });
 }
 
 /// Start the WebGPU renderer on a canvas element.
@@ -55,7 +67,11 @@ pub async fn start(canvas: HtmlCanvasElement) -> Result<(), JsValue> {
         RAF_HANDLE.with(|h| *h.borrow_mut() = Some(handle));
     }
 
-    schedule(state, canvas, Rc::new(window));
+    schedule(state.clone(), canvas, Rc::new(window));
+    
+    // Store in global for update access
+    RENDERER_STATE.with(|s| *s.borrow_mut() = Some(state));
+    
     Ok(())
 }
 

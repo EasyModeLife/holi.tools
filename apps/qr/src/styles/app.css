@@ -2,7 +2,10 @@
 
 :root {
     /* Base Palette - Zinc/Neutral */
-    --bg-body: #ffffff;
+    --bg-body: transparent;
+    /* Show SimpleBackground */
+    --bg-app-base: #f4f4f5;
+    /* For elements that need contrast */
     --bg-sidebar: #f8f9fa;
     --bg-card: #ffffff;
     --bg-panel: #f8f9fa;
@@ -27,8 +30,8 @@
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
-    --font-sans: "Inter", sans-serif;
-    --font-mono: "JetBrains Mono", monospace;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
 body.light-theme {
@@ -66,7 +69,7 @@ body.light-theme {
 }
 
 body {
-    background: var(--bg-body);
+    background: transparent;
     color: var(--text-main);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -76,11 +79,13 @@ body {
 }
 
 .icon {
-    font-family: "Material Icons";
-    font-size: 20px;
+    /* Using native emoji/unicode instead of Material Icons */
+    font-family: inherit;
+    font-size: 18px;
     line-height: 1;
-    display: inline-block;
-    font-feature-settings: "liga";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 button,
@@ -101,7 +106,7 @@ button {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background: var(--bg-body);
+    background: transparent;
     position: relative;
     overflow: hidden;
 }
@@ -245,7 +250,7 @@ button {
 
 /* === CANVAS (CENTER) === */
 .canvas-container {
-    background: var(--bg-body);
+    background: transparent;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -256,9 +261,9 @@ button {
     flex: 1;
     height: 100%;
     width: 100%;
-    /* Subtle Dot Pattern */
-    background-image: radial-gradient(var(--border-main) 1px, transparent 1px);
-    background-size: 20px 20px;
+    width: 100%;
+    /* Subtle Dot Pattern - REMOVED for clean black background */
+    background: transparent;
 }
 
 .bento-card {

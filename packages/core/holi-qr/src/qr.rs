@@ -48,23 +48,16 @@ impl QrCode {
     /// Get the flattened module data (row by row)
     /// 1 = dark, 0 = light
     pub fn get_modules(&self) -> Vec<u8> {
-        // fast_qr stores data in a formatting that converts easily
-        // We'll return a flat Vec<u8> where 1 is module, 0 is empty
         let size = self.inner.size;
         let mut modules = Vec::with_capacity(size * size);
         
-        for y in 0..size {
-            for x in 0..size {
-                // fast_qr::QRCode accesses via index [y * size + x] usually
-                // but let's see index impl. fallback to get helper if needed
-                // Using .data which is Vec<u8> in recent fast_qr versions (usually bitpacked or byte per mod)
-                // Let's assume fast_qr usage: 
-                match self.inner[y * size + x] {
-                    fast_qr::Data::Module => modules.push(1),
-                    fast_qr::Data::Empty => modules.push(0),
-                    _ => modules.push(0), // fast_qr might have other states like Finder, but for rendering we usually just need dark/light resolved? 
-                    // fast_qr handles masking resolved in the build stage typically.
-                }
+        // fast_qr stores modules in .data as Vec<Module>
+        // Module is a tuple struct Module(u8) where .value() returns true if dark
+        for module in self.inner.data.iter() {
+            if module.value() {
+                modules.push(1);
+            } else {
+                modules.push(0);
             }
         }
         modules

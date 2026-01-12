@@ -22,6 +22,9 @@ export const translations = {
         tool3_desc: "Advanced scientific-technical document editor.",
         tool4_name: "calculator",
         tool4_desc: "Complex calculations and instant visualization.",
+        tool_qr_name: "qr",
+        tool_qr_desc: "Instant, private, and secure QR code generation.",
+        status_coming_soon: "Coming Soon",
         info_privacy_title: "privacy first",
         info_privacy_text:
             "We strive to ensure the browser and page collect the least amount of information possible. We keep dependency usage to a minimum to ensure security. From the code to the provider (Cloudflare), your data is yours.",
@@ -42,6 +45,11 @@ export const translations = {
             "We believe tools should speak your language. All our pages are available in multiple languages: English, Spanish, French, German, Portuguese, Italian, Japanese, Korean, Chinese, and more. Accessibility means reaching everyone, everywhere.",
         lang_title: "language / idioma",
         skip_to_content: "Skip to main content",
+        changelog_title: "Version Log",
+        changelog_current: "Current",
+        changelog_footer: "Unified Sovereign Suite",
+        info_about_title: "About Holi.tools",
+        info_about_text: "Holi.tools is an open-source, local-first suite of high-performance tools. Developed by EasyModeLife, we prioritize privacy, speed, and user sovereignty above all else. No tracking, no servers, just pure utility directly in your browser."
     },
     es: {
         hero_title: "holi tools",
@@ -66,6 +74,9 @@ export const translations = {
         tool3_desc: "Editor de documentos científico-técnicos avanzado.",
         tool4_name: "calculator",
         tool4_desc: "Cálculos complejos y visualización instantánea.",
+        tool_qr_name: "qr",
+        tool_qr_desc: "Generación de códigos QR instantánea, privada y segura.",
+        status_coming_soon: "Próximamente",
         info_privacy_title: "privacidad absoluta",
         info_privacy_text:
             "Nos esforzamos para que el navegador y la página recopilen la menor información posible. Mantenemos el uso de paqueterías al mínimo para garantizar tu seguridad. Desde el código hasta el proveedor (Cloudflare), tus datos son tuyos.",
@@ -86,6 +97,11 @@ export const translations = {
             "Creemos que las herramientas deben hablar tu idioma. Todas nuestras páginas están disponibles en múltiples idiomas: Inglés, Español, Francés, Alemán, Portugués, Italiano, Japonés, Coreano, Chino y más. Accesibilidad significa llegar a todos, en todas partes.",
         lang_title: "idioma / language",
         skip_to_content: "Saltar al contenido principal",
+        changelog_title: "Registro de Versiones",
+        changelog_current: "Actual",
+        changelog_footer: "Suite Soberana Unificada",
+        info_about_title: "Sobre Holi.tools",
+        info_about_text: "Holi.tools es una suite de herramientas de alto rendimiento, código abierto y funcionamiento local. Desarrollado por EasyModeLife, priorizamos la privacidad, la velocidad y la soberanía del usuario por encima de todo. Sin rastreo, sin servidores, solo utilidad pura directamente en tu navegador."
     },
     fr: {
         hero_title: "holi tools",
@@ -110,6 +126,9 @@ export const translations = {
         tool3_desc: "Éditeur de documents scientifiques avancé.",
         tool4_name: "calculator",
         tool4_desc: "Calculs complexes et visualisation instantanée.",
+        tool_qr_name: "qr",
+        tool_qr_desc: "Génération de codes QR instantanée, privée et sécurisée.",
+        status_coming_soon: "Bientôt",
         info_privacy_title: "confidentialité totale",
         info_privacy_text:
             "Vos données vous appartiennent. Holi.tools utilise une architecture locale, ce qui signifie que vos fichiers et données n'atteignent jamais nos serveurs. Nous utilisons WebGPU et WASM pour le traitement lourd directement sur votre matériel.",
@@ -130,6 +149,9 @@ export const translations = {
             "Nous croyons que les outils doivent parler votre langue. Toutes nos pages sont disponibles en plusieurs langues: anglais, espagnol, français, allemand, portugais, italien, japonais, coréen, chinois et plus encore.",
         lang_title: "langue / language",
         skip_to_content: "Aller au contenu principal",
+        changelog_title: "Journal des Versions",
+        changelog_current: "Actuel",
+        changelog_footer: "Suite Souveraine Unifiée",
     },
     de: {
         hero_title: "holi tools",
@@ -154,6 +176,9 @@ export const translations = {
         tool3_desc: "Fortschrittlicher wissenschaftlicher Dokumenteditor.",
         tool4_name: "calculator",
         tool4_desc: "Komplexe Berechnungen und sofortige Visualisierung.",
+        tool_qr_name: "qr",
+        tool_qr_desc: "Sofortige, private und sichere QR-Code-Generierung.",
+        status_coming_soon: "Demnächst",
         info_privacy_title: "absolute privatsphäre",
         info_privacy_text:
             "Ihre Daten gehören Ihnen. Holi.tools verwendet eine Local-First-Architektur, was bedeutet, dass Ihre Dateien nie unsere Server erreichen. Wir nutzen WebGPU und WASM für schwere Berechnungen direkt auf Ihrer Hardware.",
@@ -174,6 +199,9 @@ export const translations = {
             "Wir glauben, dass Tools Ihre Sprache sprechen sollten. Alle unsere Seiten sind in mehreren Sprachen verfügbar: Englisch, Spanisch, Französisch, Deutsch, Portugiesisch, Italienisch, Japanisch, Koreanisch, Chinesisch und mehr.",
         lang_title: "sprache / language",
         skip_to_content: "Zum Hauptinhalt springen",
+        changelog_title: "Versionsprotokoll",
+        changelog_current: "Aktuell",
+        changelog_footer: "Vereinigte Souveräne Suite",
     },
     pt: {
         hero_title: "holi tools",
@@ -218,6 +246,9 @@ export const translations = {
             "Acreditamos que ferramentas devem falar seu idioma. Todas as nossas páginas estão disponíveis em vários idiomas: inglês, espanhol, francês, alemão, português, italiano, japonês, coreano, chinês e mais.",
         lang_title: "idioma / language",
         skip_to_content: "Pular para o conteúdo principal",
+        changelog_title: "Registro de Versões",
+        changelog_current: "Atual",
+        changelog_footer: "Suíte Soberana Unificada",
     },
     it: {
         hero_title: "holi tools",
@@ -262,6 +293,9 @@ export const translations = {
             "Crediamo che gli strumenti debbano parlare la tua lingua. Tutte le nostre pagine sono disponibili in più lingue: inglese, spagnolo, francese, tedesco, portoghese, italiano, giapponese, coreano, cinese e altre.",
         lang_title: "lingua / language",
         skip_to_content: "Vai al contenuto principale",
+        changelog_title: "Registro Versioni",
+        changelog_current: "Attuale",
+        changelog_footer: "Suite Sovrana Unificata",
     },
     zh: {
         hero_title: "holi tools",
@@ -306,6 +340,9 @@ export const translations = {
             "我们相信工具应该说您的语言。我们所有的页面都提供多种语言版本：英语、西班牙语、法语、德语、葡萄牙语、意大利语、日语、韩语、中文等。",
         lang_title: "语言 / language",
         skip_to_content: "跳至主要内容",
+        changelog_title: "版本日志",
+        changelog_current: "当前",
+        changelog_footer: "统一主权套件",
     },
     ja: {
         hero_title: "holi tools",
@@ -350,6 +387,9 @@ export const translations = {
             "ツールはあなたの言語を話すべきだと信じています。すべてのページは多言語対応：英語、スペイン語、フランス語、ドイツ語、ポルトガル語、イタリア語、日本語、韓国語、中国語など。",
         lang_title: "言語 / language",
         skip_to_content: "メインコンテンツにスキップ",
+        changelog_title: "バージョンログ",
+        changelog_current: "現在",
+        changelog_footer: "統一主権スイート",
     },
     ko: {
         hero_title: "holi tools",
@@ -394,6 +434,9 @@ export const translations = {
             "도구는 당신의 언어를 말해야 한다고 믿습니다. 모든 페이지는 다국어 지원: 영어, 스페인어, 프랑스어, 독일어, 포르투갈어, 이탈리아어, 일본어, 한국어, 중국어 등.",
         lang_title: "언어 / language",
         skip_to_content: "메인 콘텐츠로 건너뛰기",
+        changelog_title: "버전 로그",
+        changelog_current: "현재",
+        changelog_footer: "통합 주권 제품군",
     },
     ru: {
         hero_title: "holi tools",
@@ -438,6 +481,9 @@ export const translations = {
             "Мы верим, что инструменты должны говорить на вашем языке. Все наши страницы доступны на нескольких языках: английский, испанский, французский, немецкий, португальский, итальянский, японский, корейский, китайский и другие.",
         lang_title: "язык / language",
         skip_to_content: "Перейти к основному содержимому",
+        changelog_title: "Журнал версий",
+        changelog_current: "Текущая",
+        changelog_footer: "Единый Суверенный Набор",
     },
 } as const;
 

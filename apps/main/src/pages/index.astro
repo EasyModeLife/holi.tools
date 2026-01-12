@@ -1,5 +1,15 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+
+// Version History
+const currentVersion = "0.1.1"; // Main App Version
+
+import { mainAppChangelog } from "@holi/configs/changelogs";
+
+
+
+const lang = Astro.currentLocale || "en";
+const history = (mainAppChangelog as any)[lang] || mainAppChangelog.en;
 ---
 
-<MainLayout />
+<MainLayout version={currentVersion} changelog={history} />

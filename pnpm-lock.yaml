@@ -132,25 +132,31 @@ importers:
       '@holi/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@holi/wasm-core':
-        specifier: workspace:^
-        version: link:../../packages/wasm-core
       astro:
         specifier: ^4.0.0
         version: 4.16.19(rollup@4.53.5)(typescript@5.9.3)
+      gif.js:
+        specifier: ^0.2.0
+        version: 0.2.0
+      gifuct-js:
+        specifier: ^2.1.2
+        version: 2.1.2
       jspdf:
         specifier: ^3.0.4
         version: 3.0.4
+      jsqr:
+        specifier: ^1.4.0
+        version: 1.4.0
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.19(yaml@2.8.2)
     devDependencies:
       vite-plugin-top-level-await:
         specifier: ^1.6.0
-        version: 1.6.0(rollup@4.53.5)(vite@5.4.21)
+        version: 1.6.0(rollup@4.53.5)(vite@7.3.0(jiti@1.21.7)(yaml@2.8.2))
       vite-plugin-wasm:
         specifier: ^3.5.0
-        version: 3.5.0(vite@5.4.21)
+        version: 3.5.0(vite@7.3.0(jiti@1.21.7)(yaml@2.8.2))
       vitest:
         specifier: ^4.0.16
         version: 4.0.16(jiti@1.21.7)(yaml@2.8.2)
@@ -1939,6 +1945,12 @@ packages:
   get-source@2.0.12:
     resolution: {integrity: sha512-X5+4+iD+HoSeEED+uwrQ07BOQr0kEDFMVqqpBuI+RaZBpBpHCuXxo70bjar6f0b0u/DQJsJ7ssurpP0V60Az+w==}
 
+  gif.js@0.2.0:
+    resolution: {integrity: sha512-bYxCoT8OZKmbxY8RN4qDiYuj4nrQDTzgLRcFVovyona1PTWNePzI4nzOmotnlOFIzTk/ZxAHtv+TfVLiBWj/hw==}
+
+  gifuct-js@2.1.2:
+    resolution: {integrity: sha512-rI2asw77u0mGgwhV3qA+OEgYqaDn5UNqgs+Bx0FGwSpuqfYn+Ir6RQY5ENNQ8SbIiG/m5gVa7CD5RriO4f4Lsg==}
+
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
 
@@ -2105,6 +2117,9 @@ packages:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
 
+  js-binary-schema-parser@2.0.3:
+    resolution: {integrity: sha512-xezGJmOb4lk/M1ZZLTR/jaBHQ4gG/lqQnJqdIv4721DMggsa1bDVlHXNeHYogaIEHD9vCRv0fcL4hMA+Coarkg==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -2137,6 +2152,9 @@ packages:
 
   jspdf@3.0.4:
     resolution: {integrity: sha512-dc6oQ8y37rRcHn316s4ngz/nOjayLF/FFxBF4V9zamQKRqXxyiH1zagkCdktdWhtoQId5K20xt1lB90XzkB+hQ==}
+
+  jsqr@1.4.0:
+    resolution: {integrity: sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -4855,6 +4873,12 @@ snapshots:
       data-uri-to-buffer: 2.0.2
       source-map: 0.6.1
 
+  gif.js@0.2.0: {}
+
+  gifuct-js@2.1.2:
+    dependencies:
+      js-binary-schema-parser: 2.0.3
+
   github-slugger@2.0.0: {}
 
   glob-parent@5.1.2:
@@ -5043,6 +5067,8 @@ snapshots:
 
   jiti@1.21.7: {}
 
+  js-binary-schema-parser@2.0.3: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.2:
@@ -5074,6 +5100,8 @@ snapshots:
       core-js: 3.47.0
       dompurify: 3.3.1
       html2canvas: 1.4.1
+
+  jsqr@1.4.0: {}
 
   keyv@4.5.4:
     dependencies:
@@ -6246,17 +6274,6 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-top-level-await@1.6.0(rollup@4.53.5)(vite@5.4.21):
-    dependencies:
-      '@rollup/plugin-virtual': 3.0.2(rollup@4.53.5)
-      '@swc/core': 1.15.7
-      '@swc/wasm': 1.15.7
-      uuid: 10.0.0
-      vite: 5.4.21
-    transitivePeerDependencies:
-      - '@swc/helpers'
-      - rollup
-
   vite-plugin-top-level-await@1.6.0(rollup@4.53.5)(vite@7.3.0(jiti@1.21.7)(yaml@2.8.2)):
     dependencies:
       '@rollup/plugin-virtual': 3.0.2(rollup@4.53.5)
@@ -6267,10 +6284,6 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
       - rollup
-
-  vite-plugin-wasm@3.5.0(vite@5.4.21):
-    dependencies:
-      vite: 5.4.21
 
   vite-plugin-wasm@3.5.0(vite@7.3.0(jiti@1.21.7)(yaml@2.8.2)):
     dependencies:

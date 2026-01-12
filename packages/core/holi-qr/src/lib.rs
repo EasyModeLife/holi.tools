@@ -18,7 +18,12 @@
 mod error;
 mod qr;
 mod render;
+mod shapes;
+mod verify;
 
 pub use error::QrError;
 pub use qr::{generate_qr, QrCode, ErrorCorrectionLevel};
-pub use render::{render_svg, render_svg_with_options, RenderOptions};
+pub use render::{render_svg, render_svg_with_options, render_svg_styled, RenderOptions, StyledRenderOptions};
+pub use shapes::{BodyShape, EyeFrameShape, EyeBallShape, body_path, eye_frame_path, eye_ball_path};
+pub use verify::{verify_svg, decode_image};
+

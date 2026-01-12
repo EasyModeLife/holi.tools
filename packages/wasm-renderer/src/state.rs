@@ -4,8 +4,9 @@ use wasm_bindgen::prelude::*;
 use web_sys::{HtmlCanvasElement, Window};
 
 use crate::math::generate_view_projection;
-use crate::mesh::create_plane_mesh;
+use crate::mesh::{create_quad_mesh, Instance};
 use crate::pipeline::{create_pipeline, Uniforms};
+use wgpu::util::DeviceExt;
 
 pub struct State {
     surface: wgpu::Surface<'static>,
@@ -15,11 +16,13 @@ pub struct State {
     render_pipeline: wgpu::RenderPipeline,
     vertex_buffer: wgpu::Buffer,
     index_buffer: wgpu::Buffer,
+    instance_buffer: wgpu::Buffer,
     uniform_buffer: wgpu::Buffer,
     bind_group: wgpu::BindGroup,
     depth_texture: wgpu::Texture,
     depth_view: wgpu::TextureView,
     num_indices: u32,
+    num_instances: u32,
     start: f64,
 }
 
@@ -49,15 +52,27 @@ impl State {
                 &wgpu::DeviceDescriptor {
                     label: Some("Device"),
                     required_features: wgpu::Features::empty(),
-                    required_limits: wgpu::Limits::downlevel_webgl2_defaults()
-                        .using_resolution(adapter.limits()),
+                    // WebGL2 Defaults for compatibility, but respecting wgpu 23.0 restrictions if any
+                    // wgpu::Limits::downlevel_webgl2_defaults() is ideal for broad support.
+                    required_limits: wgpu::Limits::downlevel_webgl2_defaults().using_resolution(adapter.limits()),
+                    memory_hints: wgpu::MemoryHints::Performance,
                 },
                 None,
             )
             .await
             .map_err(|e| JsValue::from_str(&format!("request_device failed: {e:?}")))?;
 
-        let (vertex_buffer, index_buffer, num_indices) = create_plane_mesh(&device, 30, 0.5);
+        let (vertex_buffer, index_buffer, num_indices) = create_quad_mesh(&device);
+        
+        // Initial Instance Buffer (Empty)
+        // Capacity for 10k instances
+        let instance_data = vec![Instance { position: [0.0,0.0], scale: 0.0, color: [0.0,0.0,0.0] }; 10000];
+        let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Instance Buffer"),
+            contents: bytemuck::cast_slice(&instance_data),
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+        });
+        let num_instances = 0;
 
         let uniform_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Uniform Buffer"),
@@ -133,13 +148,29 @@ impl State {
             render_pipeline,
             vertex_buffer,
             index_buffer,
+            instance_buffer,
             uniform_buffer,
             bind_group,
             depth_texture,
             depth_view,
             num_indices,
+            num_instances,
             start: js_sys::Date::now(),
         })
+    }
+
+    pub fn update_instances(&mut self, data: &[f32]) {
+        // data layout: [x, y, scale, r, g, b] per instance
+        let instances: &[Instance] = bytemuck::cast_slice(data);
+        self.num_instances = instances.len() as u32;
+
+        if self.num_instances > 0 {
+             let bytes: &[u8] = bytemuck::cast_slice(instances);
+             // Ensure we don't overflow buffer (10k capacity)
+             let max_bytes = 10000 * std::mem::size_of::<Instance>();
+             let write_len = bytes.len().min(max_bytes);
+             self.queue.write_buffer(&self.instance_buffer, 0, &bytes[..write_len]);
+        }
     }
 
     pub fn start_time(&self) -> f64 {
@@ -214,7 +245,7 @@ impl State {
                             r: 0.0,
                             g: 0.0,
                             b: 0.0,
-                            a: 1.0,
+                            a: 0.0, // Transparent clear
                         }),
                         store: wgpu::StoreOp::Store,
                     },
@@ -234,8 +265,9 @@ impl State {
             render_pass.set_pipeline(&self.render_pipeline);
             render_pass.set_bind_group(0, &self.bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
+            render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
-            render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
+            render_pass.draw_indexed(0..self.num_indices, 0, 0..self.num_instances);
         }
 
         self.queue.submit(std::iter::once(encoder.finish()));

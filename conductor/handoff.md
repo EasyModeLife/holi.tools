@@ -1,46 +1,23 @@
-# Handoff Note
-**Date:** 2026-01-02
-**Agent:** Antigravity (Gemini)
+# Handoff Note: QR Optimization & Fixes
 
-## 🎨 QR Generator UX Overhaul
+## Context
+Massive optimization session. Reduced bundle size by removing legacy WASM and unused PDF libraries. Fixed UI background issue.
 
-### ✅ Completed Today
+## Work Completed
 
-#### 1. Tabbed Controls Panel
-Consolidated 6 bento sections into 3 logical tabs:
-- **Style Tab**: Colors, Pattern (shapes), Settings (ECC)
-- **Brand Tab**: Logo upload, Frame style, CTA
-- **Export Tab**: Quality slider, SVG/PNG/PDF buttons
+### 🚀 Optimization (Total ~5MB Reduction)
+- **WASM**: Removed legacy 4MB `src/wasm/holi_wasm_qr.js` binary. Refactored `qr-engine.ts` to use optimized `wasm-qr-svg` (30kb).
+- **Dependencies**: Removed `jspdf` and manually stripped export logic (1MB savings). `dist` size is now ~1.7MB total (was >6MB).
 
-#### 2. Collapsible Sidebar
-- Default: 56px width (icons only)
-- Expands to 200px on toggle
-- Smooth CSS transitions
+### 🛠 UI / Logic Fixes
+- **Background**: Replaced `bg-slate-100` in `EditorCanvas` with `@holi/ui`'s `GridBackground` component. Solves "white screen" issue.
+- **PDF Export**: Removed feature entirely as requested.
+- **Split Panels**: Refactored `StylePanel` into `ShapesPanel` and `EffectPanel`.
 
-#### 3. Enhanced Canvas
-- Clean dark background (no dot pattern)
-- Zoom controls (+/- buttons)
-- Background toggle (white/dark/transparency grid)
-- Undo/Redo history buttons
+## Build Status
+- `pnpm --filter holi-qr build` ✅ **PASSED**
+- Final WASM size: 30KB.
 
-#### 4. Progressive Disclosure
-- Controls panel muted until URL entered
-- Export tab pulses when content is ready
-- Larger, emphasized URL input field
-
-### Files Changed
-- `apps/qr/src/components/ControlsPanel.astro` — Complete rewrite
-- `apps/qr/src/components/Sidebar.astro` — Collapsible structure
-- `apps/qr/src/components/EditorCanvas.astro` — Canvas controls
-- `apps/qr/src/styles/app.css` — +250 lines new CSS
-- `apps/qr/src/pages/index.astro` — +180 lines JS functions
-
-### Codebase Status
-- Build: ✅ Passing
-- Browser Tests: ✅ All features verified
-- No breaking changes to existing QR generation logic
-
-### 🚧 Future Enhancements
-1. **Persist preferences**: Save tab state, zoom level to localStorage
-2. **Keyboard shortcuts**: Ctrl+Z/Y for undo/redo
-3. **rMQR support**: Backend still pending
+## Next Actions
+- Verify the new Background in the app.
+- Confirm Micro QR plans (deferred).

@@ -40,40 +40,55 @@ pub fn multiply_matrices(a: [[f32; 4]; 4], b: [[f32; 4]; 4]) -> [[f32; 4]; 4] {
     out
 }
 
-/// Generate a combined view-projection matrix for orbiting camera
-pub fn generate_view_projection(width: f32, height: f32, time: f32) -> [[f32; 4]; 4] {
+/// Generate a combined view-projection matrix for static top-down camera
+pub fn generate_view_projection(width: f32, height: f32, _time: f32) -> [[f32; 4]; 4] {
     let aspect = width / height;
-    let fov_y = 45.0f32.to_radians();
+    
+    // ORTHOGRAPHIC PROJECTION (Better for 2D readability)
+    // We want to see roughly -20 to +20 range?
+    // Let's assume QR is ~30x30.
+    // Zoom factor:
+    let zoom = 30.0; 
+    let left = -zoom * aspect;
+    let right = zoom * aspect;
+    let bottom = -zoom;
+    let top = zoom;
     let near = 0.1;
     let far = 100.0;
 
-    // Projection matrix (WebGPU depth [0, 1])
-    let f = 1.0 / (fov_y / 2.0).tan();
+    let r_l = right - left;
+    let t_b = top - bottom;
+    let f_n = far - near;
+
     let proj = [
-        [f / aspect, 0.0, 0.0, 0.0],
-        [0.0, f, 0.0, 0.0],
-        [0.0, 0.0, far / (near - far), -1.0],
-        [0.0, 0.0, (near * far) / (near - far), 0.0],
+        [2.0 / r_l, 0.0, 0.0, 0.0],
+        [0.0, 2.0 / t_b, 0.0, 0.0],
+        [0.0, 0.0, -1.0 / f_n, 0.0], // WGPU depth [0, 1]
+        [-(right + left) / r_l, -(top + bottom) / t_b, -near / f_n, 1.0],
     ];
 
-    // View matrix (orbiting camera)
-    let radius = 8.0;
-    let cam_x = time.cos() * radius;
-    let cam_z = time.sin() * radius;
-    let eye = [cam_x, 5.0, cam_z];
-    let center = [0.0, 0.0, 0.0];
-    let up = [0.0, 1.0, 0.0];
-
-    // LookAt
-    let z_axis = normalize(sub(eye, center));
-    let x_axis = normalize(cross(up, z_axis));
-    let y_axis = cross(z_axis, x_axis);
-
+    // Ortho is simple, no view matrix needed if we align world to camera
+    // But let's keep a basic view transform just in case we want to pan
+    // Identity View (Camera at 0,0, looking -Z?) 
+    // Wait, our particles are on XZ plane (y=0).
+    // So we need to look from +Y down, or rotate the particles.
+    // Let's Rotate View: look from +Y down.
+    
+    // View matrix (static front view)
+    // Particles are on XY plane. We look from +Z.
+    
+    // Ortho is already set up.
+    // If we use Identity View, we look down -Z. 
+    // Eye at 0,0,0 looking -Z.
+    // So if particles are at Z=0, and Near=0.1, they might be clipped?
+    // We need to move camera BACK on +Z.
+    
+    // LookAt(eye=[0, 0, 50], center=[0, 0, 0], up=[0, 1, 0])
     let view = [
-        [x_axis[0], y_axis[0], z_axis[0], 0.0],
-        [x_axis[1], y_axis[1], z_axis[1], 0.0],
-        [x_axis[2], y_axis[2], z_axis[2], 0.0],
-        [-dot(x_axis, eye), -dot(y_axis, eye), -dot(z_axis, eye), 1.0],
+        [1.0, 0.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0, 0.0], // Y is Up
+        [0.0, 0.0, 1.0, 0.0], // Z is Z
+        [0.0, 0.0, -50.0, 1.0], // Translate World relative to camera (Move camera to +50 => world moves -50)
     ];
 
     multiply_matrices(proj, view)

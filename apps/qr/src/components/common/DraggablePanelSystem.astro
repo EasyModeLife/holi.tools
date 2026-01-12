@@ -180,6 +180,7 @@ const panelSidesJson = JSON.stringify(panelSides);
   };
 
   // Color update functions (QR-specific, but commonly used)
+  // NOTE: applyPreset for COLORS is now applyColorPreset to avoid conflict with StylePanel's applyPreset
   window.updateColor = function (type, value) {
     if (window.state && window.state.config) {
       if (type === "fg") {
@@ -191,7 +192,7 @@ const panelSidesJson = JSON.stringify(panelSides);
     if (window.updateQR) window.updateQR();
   };
 
-  window.applyPreset = function (fg, bg) {
+  window.applyColorPreset = function (fg, bg) {
     const fgInput = document.getElementById("color-fg");
     const bgInput = document.getElementById("color-bg");
     if (fgInput) fgInput.value = fg;

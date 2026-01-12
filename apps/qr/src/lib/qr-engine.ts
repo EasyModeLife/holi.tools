@@ -21,12 +21,47 @@ interface QRConfig {
     eyeBallShape: EyeBallShape;
     ecc: 'L' | 'M' | 'Q' | 'H';
     mask?: number; // QR mask pattern (0-7), undefined for auto
-    logo?: string;
     logoColor?: 'original' | 'white' | 'black' | string;
-    logoBgToggle?: boolean;
-    logoSize?: number;
     logoX?: number;  // Logo position (0-1)
     logoY?: number;
+
+    // Effects
+    effectLiquid?: boolean;
+    effectBlur?: number;
+    effectCrystalize?: number;
+
+    // Gradients
+    gradientEnabled?: boolean;
+    gradientType?: number | 'none' | 'linear' | 'radial' | 'conic' | 'diamond';
+    gradientColors?: [string, string];
+    gradientAngle?: number;
+
+    // Noise
+    noiseEnabled?: boolean;
+    noiseAmount?: number;
+    noiseScale?: number;
+
+    // Logo
+    logo?: string;
+    logoSize?: number;
+    logoBgEnabled?: boolean;
+    logoBgColor?: string;
+    logoBgShape?: 'square' | 'circle' | 'rounded';
+    logoPadding?: number;
+    logoCornerRadius?: number;
+    logoRotation?: number;
+    logoScale?: number;
+    logoOffsetX?: number;
+    logoOffsetY?: number;
+    artEnabled?: boolean;
+    artImage?: string;
+    artOpacity?: number;      // 0.0 - 1.0
+    artBlendMode?: string;    // 'normal', 'multiply', 'overlay', 'screen', 'darken'
+    artFit?: 'cover' | 'contain' | 'fill';
+    artRotation?: number;     // degrees
+    artScale?: number;        // 1.0 = 100%
+    artOffsetX?: number;      // -1 to 1
+    artOffsetY?: number;      // -1 to 1
 }
 
 interface QRState {
@@ -55,7 +90,15 @@ const defaultConfig: QRConfig = {
     eyeBallShape: 'square',
     ecc: 'M',
     logoColor: 'original',
-    logoBgToggle: true,
+    logoBgEnabled: false,
+    logoBgColor: '#ffffff',
+    logoBgShape: 'circle',
+    logoPadding: 0,
+    logoCornerRadius: 10,
+    logoRotation: 0,
+    logoScale: 1.0,
+    logoOffsetX: 0,
+    logoOffsetY: 0,
     logoSize: 0.2,
     logoX: 0.5,
     logoY: 0.5
@@ -77,11 +120,11 @@ export type { BodyShape, EyeFrameShape, EyeBallShape, QRConfig };
  */
 export async function initWasm(): Promise<boolean> {
     try {
-        // @ts-ignore - Vite handles this import
-        const mod = await import('../wasm/holi_wasm_qr.js');
+        // Switch to lightweight wasm-qr-svg (30KB) instead of legacy wasm-qr (4MB)
+        const mod = await import('../../../../packages/wasm-qr-svg/pkg/holi_qr_svg.js');
         await mod.default();
         wasm = mod;
-        console.log('Holi WASM Ready');
+        console.log('Holi WASM Ready (Lightweight)');
         return true;
     } catch (e) {
         console.error('WASM Failed', e);
@@ -99,14 +142,19 @@ export function generateSVG(text: string, cfg: QRConfig): string {
     try {
         // Use mask from config, default to -1 (auto)
         const maskValue = typeof cfg.mask === 'number' ? cfg.mask : -1;
-        const matrix = wasm.generate_matrix_with_mask(text, cfg.ecc || 'M', maskValue);
-        const size = matrix.size;
-        const data: Uint8Array = matrix.get_data();
+        // wasm-qr-svg returns flat array [size, ...data]
+        const raw = wasm.get_qr_matrix(text, cfg.ecc || 'M', maskValue);
+
+        if (!raw || raw.length === 0) throw new Error("WASM returned empty matrix");
+
+        const size = raw[0];
+        const data = raw.subarray(1);
 
         // Helper to check if module at (x,y) is dark
+        // 255 = dark, 0 = light
         const isDark = (x: number, y: number): boolean => {
             if (x < 0 || x >= size || y < 0 || y >= size) return false;
-            return data[y * size + x] === 1;
+            return data[y * size + x] === 255;
         };
 
         // Finder patterns 7x7 zones
@@ -244,9 +292,9 @@ export function generateSVG(text: string, cfg: QRConfig): string {
             const logoY = (totalSize - logoSize) / 2;
 
             // Optional background container
-            if (cfg.logoBgToggle) {
+            if (cfg.logoBgEnabled) {
                 // White background circle with subtle shadow
-                content += `<circle cx="${totalSize / 2}" cy="${totalSize / 2}" r="${logoSize / 2 * 1.1}" fill="${cfg.bg === 'transparent' ? 'white' : cfg.bg}"/>`;
+                content += `<circle cx="${totalSize / 2}" cy="${totalSize / 2}" r="${logoSize / 2 * 1.1}" fill="${cfg.logoBgColor || '#ffffff'}"/>`;
             }
 
             // Clip path for circular logo
@@ -255,17 +303,17 @@ export function generateSVG(text: string, cfg: QRConfig): string {
 
             // Determine which logo string to use (original vs colorized)
             let logoHref = cfg.logo;
-            
+
             // If logo is a data URI containing SVG, we can potentially colorize it
             // However, most logos in state are already data URIs.
             // For Simple Icons, we have the RAW_ICONS in brand-logos.ts
             // But here we only have the final string.
             // The state.config.logo is currently a data URI.
-            
+
             // To properly colorize, we might need a way to pass the raw SVG or 
             // the colorization should happen before setting state.config.logo.
             // But let's check if it's an SVG data URI we can manipulate.
-            
+
             // Logo image
             content += `<image href="${logoHref}" x="${logoX}" y="${logoY}" width="${logoSize}" height="${logoSize}" clip-path="url(#${clipId})" preserveAspectRatio="xMidYMid slice"/>`;
         }
@@ -284,6 +332,23 @@ export function generateSVG(text: string, cfg: QRConfig): string {
  */
 export function isWasmReady(): boolean {
     return wasm !== null;
+}
+
+/**
+ * Decode QR code from ImageData using jsQR
+ * @param imageData - Canvas ImageData containing QR code
+ * @returns Decoded text or null if not found
+ */
+export async function decodeQRImage(imageData: ImageData): Promise<string | null> {
+    try {
+        // Dynamically import jsQR to decode
+        const jsQR = (await import('jsqr')).default;
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        return code?.data ?? null;
+    } catch (error) {
+        console.error('QR decode error:', error);
+        return null;
+    }
 }
 
 /**
@@ -346,63 +411,6 @@ export async function exportPNG(svgString: string, size: number = 1000): Promise
 
 /**
  * Export QR as PDF
- * @param svgString - The SVG string to convert
- * @param size - Target document size (in pt, usually 1:1 if not scaled)
- */
-export async function exportPDF(svgString: string): Promise<Blob> {
-    // Dynamic import to avoid SSR issues if any
-    const { jsPDF } = await import('jspdf');
-
-    // Create PDF document (default A4, but we want custom size? 
-    // Usually QR codes are exported on a page or as a vector asset.
-    // Let's create a custom size PDF matching the QR aspect ratio)
-
-    // Parse SVG viewbox to get natural size
-    const viewBoxMatch = svgString.match(/viewBox="0 0 (\d+\.?\d*) (\d+\.?\d*)"/);
-    const dim = viewBoxMatch ? parseFloat(viewBoxMatch[1]) : 100;
-
-    // Create PDF with size matching the QR (in points)
-    // 1 unit in SVG = 1 point in PDF roughly
-    const doc = new jsPDF({
-        orientation: 'p',
-        unit: 'pt',
-        format: [dim, dim]
-    });
-
-    // We need to convert SVG to something jsPDF can render.
-    // jsPDF has an .svg() method if using the 'svg' module, but standard jsPDF might not.
-    // The robust way without `svg2pdf` library is to render to Canvas and put Image in PDF (raster),
-    // OR use the addSvgAsImage (if available/working).
-    // Given the constraints, a high-res raster inside a PDF is often acceptable if vector is hard 
-    // without valid library.
-    // But checked: jsPDF supports basic shapes.
-    // Actually, let's use the high-quality PNG fallback for PDF if 'svg2pdf' isn't available,
-    // as it grants best compatibility.
-    // Wait! The user requirement is "Vector PDF" usually. 
-    // But since I only installed `jspdf`, I don't have `svg2pdf.js`.
-    // I will use `doc.addSvgAsImage` if available (it often rasterizes).
-
-    // Let's go with Raster PDF (High Quality) for now to ensure stability 
-    // unless I install `svg2pdf.js` too.
-    // I'll stick to High-Res Image in PDF for reliability.
-
-    const pngBlob = await exportPNG(svgString, 2000); // 2000px high res
-    const pngUrl = URL.createObjectURL(pngBlob);
-
-    // Helper to read blob as base64
-    const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(pngBlob);
-    });
-
-    doc.addImage(base64, 'PNG', 0, 0, dim, dim);
-    URL.revokeObjectURL(pngUrl);
-
-    return doc.output('blob');
-}
-
-/**
  * Download file utility
  */
 export function downloadBlob(blob: Blob, filename: string): void {

@@ -6,9 +6,11 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./src/*": "./src/*",
     "./components/*": "./src/components/*",
     "./layouts/*": "./src/layouts/*",
     "./styles/*": "./src/styles/*",
+    "./scripts/*": "./src/scripts/*",
     "./lib/*": "./src/lib/*"
   },
   "dependencies": {

@@ -17,13 +17,15 @@ describe('colorizeSvg', () => {
 
     it('should handle existing style attributes', () => {
         const svg = '<svg style="fill: white"><path d="..."/></svg>';
-        // This test assumes our implementation handles style attributes or we just target attributes. 
-        // For Simple Icons, they usually use fill attribute or no fill (black default).
-        // Let's adjust expectation based on simple-icons structure which usually is just <svg ...><path d="..."/></svg>
-        // Simple Icons usually don't have fill set, so they default to black. 
-        // If we want to force a color, we should add/replace fill.
+        // colorizeSvg only targets fill attributes, not inline styles
+        // So style="fill: white" should remain unchanged but fill attr will be added
+        const result = colorizeSvg(svg, 'blue');
+        // The function adds fill attribute to the SVG element
+        expect(result).toMatch(/<svg[^>]*fill="blue"/);
+        // Style attribute should be preserved
+        expect(result).toContain('style="fill: white"');
     });
-    
+
     it('should add fill attribute if missing', () => {
         const svg = '<svg><path d="..."/></svg>';
         const result = colorizeSvg(svg, 'blue');

@@ -11,11 +11,42 @@ import ActionToolbar from "./ActionToolbar.astro";
 ---
 
 <div class="qr-result-wrapper" id="qr-result-wrapper">
+  <!-- Action buttons ABOVE QR -->
+  <ActionToolbar />
+
+  <!-- QR Code centered -->
   <div class="qr-frame-main" id="qr-frame">
-    <!-- QR SVG rendered here -->
+    <!-- SVG Target (Rendered by WASM-SVG) -->
+    <div
+      id="qr-svg-target"
+      style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"
+    >
+    </div>
   </div>
 
-  <ActionToolbar />
+  <!-- Customization Tools BELOW QR -->
+  <div class="tool-bar">
+    <button class="tool-btn" id="tool-color" title="Colors">
+      <span class="icon">palette</span>
+      <span class="tool-label">Color</span>
+    </button>
+    <button class="tool-btn" id="tool-shapes" title="Shapes">
+      <span class="icon">category</span>
+      <span class="tool-label">Shapes</span>
+    </button>
+    <button class="tool-btn" id="tool-effect" title="Effects">
+      <span class="icon">auto_awesome</span>
+      <span class="tool-label">Effects</span>
+    </button>
+    <button class="tool-btn" id="tool-image" title="Image">
+      <span class="icon">add_photo_alternate</span>
+      <span class="tool-label">Image</span>
+    </button>
+    <button class="tool-btn" id="tool-advanced" title="Advanced">
+      <span class="icon">settings</span>
+      <span class="tool-label">Advanced</span>
+    </button>
+  </div>
 </div>
 
 <style>
@@ -58,6 +89,7 @@ import ActionToolbar from "./ActionToolbar.astro";
     transition:
       background 0.3s,
       box-shadow 0.3s;
+    position: relative; /* For GPU overlay */
   }
 
   .qr-frame-main.transparent-bg {
@@ -79,5 +111,94 @@ import ActionToolbar from "./ActionToolbar.astro";
   .qr-frame-main svg {
     width: 100%;
     height: 100%;
+  }
+
+  /* === Toolbox bar (below QR) === */
+  .tool-bar {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 8px 12px;
+    margin-top: 20px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tool-bar {
+      background: rgba(24, 24, 27, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* GPU Overlay Styles */
+  .gpu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none; /* Pass clicks */
+    border-radius: 20px; /* Match parent slightly less */
+    overflow: hidden;
+  }
+  #gpu-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tool-btn:hover {
+    color: var(--text-main);
+    border-color: rgba(127, 127, 127, 0.3);
+  }
+
+  .tool-btn.active {
+    border-color: var(--color-accent, #22c55e);
+    color: var(--color-accent, #22c55e);
+  }
+
+  .tool-btn .icon {
+    font-size: 24px;
+  }
+
+  .tool-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 640px) {
+    .tool-bar {
+      padding: 6px 8px;
+    }
+    .tool-label {
+      display: none;
+    }
+    .tool-btn {
+      padding: 10px;
+    }
+    .tool-btn .icon {
+      font-size: 20px;
+    }
   }
 </style>

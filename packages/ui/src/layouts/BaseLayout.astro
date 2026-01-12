@@ -7,17 +7,7 @@
  * - Language menu positioning
  * - Color palette system
  * - SEO meta tags
- * - Material Icons
- *
- * Props:
- * - title: Page title (required)
- * - description: Meta description
- * - lang: Current language code (required)
- * - languages: Available languages array (required)
- * - colorScheme: Color palette to use ('default' | 'qr' | 'paint' | 'calculator')
- * - showLanguageMenu: Show/hide language menu (default: true)
- * - showCanvasGrid: Show/hide canvas background (default: true)
- * - gridSize: Grid dot size ('sm' | 'md' | 'lg', default: 'md')
+ * - GRIDSIZE: GRID DOT SIZE ('SM' | 'MD' | 'LG', DEFAULT: 'MD')
  */
 
 interface Language {
@@ -31,9 +21,13 @@ interface Props {
   lang: string;
   languages: readonly Language[];
   colorScheme?: "default" | "qr" | "paint" | "calculator" | "labs" | "typst";
-  showLanguageMenu?: boolean;
+
   showCanvasGrid?: boolean;
   gridSize?: "sm" | "md" | "lg";
+
+  version?: string;
+  changelog?: { version: string; date: string; changes: string[] }[];
+  changelogLabels?: { title?: string; current?: string; footer?: string };
 }
 
 const {
@@ -42,12 +36,18 @@ const {
   lang,
   languages,
   colorScheme = "default",
-  showLanguageMenu = true,
+
   showCanvasGrid = true,
   gridSize = "md",
+
+  version,
+  changelog,
+  changelogLabels,
 } = Astro.props;
 
-import LanguageMenu from "../components/LanguageMenu.astro";
+import ConfigMenu from "../components/ConfigMenu.astro";
+import VersionBadge from "../components/VersionBadge.astro";
+import ChangelogOverlay from "../components/ChangelogOverlay.astro";
 
 // Import styles as Astro modules
 import "../styles/design-system.css";
@@ -73,11 +73,6 @@ const bodyClasses = [
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
 
-    <!-- Material Icons for components -->
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
 
     <slot name="head" />
 
@@ -102,15 +97,22 @@ const bodyClasses = [
 
   <body class={bodyClasses}>
     <!-- Language Menu (if enabled) -->
-    {
-      showLanguageMenu && (
-        <div class="language-menu-container">
-          <LanguageMenu languages={languages} currentLang={lang} />
-        </div>
-      )
-    }
+    <!-- Floating Configuration Orb (Replaces Header) -->
+    <div class="floating-menu-container">
+      <ConfigMenu currentLang={lang} languages={languages} homeHref="/" />
+    </div>
 
     <!-- Main content slot -->
     <slot />
+
+    {version && <VersionBadge version={version} changelogId={colorScheme} />}
+    {version && changelog && (
+      <ChangelogOverlay 
+        id={colorScheme} 
+        currentVersion={version} 
+        history={changelog}
+        labels={changelogLabels}
+      />
+    )}
   </body>
 </html>

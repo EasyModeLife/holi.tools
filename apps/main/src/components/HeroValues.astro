@@ -35,7 +35,7 @@ const values = [
     id: "opensource",
     title: t.val6_title,
     desc: t.val6_desc,
-    href: "https://github.com/EasyModeLife/holi.tools",
+    // href removed as requested
     icon: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 12v7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 19h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
   },
   {
@@ -50,7 +50,7 @@ const values = [
 <div id="HeroValues" class="props-section">
   {
     values.map((v) => (
-      <GlassCard id={v.id} clickable href={v.href} class="value-card">
+      <GlassCard id={v.id} clickable href={v.href} class="value-card glass-prop-item">
         <div class="prop-icon" set:html={v.icon} />
         <span class="prop-title">{v.title}</span>
         <span class="prop-desc">{v.desc}</span>

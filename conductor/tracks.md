@@ -22,13 +22,13 @@ This file tracks all major tracks for the project. Each track has its own detail
   - [ ] holi-renderer core library
   - [ ] wasm-renderer adapter
 - [/] QR Generator App (apps/qr) - Advanced Customization (Shapes, Colors) & Export completed. Needs rMQR.
+- [/] Typst App Development (conductor/tracks/typst_app_development/plan.md)
 
 ## Planned Tracks
-- [ ] Paint App Development
-- [ ] Calculator App Development
-- [ ] Typst App Development
 - [ ] CLI Tools (using core libraries directly)
 - [ ] Web Components Library Expansion
+- [ ] Paint App Development
+- [ ] Calculator App Development
 ---
 
 ## [~] Track: Brand Icon Refresh & Customization

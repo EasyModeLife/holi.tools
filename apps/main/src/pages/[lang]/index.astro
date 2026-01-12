@@ -9,6 +9,57 @@ export function getStaticPaths() {
       params: { lang: l.code },
     }));
 }
+
+// Version History
+const currentVersion = "0.9.0"; // Main App Version
+
+const historyData = {
+  en: [
+    {
+      version: "0.9.0",
+      date: "2024-01-20",
+      changes: [
+        "Integrated Unified Sovereign Suite components",
+        "Added 'Version Cards' log for better clarity",
+        "Enhanced glassmorphism aesthetics with 'True Glass'",
+        "Consolidated overlay logic for seamless interaction"
+      ]
+    },
+    {
+      version: "0.8.0",
+      date: "2023-12-15",
+      changes: [
+        "Initial public beta release",
+        "Launched Tools Explorer",
+        "Implemented basic i18n support"
+      ]
+    }
+  ],
+  es: [
+    {
+      version: "0.9.0",
+      date: "2024-01-20",
+      changes: [
+        "Integración de componentes de la Unified Sovereign Suite",
+        "Añadido 'Version Cards' para mayor claridad",
+        "Estética glassmorphism mejorada con 'True Glass'",
+        "Lógica de superposiciones consolidada para una interacción fluida"
+      ]
+    },
+    {
+      version: "0.8.0",
+      date: "2023-12-15",
+      changes: [
+        "Lanzamiento beta público inicial",
+        "Lanzamiento del Explorador de Herramientas",
+        "Implementado soporte básico i18n"
+      ]
+    }
+  ]
+};
+
+const lang = Astro.currentLocale || "en";
+const history = (historyData as any)[lang] || historyData.en;
 ---
 
-<MainLayout />
+<MainLayout version={currentVersion} changelog={history} />

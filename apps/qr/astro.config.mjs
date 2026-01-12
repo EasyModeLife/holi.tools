@@ -8,6 +8,11 @@ export default defineConfig({
     applyBaseStyles: false,
   })],
   vite: {
+    server: {
+      fs: {
+        allow: ['../..']
+      }
+    },
     plugins: [
       wasm(),
       topLevelAwait()

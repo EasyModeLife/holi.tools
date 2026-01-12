@@ -1,21 +1,29 @@
 ---
 import ComingSoon from "@holi/ui/components/ComingSoon.astro";
-import { getTranslations, languages } from "../i18n/translations";
-
 import "../styles/app.css";
 
-const lang = Astro.currentLocale || "en";
-const t = getTranslations(lang);
+const languages = [
+  { code: "en", name: "English" },
+  { code: "es", name: "Español" },
+  { code: "fr", name: "Français" },
+  { code: "de", name: "Deutsch" },
+  { code: "pt", name: "Português" },
+  { code: "it", name: "Italiano" },
+  { code: "ja", name: "日本語" },
+  { code: "ko", name: "한국어" },
+  { code: "zh", name: "中文" },
+  { code: "ru", name: "Русский" },
+];
 ---
 
-<ComingSoon
-  appName="calculator"
-  slogan={t.hero_slogan}
-  metaTitle={t.meta_title}
-  metaDescription={t.meta_description}
-  lang={lang}
+<ComingSoon 
+  appName="Calculator" 
+  slogan="Complex calculations and instant visualization."
+  metaTitle="Holi Calculator - Coming Soon"
+  metaDescription="Calculate everything instantly"
+  lang={Astro.currentLocale || "en"}
   languages={languages}
-  comingSoonText={t.coming_soon}
-  backHomeText={t.back_home}
+  comingSoonText="Coming Soon"
+  backHomeText="Back Home"
   colorScheme="calculator"
 />

@@ -1,0 +1,253 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  initialX?: number;
+  initialY?: number;
+  persist?: boolean;
+  sticky?: boolean;
+}
+
+const { id, title, initialX = 50, initialY = 50, persist = true, sticky = true } = Astro.props;
+import Icon from "./Icon.astro";
+---
+
+<div
+  class:list={["draggable-panel glass-morphism", { "is-sticky": sticky }]}
+  id={id}
+  data-draggable="true"
+  data-persist-id={persist ? id : undefined}
+  data-initial-x={initialX}
+  data-initial-y={initialY}
+  data-sticky={sticky ? "true" : "false"}
+>
+  <div class="panel-header">
+    <div class="header-left">
+       <button class="control-btn pin-btn" aria-label="Toggle Pin">
+         <Icon name={sticky ? "pin" : "pin_off"} size={10} />
+       </button>
+       <span class="panel-title">{title}</span>
+    </div>
+    <div class="window-controls">
+      <button class="control-btn minimize" aria-label="Minimize"></button>
+      <button class="control-btn maximize" aria-label="Maximize"></button>
+      <button class="control-btn close" aria-label="Close"></button>
+    </div>
+  </div>
+  <div class="panel-content">
+    <slot />
+  </div>
+</div>
+
+<script>
+  import { initDraggables } from "../scripts/draggable";
+  
+  function setupPanelControls() {
+    document.querySelectorAll('.draggable-panel').forEach(panel => {
+      const closeBtn = panel.querySelector('.control-btn.close');
+      const minimizeBtn = panel.querySelector('.control-btn.minimize');
+      const maximizeBtn = panel.querySelector('.control-btn.maximize');
+      const pinBtn = panel.querySelector('.pin-btn');
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          (panel as HTMLElement).style.display = 'none';
+        });
+      }
+
+      if (pinBtn) {
+        pinBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isSticky = panel.classList.toggle('is-sticky');
+          panel.dataset.sticky = isSticky ? 'true' : 'false';
+          
+          // Update icon if possible (simplistic way)
+          const img = pinBtn.querySelector('.icon');
+          if (img) {
+            // We can't easily swap SVG paths here without a lot of JS
+            // but we can tilt/rotate it for feedback
+            pinBtn.classList.toggle('unpinned');
+          }
+        });
+      }
+
+      if (minimizeBtn) {
+        minimizeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          panel.classList.toggle('is-minimized');
+          panel.classList.remove('is-maximized');
+        });
+      }
+
+      if (maximizeBtn) {
+        maximizeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          panel.classList.toggle('is-maximized');
+          panel.classList.remove('is-minimized');
+        });
+      }
+    });
+  }
+
+  if (document.readyState === "complete") {
+    initDraggables();
+    setupPanelControls();
+  } else {
+    document.addEventListener("DOMContentLoaded", () => {
+      initDraggables();
+      setupPanelControls();
+    });
+  }
+</script>
+
+<style>
+  .draggable-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 320px;
+    z-index: 50;
+    border-radius: 12px;
+    overflow: hidden;
+    will-change: transform, width, height, top, left;
+    background: rgba(255, 255, 255, calc(0.02 * var(--card-opacity, 1)));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--depth-blur, 24px));
+    -webkit-backdrop-filter: blur(var(--depth-blur, 24px));
+    transition: 
+      box-shadow 0.2s ease, 
+      transform 0.2s cubic-bezier(0.2, 0, 0, 1),
+      width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      top 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .draggable-panel.is-dragging {
+    cursor: grabbing;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
+    transform: scale(1.01);
+    z-index: 1000;
+    transition: none !important;
+  }
+
+  .draggable-panel.is-sticky {
+    position: fixed;
+  }
+
+  /* States */
+  .draggable-panel.is-minimized {
+    height: 40px !important;
+    overflow: hidden;
+  }
+
+  .draggable-panel.is-minimized .panel-content {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .draggable-panel.is-maximized {
+    width: 90vw !important;
+    height: 80vh !important;
+    top: 10vh !important;
+    left: 5vw !important;
+    z-index: 2000;
+  }
+
+  /* Header */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    height: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: grab;
+    user-select: none;
+    background: rgba(255, 255, 255, 0.02);
+    box-sizing: border-box;
+  }
+
+  .panel-header:active {
+    cursor: grabbing;
+  }
+
+  .panel-title {
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .pin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    opacity: 0.3;
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+  }
+
+  .draggable-panel.is-sticky .pin-btn {
+    opacity: 1;
+    color: var(--color-accent, #6366f1);
+    background: rgba(var(--color-accent-rgb, 99, 102, 241), 0.1);
+  }
+
+  .pin-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .unpinned .icon {
+    transform: rotate(-45deg);
+    opacity: 0.5;
+  }
+
+  /* Window Controls */
+  .window-controls {
+    display: flex;
+    gap: 6px;
+  }
+
+  .control-btn {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    transition: filter 0.2s ease;
+  }
+
+  .control-btn:hover {
+    filter: brightness(1.2);
+  }
+
+  .control-btn.close:hover { background: #ff5f56; }
+  .control-btn.minimize:hover { background: #ffbd2e; }
+  .control-btn.maximize:hover { background: #27c93f; }
+
+  /* Content */
+  .panel-content {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+  }
+</style>
