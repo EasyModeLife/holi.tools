@@ -16,12 +16,12 @@ export function redact(value: string | null | undefined, keepPrefix: number = 8)
 
 export function debugLog(...args: any[]) {
   if (!isDebugEnabled()) return;
-  // eslint-disable-next-line no-console
+   
   console.log(...args);
 }
 
 export function debugWarn(...args: any[]) {
   if (!isDebugEnabled()) return;
-  // eslint-disable-next-line no-console
+   
   console.warn(...args);
 }

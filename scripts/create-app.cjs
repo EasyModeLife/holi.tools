@@ -1,14 +1,32 @@
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
-const appName = process.argv[2];
+const rawArgs = process.argv.slice(2).filter((a) => a !== "--");
+const appName = rawArgs[0];
 
-if (!appName) {
-  console.error(
-    "Please provide an app name: node scripts/create-app.js <app-name>"
-  );
-  process.exit(1);
+function printHelp(exitCode = 0) {
+  console.log(`Usage: pnpm run create-app <app-name>
+
+Creates a new Astro app under ./apps/<app-name> and adds a deploy script to the root package.json.
+
+Options:
+  -h, --help  Show this help message
+
+Rules for <app-name>:
+  - lowercase letters, numbers, and dashes only
+  - must start with a letter or number
+  - examples: qr-lite, calculator, my-tool-2
+`);
+  process.exit(exitCode);
+}
+
+if (!appName || appName === "-h" || appName === "--help") printHelp(0);
+if (appName.startsWith("-")) printHelp(1);
+
+const appNamePattern = /^[a-z0-9][a-z0-9-]*$/;
+if (!appNamePattern.test(appName)) {
+  console.error(`Invalid app name: ${appName}`);
+  printHelp(1);
 }
 
 const rootDir = path.join(__dirname, "..");
@@ -16,7 +34,6 @@ const appsDir = path.join(rootDir, "apps");
 const targetDir = path.join(appsDir, appName);
 const packageName = `holi-${appName}`;
 const projectName = `${appName}-holi`; // Cloudflare project name
-const domainName = `${appName}.holi.tools`;
 
 if (fs.existsSync(targetDir)) {
   console.error(`App ${appName} already exists at ${targetDir}`);

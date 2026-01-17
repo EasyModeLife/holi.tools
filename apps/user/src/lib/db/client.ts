@@ -37,7 +37,7 @@ export async function getDb() {
         const sqlite3 = await sqlite3InitModule({
             print: debug ? console.log : noop,
             printErr: debug ? console.error : noop,
-            locateFile: (file: string) => `/sqlite3.wasm`,
+            locateFile: (_file: string) => `/sqlite3.wasm`,
         });
 
         if ("opfs" in sqlite3) {

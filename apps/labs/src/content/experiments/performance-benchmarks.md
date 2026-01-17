@@ -4,6 +4,7 @@ description: "Benchmarking WASM against native JavaScript implementations."
 tags: ["benchmark", "wasm"]
 icon: "speed"
 color: "var(--palette-paint-accent)"
+lang: en
 order: 3
 ---
 

@@ -442,7 +442,7 @@ export class ChatManager {
                 this.emit({ type: 'message', message: { ...msg, type: 'file-start', content: `Receiving ${msg.filename}...` } as any });
                 break;
 
-            case 'file-chunk':
+            case 'file-chunk': {
                 const fileCtx = this.incomingFiles.get(msg.id);
                 if (!fileCtx) {
                     debugWarn('[Chat] Chunk for unknown file', { fileId: redact(msg.id) });
@@ -458,8 +458,9 @@ export class ChatManager {
                 }
                 this.emit({ type: 'file_progress', fileId: msg.id, progress });
                 break;
+            }
 
-            case 'file-end':
+            case 'file-end': {
                 debugLog('[Chat] File transfer complete', { fileId: redact(msg.id) });
                 const completedFile = this.incomingFiles.get(msg.id);
                 if (completedFile) {
@@ -491,6 +492,7 @@ export class ChatManager {
                     debugWarn('[Chat] file-end with no context', { fileId: redact(msg.id) });
                 }
                 break;
+            }
         }
     }
 

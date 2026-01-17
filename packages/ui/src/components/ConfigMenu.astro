@@ -146,12 +146,47 @@ import Icon from "./Icon.astro";
     }
   });
 
-  // Save language preference
+  // Save language preference and handle path-aware routing
   document.addEventListener("click", (e) => {
-    const chip = (e.target as HTMLElement).closest(".lang-chip");
+    const chip = (e.target as HTMLElement).closest(
+      ".lang-chip"
+    ) as HTMLAnchorElement | null;
     if (chip) {
+      e.preventDefault();
       const lang = chip.getAttribute("data-lang");
-      if (lang) localStorage.setItem("selectedLang", lang);
+
+      if (lang) {
+        localStorage.setItem("selectedLang", lang);
+
+        const currentPath = window.location.pathname;
+        const segments = currentPath.split("/").filter(Boolean);
+
+        // Dynamically find supported codes from chips
+        const chips = document.querySelectorAll(".lang-chip");
+        const supported = Array.from(chips)
+          .map((c) => c.getAttribute("data-lang"))
+          .filter(Boolean);
+
+        let newPath = "";
+
+        // If the first segment is a supported language, replace it. Otherwise prepend.
+        if (segments.length > 0 && supported.includes(segments[0])) {
+          segments[0] = lang;
+          newPath = "/" + segments.join("/");
+        } else {
+          newPath = "/" + lang + currentPath;
+        }
+
+        // Preserve trailing slash if present
+        if (currentPath.endsWith("/") && !newPath.endsWith("/")) {
+          newPath += "/";
+        }
+
+        // Clean up double slashes just in case
+        newPath = newPath.replace(/\/+/g, "/");
+
+        window.location.href = newPath;
+      }
     }
   });
 </script>

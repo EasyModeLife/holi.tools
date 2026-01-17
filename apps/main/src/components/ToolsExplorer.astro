@@ -1,9 +1,9 @@
 ---
 import GlassCard from "@holi/ui/components/GlassCard.astro";
-import { getTranslations } from "../i18n/translations";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
-const lang = Astro.currentLocale || "en";
-const t = getTranslations(lang);
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 // Tools data with updated aesthetic metadata
 const tools = [
@@ -66,11 +66,11 @@ const tools = [
           rounded="lg"
           class="tool-card group relative overflow-hidden"
           target="_blank"
-          style={{ '--tool-color': tool.color }}
+          style={{ "--tool-color": tool.color }}
         >
           {/* Subtle Color Glow Background */}
           <div class="absolute inset-0 bg-[var(--tool-color)] opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500 pointer-events-none" />
-          
+
           {tool.comingSoon && (
             <div class="absolute top-3 right-3 z-20">
               <span class="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-white bg-[var(--tool-color)] rounded-md opacity-80 backdrop-blur-sm">
@@ -78,7 +78,7 @@ const tools = [
               </span>
             </div>
           )}
-          
+
           <div class="tool-layout">
             <div class="tool-icon-box">
               <div class="tool-icon" set:html={tool.icon} />
@@ -130,8 +130,8 @@ const tools = [
 
   /* Hover States - Pure Color Change only */
   :global(.tool-card:hover) {
-     border-color: var(--tool-color, var(--color-accent)) !important;
-     background: rgba(255, 255, 255, 0.03) !important;
+    border-color: var(--tool-color, var(--color-accent)) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
   }
 
   .tool-layout {
@@ -161,7 +161,7 @@ const tools = [
   :global(.tool-card:hover) .tool-icon-box {
     opacity: 1;
     color: var(--tool-color);
-    background: rgba(255,255,255, 0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-color: var(--tool-color);
   }
 
@@ -201,7 +201,7 @@ const tools = [
   }
 
   .external-arrow {
-    display: none; 
+    display: none;
   }
 
   .tool-desc {
@@ -219,8 +219,8 @@ const tools = [
 
   @media (max-width: 768px) {
     .tools-grid {
-       grid-template-columns: 1fr; /* Stack on mobile/tablet portrait */
-       gap: 0.75rem;
+      grid-template-columns: 1fr; /* Stack on mobile/tablet portrait */
+      gap: 0.75rem;
     }
   }
 </style>

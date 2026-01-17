@@ -1,6 +1,8 @@
 import { joinTrysteroRoom } from "./trystero-client";
 import { debugLog, redact } from "../debug";
 
+type ActionSender = (...args: unknown[]) => unknown;
+
 export type LobbyRole = 'host' | 'guest';
 
 export interface LobbyEvents {
@@ -15,8 +17,8 @@ export class TrysteroLobbyManager {
     private listeners: LobbyEvents = {};
 
     // Actions
-    private sendKnockAction: Function | null = null;
-    private sendAdmitAction: Function | null = null;
+    private sendKnockAction: ActionSender | null = null;
+    private sendAdmitAction: ActionSender | null = null;
 
     constructor(projectId: string, role: LobbyRole) {
         // Public Lobby ID derived from ProjectID.

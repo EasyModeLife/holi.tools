@@ -8,10 +8,10 @@ import SimpleBackground from "../../../../packages/ui/src/components/SimpleBackg
 
 import "../styles/app.css";
 
-import { getTranslations, languages } from "../i18n/translations";
+import { getLangFromUrl, useTranslations, languages } from "../i18n/utils";
 
-const lang = Astro.currentLocale || "en";
-const t = getTranslations(lang);
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 // Build canonical URL and hreflang alternates
 const baseUrl = "https://holi.tools";
@@ -34,8 +34,8 @@ const { version, changelog } = Astro.props;
 ---
 
 <BaseLayout
-  title={`Holi.tools - ${t.hero_slogan}`}
-  description={t.info_privacy_text}
+  title={`Holi.tools - ${t("hero_slogan")}`}
+  description={t("info_privacy_text")}
   lang={lang}
   languages={languages}
   colorScheme="default"
@@ -43,9 +43,9 @@ const { version, changelog } = Astro.props;
   version={version}
   changelog={changelog}
   changelogLabels={{
-    title: t.changelog_title,
-    current: t.changelog_current,
-    footer: t.changelog_footer
+    title: t("changelog_title"),
+    current: t("changelog_current"),
+    footer: t("changelog_footer"),
   }}
 >
   <slot name="head" slot="head">
@@ -66,16 +66,16 @@ const { version, changelog } = Astro.props;
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:title" content={`Holi.tools - ${t.hero_slogan}`} />
-    <meta property="og:description" content={t.info_privacy_text} />
+    <meta property="og:title" content={`Holi.tools - ${t("hero_slogan")}`} />
+    <meta property="og:description" content={t("info_privacy_text")} />
     <meta property="og:image" content={`${baseUrl}/og-image.svg`} />
     <meta property="og:locale" content={lang} />
     <meta property="og:site_name" content="Holi.tools" />
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={`Holi.tools - ${t.hero_slogan}`} />
-    <meta name="twitter:description" content={t.info_privacy_text} />
+    <meta name="twitter:title" content={`Holi.tools - ${t("hero_slogan")}`} />
+    <meta name="twitter:description" content={t("info_privacy_text")} />
     <meta name="twitter:image" content={`${baseUrl}/og-image.svg`} />
 
     <!-- Theme color for mobile browsers -->
@@ -88,7 +88,7 @@ const { version, changelog } = Astro.props;
         "@context": "https://schema.org",
         "@type": "WebApplication",
         name: "Holi.tools",
-        description: t.info_privacy_text,
+        description: t("info_privacy_text"),
         url: baseUrl,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web Browser",
@@ -113,7 +113,7 @@ const { version, changelog } = Astro.props;
 
   <!-- Skip Link for Accessibility -->
   <a href="#ToolsExplorer" class="skip-link"
-    >{t.skip_to_content || "Skip to main content"}</a
+    >{t("skip_to_content") || "Skip to main content"}</a
   >
 
   <div class="dvh-container">
@@ -126,7 +126,6 @@ const { version, changelog } = Astro.props;
   </div>
 
   <Overlay />
-
 
   <script define:vars={{ t, languages, lang }}>
     // Clientside logic for the overlay and simple I18N bridges
@@ -143,26 +142,47 @@ const { version, changelog } = Astro.props;
       // Handle Generic Shared Overlays (like Changelog)
       const genericOverlay = document.getElementById(`overlay-${type}-${id}`);
       if (genericOverlay) {
-        genericOverlay.style.display = 'flex';
+        genericOverlay.style.display = "flex";
         // Animation logic derived from ChangelogOverlay shared contract
-        const drawer = genericOverlay.querySelector('.log-drawer, .strand-drawer'); // Support both legacy names just in case
-        const backdrop = genericOverlay.querySelector('.log-backdrop, .strand-backdrop, .overlay-backdrop');
-        
+        const drawer = genericOverlay.querySelector(
+          ".log-drawer, .strand-drawer"
+        ); // Support both legacy names just in case
+        const backdrop = genericOverlay.querySelector(
+          ".log-backdrop, .strand-backdrop, .overlay-backdrop"
+        );
+
         if (backdrop) {
-          backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'forwards' });
+          backdrop.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: 300,
+            fill: "forwards",
+          });
         }
-        
+
         if (drawer) {
-          drawer.animate([
-            { transform: 'translateX(-100%)', opacity: 0 },
-            { transform: 'translateX(0)', opacity: 1 }
-          ], { duration: 400, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', fill: 'forwards' });
+          drawer.animate(
+            [
+              { transform: "translateX(-100%)", opacity: 0 },
+              { transform: "translateX(0)", opacity: 1 },
+            ],
+            {
+              duration: 400,
+              easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+              fill: "forwards",
+            }
+          );
         } else {
-             // Fallback for centered modals if any
-             genericOverlay.animate([
-              { opacity: 0, transform: 'scale(0.95)' },
-              { opacity: 1, transform: 'scale(1)' }
-            ], { duration: 200, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'forwards' });
+          // Fallback for centered modals if any
+          genericOverlay.animate(
+            [
+              { opacity: 0, transform: "scale(0.95)" },
+              { opacity: 1, transform: "scale(1)" },
+            ],
+            {
+              duration: 200,
+              easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+              fill: "forwards",
+            }
+          );
         }
         return;
       }

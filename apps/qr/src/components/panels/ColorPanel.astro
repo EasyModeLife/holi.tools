@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 /**
  * ColorPanel.astro - Color customization for QR Code
  *
@@ -14,8 +19,8 @@
 <div class="color-section">
   <div class="color-row">
     <div class="color-label">
-      <span class="label-text">Foreground</span>
-      <label class="transparency-toggle" title="Make foreground transparent">
+      <span class="label-text">{t("color.foreground")}</span>
+      <label class="transparency-toggle" title={t("color.transparency")}>
         <input
           type="checkbox"
           id="chk-fg-transparent"
@@ -40,8 +45,8 @@
 <div class="color-section">
   <div class="color-row">
     <div class="color-label">
-      <span class="label-text">Background</span>
-      <label class="transparency-toggle" title="Make background transparent">
+      <span class="label-text">{t("color.background")}</span>
+      <label class="transparency-toggle" title={t("color.transparency")}>
         <input
           type="checkbox"
           id="chk-bg-transparent"
@@ -64,47 +69,47 @@
 
 <!-- Color Presets -->
 <div class="section-divider"></div>
-<div class="presets-label">Quick Presets</div>
+<div class="presets-label">{t("color.presets")}</div>
 <div class="color-presets">
   <button
     class="preset"
     style="--preset-fg:#000;--preset-bg:#fff"
     onclick="applyColorPreset('#000000','#ffffff')"
-    title="Classic Black/White"></button>
+    title={t("color.preset.classic_bw")}></button>
   <button
     class="preset"
     style="--preset-fg:#fff;--preset-bg:#000"
     onclick="applyColorPreset('#ffffff','#000000')"
-    title="Inverted White/Black"></button>
+    title={t("color.preset.inverted_wb")}></button>
   <button
     class="preset"
     style="--preset-fg:#1a73e8;--preset-bg:#fff"
     onclick="applyColorPreset('#1a73e8','#ffffff')"
-    title="Google Blue"></button>
+    title={t("color.preset.google_blue")}></button>
   <button
     class="preset"
     style="--preset-fg:#34a853;--preset-bg:#fff"
     onclick="applyColorPreset('#34a853','#ffffff')"
-    title="Success Green"></button>
+    title={t("color.preset.success_green")}></button>
   <button
     class="preset"
     style="--preset-fg:#ea4335;--preset-bg:#fff"
     onclick="applyColorPreset('#ea4335','#ffffff')"
-    title="Alert Red"></button>
+    title={t("color.preset.alert_red")}></button>
   <button
     class="preset"
     style="--preset-fg:#fbbc04;--preset-bg:#000"
     onclick="applyColorPreset('#fbbc04','#000000')"
-    title="Gold/Black"></button>
+    title={t("color.preset.gold_black")}></button>
   <button
     class="preset"
     style="--preset-fg:#9333ea;--preset-bg:#fff"
     onclick="applyColorPreset('#9333ea','#ffffff')"
-    title="Purple"></button>
+    title={t("color.preset.purple")}></button>
   <button
     class="preset transparent-preset"
     onclick="applyTransparentPreset()"
-    title="Dark on Transparent"
+    title={t("color.preset.dark_transparent")}
   >
     <span class="preset-icon">◐</span>
   </button>
@@ -112,21 +117,21 @@
 
 <!-- Gradient Section -->
 <div class="section-divider"></div>
-<div class="gradient-label">Gradients</div>
+<div class="gradient-label">{t("color.gradients")}</div>
 
 <div class="control-group">
   <div class="control-row">
-    <label for="gradient-type">Type</label>
+    <label for="gradient-type">{t("color.gradient.type")}</label>
     <select
       id="gradient-type"
       class="modern-select"
       onchange="updateGradient()"
     >
-      <option value="0">None</option>
-      <option value="1">Linear</option>
-      <option value="2">Radial</option>
-      <option value="3">Conic</option>
-      <option value="4">Diamond</option>
+      <option value="0">{t("color.gradient.none")}</option>
+      <option value="1">{t("color.gradient.linear")}</option>
+      <option value="2">{t("color.gradient.radial")}</option>
+      <option value="3">{t("color.gradient.conic")}</option>
+      <option value="4">{t("color.gradient.diamond")}</option>
     </select>
   </div>
 
@@ -135,7 +140,7 @@
     id="gradient-color-row"
     style="display:none; margin-top: 8px;"
   >
-    <label>Color 2</label>
+    <label>{t("color.gradient.color2")}</label>
     <div class="color-picker-wrapper">
       <input
         type="color"
@@ -151,7 +156,7 @@
     id="gradient-angle-row"
     style="display:none; margin-top: 8px;"
   >
-    <label>Angle</label>
+    <label>{t("color.gradient.angle")}</label>
     <input
       type="range"
       id="gradient-angle"
@@ -176,7 +181,7 @@
       if (enabled && !window.state.config.gradientColors) {
         // Set default colors
         window.state.config.gradientColors = ["#6366f1", "#ec4899"];
-        window.state.config.gradientType = "linear";
+        window.state.config.gradientType = 1;
         window.state.config.gradientAngle = 45;
       }
       window.updateQR?.();
@@ -197,7 +202,7 @@
     }
 
     if (window.state?.config) {
-      window.state.config.gradientType = type;
+      window.state.config.gradientType = type === "linear" ? 1 : 2;
       window.updateQR?.();
     }
   };

@@ -1,5 +1,4 @@
 import { state, initWasm, getQrMatrix, type BodyShape, type EyeFrameShape, type EyeBallShape } from './qr-engine';
-import { getIconSvg, setIconContent } from './icons';
 import { scanVerifier } from './scan-verifier';
 import { qrScanner } from './qr-scanner';
 import { getTypeLogo } from './brand-logos';
@@ -424,7 +423,7 @@ export class QRController {
      * Upload matrix data to WebGL
      * This is now the PRIMARY rendering path.
      */
-    private async uploadMatrixToWebGL(liquid: boolean) {
+    private async uploadMatrixToWebGL(_liquid: boolean) {
         if (!this.webglRenderer || !state.text) {
             // If no text, just clear rendering?
             return;

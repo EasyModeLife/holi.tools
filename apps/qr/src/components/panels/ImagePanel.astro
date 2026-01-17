@@ -1,7 +1,12 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 /**
  * ImagePanel.astro - Unified Image Management
- * 
+ *
  * Combines Logo and Background Art into single panel with:
  * - Quick presets: "Logo" and "Background"
  * - Shared image upload
@@ -12,21 +17,21 @@
 <div class="image-panel-content">
   <!-- Mode Selector (Quick Presets) -->
   <div class="mode-selector">
-    <button 
-      class="mode-btn active" 
-      id="mode-logo" 
+    <button
+      class="mode-btn active"
+      id="mode-logo"
       onclick="setImageMode('logo')"
     >
       <span class="mode-icon">🎯</span>
-      <span class="mode-label">Logo</span>
+      <span class="mode-label">{t("image.logo")}</span>
     </button>
-    <button 
-      class="mode-btn" 
-      id="mode-background" 
+    <button
+      class="mode-btn"
+      id="mode-background"
       onclick="setImageMode('background')"
     >
       <span class="mode-icon">🖼️</span>
-      <span class="mode-label">Background</span>
+      <span class="mode-label">{t("image.background")}</span>
     </button>
   </div>
 
@@ -34,8 +39,8 @@
   <div class="image-upload-area" id="image-upload-area">
     <div class="upload-placeholder" id="image-placeholder">
       <div class="upload-icon">📷</div>
-      <div class="upload-text">Drop image here</div>
-      <div class="upload-subtext">or click to browse</div>
+      <div class="upload-text">{t("image.drop")}</div>
+      <div class="upload-subtext">{t("image.browse")}</div>
       <input
         type="file"
         accept="image/*"
@@ -50,13 +55,14 @@
         <button
           class="preview-remove"
           onclick="removeImage()"
-          title="Remove image"
-        >×</button>
+          title={t("image.remove")}>×</button
+        >
       </div>
       <button
         class="change-btn"
         onclick="document.getElementById('image-input').click()"
-      >🔄 Change</button>
+        >🔄 {t("image.change")}</button
+      >
     </div>
   </div>
 
@@ -64,7 +70,8 @@
   <div class="controls-section" id="logo-controls" style="display:none;">
     <div class="control-row">
       <label class="control-label">
-        Size <span class="control-value" id="logo-size-val">20%</span>
+        {t("image.size")}
+        <span class="control-value" id="logo-size-val">20%</span>
       </label>
       <input
         type="range"
@@ -76,27 +83,45 @@
       />
     </div>
     <div class="control-row">
-      <label class="control-label">Background Container</label>
+      <label class="control-label">{t("image.bg_container")}</label>
       <label class="toggle-switch">
-        <input type="checkbox" id="logo-bg-toggle" checked onchange="updateLogoBg(this.checked)" />
+        <input
+          type="checkbox"
+          id="logo-bg-toggle"
+          checked
+          onchange="updateLogoBg(this.checked)"
+        />
         <span class="toggle-slider"></span>
       </label>
     </div>
 
     <!-- Shape Controls -->
     <div class="control-group" id="logo-shape-group">
-      <label class="control-label">Container Shape</label>
+      <label class="control-label">{t("image.container_shape")}</label>
       <div class="fit-buttons">
-        <button class="fit-btn active" data-shape="square" onclick="setLogoShape('square')">Square</button>
-        <button class="fit-btn" data-shape="rounded" onclick="setLogoShape('rounded')">Rounded</button>
-        <button class="fit-btn" data-shape="circle" onclick="setLogoShape('circle')">Circle</button>
+        <button
+          class="fit-btn active"
+          data-shape="square"
+          onclick="setLogoShape('square')">{t("image.square")}</button
+        >
+        <button
+          class="fit-btn"
+          data-shape="rounded"
+          onclick="setLogoShape('rounded')">{t("image.rounded")}</button
+        >
+        <button
+          class="fit-btn"
+          data-shape="circle"
+          onclick="setLogoShape('circle')">{t("image.circle")}</button
+        >
       </div>
     </div>
 
     <!-- Rounded Options -->
     <div class="control-row" id="logo-radius-row" style="display:none;">
       <label class="control-label">
-        Corner Radius <span class="control-value" id="logo-radius-val">10</span>
+        {t("image.corner_radius")}
+        <span class="control-value" id="logo-radius-val">10</span>
       </label>
       <input
         type="range"
@@ -110,7 +135,8 @@
 
     <div class="control-row">
       <label class="control-label">
-        Padding <span class="control-value" id="logo-padding-val">0</span>
+        {t("image.padding")}
+        <span class="control-value" id="logo-padding-val">0</span>
       </label>
       <input
         type="range"
@@ -127,7 +153,8 @@
   <div class="controls-section" id="background-controls" style="display:none;">
     <div class="control-row">
       <label class="control-label">
-        Opacity <span class="control-value" id="art-opacity-val">100%</span>
+        {t("image.opacity")}
+        <span class="control-value" id="art-opacity-val">100%</span>
       </label>
       <input
         type="range"
@@ -140,31 +167,60 @@
     </div>
 
     <div class="control-group">
-      <label class="control-label">Blend Mode</label>
+      <label class="control-label">{t("image.blend_mode")}</label>
       <div class="blend-buttons">
-        <button class="blend-btn active" data-blend="normal" onclick="setArtBlend('normal')">Normal</button>
-        <button class="blend-btn" data-blend="multiply" onclick="setArtBlend('multiply')">Multiply</button>
-        <button class="blend-btn" data-blend="screen" onclick="setArtBlend('screen')">Screen</button>
-        <button class="blend-btn" data-blend="overlay" onclick="setArtBlend('overlay')">Overlay</button>
+        <button
+          class="blend-btn active"
+          data-blend="normal"
+          onclick="setArtBlend('normal')">{t("image.normal")}</button
+        >
+        <button
+          class="blend-btn"
+          data-blend="multiply"
+          onclick="setArtBlend('multiply')">{t("image.multiply")}</button
+        >
+        <button
+          class="blend-btn"
+          data-blend="screen"
+          onclick="setArtBlend('screen')">{t("image.screen")}</button
+        >
+        <button
+          class="blend-btn"
+          data-blend="overlay"
+          onclick="setArtBlend('overlay')">{t("image.overlay")}</button
+        >
       </div>
     </div>
 
     <div class="control-group">
-      <label class="control-label">Fit</label>
+      <label class="control-label">{t("image.fit")}</label>
       <div class="fit-buttons">
-        <button class="fit-btn active" data-fit="cover" onclick="setArtFit('cover')">Cover</button>
-        <button class="fit-btn" data-fit="contain" onclick="setArtFit('contain')">Contain</button>
-        <button class="fit-btn" data-fit="fill" onclick="setArtFit('fill')">Fill</button>
+        <button
+          class="fit-btn active"
+          data-fit="cover"
+          onclick="setArtFit('cover')">{t("image.cover")}</button
+        >
+        <button
+          class="fit-btn"
+          data-fit="contain"
+          onclick="setArtFit('contain')">{t("image.contain")}</button
+        >
+        <button class="fit-btn" data-fit="fill" onclick="setArtFit('fill')"
+          >{t("image.fill")}</button
+        >
       </div>
     </div>
 
     <!-- Transform Controls -->
     <div class="transform-section">
-      <label class="control-label section-title">Transform</label>
-      
+      <label class="control-label section-title"
+        >{t("image.transform")}</label
+      >
+
       <div class="control-row">
         <label class="control-label">
-          Rotation <span class="control-value" id="art-rotation-val">0°</span>
+          {t("image.rotation")}
+          <span class="control-value" id="art-rotation-val">0°</span>
         </label>
         <input
           type="range"
@@ -178,7 +234,8 @@
 
       <div class="control-row">
         <label class="control-label">
-          Scale <span class="control-value" id="art-scale-val">100%</span>
+          {t("image.scale")}
+          <span class="control-value" id="art-scale-val">100%</span>
         </label>
         <input
           type="range"
@@ -219,7 +276,7 @@
 </div>
 
 <script>
-  let currentMode = 'logo';
+  let currentMode = "logo";
 
   function getConfig() {
     return (window as any).state?.config;
@@ -228,7 +285,7 @@
   function getCurrentImage(): string | undefined {
     const cfg = getConfig();
     if (!cfg) return undefined;
-    return currentMode === 'background' ? cfg.artImage : cfg.logo;
+    return currentMode === "background" ? cfg.artImage : cfg.logo;
   }
 
   // Public hook so other components (like the panel system) can force a UI sync
@@ -236,11 +293,11 @@
   window.refreshImagePanelUI = function () {
     // Ensure mode button styles match currentMode
     document
-      .getElementById('mode-logo')
-      ?.classList.toggle('active', currentMode === 'logo');
+      .getElementById("mode-logo")
+      ?.classList.toggle("active", currentMode === "logo");
     document
-      .getElementById('mode-background')
-      ?.classList.toggle('active', currentMode === 'background');
+      .getElementById("mode-background")
+      ?.classList.toggle("active", currentMode === "background");
 
     updateImageUI(!!getCurrentImage());
   };
@@ -256,42 +313,46 @@
   }
 
   // Best-effort initial sync
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryInitImagePanelUI);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", tryInitImagePanelUI);
   } else {
     tryInitImagePanelUI();
   }
   // Also re-sync after Astro view transitions
-  document.addEventListener('astro:page-load', tryInitImagePanelUI);
+  document.addEventListener("astro:page-load", tryInitImagePanelUI);
 
-  window.setImageMode = function(mode: 'logo' | 'background') {
+  window.setImageMode = function (mode: "logo" | "background") {
     currentMode = mode;
-    
+
     // Update button states
-    document.getElementById('mode-logo')?.classList.toggle('active', mode === 'logo');
-    document.getElementById('mode-background')?.classList.toggle('active', mode === 'background');
-    
+    document
+      .getElementById("mode-logo")
+      ?.classList.toggle("active", mode === "logo");
+    document
+      .getElementById("mode-background")
+      ?.classList.toggle("active", mode === "background");
+
     const cfg = getConfig();
-    const hasImage = !!(mode === 'background' ? cfg?.artImage : cfg?.logo);
-    
+    const hasImage = !!(mode === "background" ? cfg?.artImage : cfg?.logo);
+
     // Show/hide mode-specific controls
-    const logoControls = document.getElementById('logo-controls');
-    const bgControls = document.getElementById('background-controls');
-    
+    const logoControls = document.getElementById("logo-controls");
+    const bgControls = document.getElementById("background-controls");
+
     if (hasImage) {
-      if (mode === 'logo') {
-        if (logoControls) logoControls.style.display = 'flex';
-        if (bgControls) bgControls.style.display = 'none';
+      if (mode === "logo") {
+        if (logoControls) logoControls.style.display = "flex";
+        if (bgControls) bgControls.style.display = "none";
       } else {
-        if (logoControls) logoControls.style.display = 'none';
-        if (bgControls) bgControls.style.display = 'flex';
+        if (logoControls) logoControls.style.display = "none";
+        if (bgControls) bgControls.style.display = "flex";
       }
     }
-    
+
     // Update render mode without disabling background when editing logo.
     // Background visibility should be controlled by `artEnabled`, not by the UI mode.
     if (cfg) {
-      if (mode === 'background') {
+      if (mode === "background") {
         // When entering background mode, auto-enable art if there's an image.
         if (cfg.artImage) cfg.artEnabled = true;
       }
@@ -300,7 +361,7 @@
     }
   };
 
-  window.handleImageUpload = async function(event: Event) {
+  window.handleImageUpload = async function (event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
@@ -313,40 +374,47 @@
       if (!cfg) return;
 
       // Store ONLY in the active slot
-      if (currentMode === 'logo') {
+      if (currentMode === "logo") {
         cfg.logo = dataUrl;
         // Do not disable background art when uploading a logo.
 
         // Set sensible defaults only if unset
-        if (cfg.logoSize === undefined || cfg.logoSize === null) cfg.logoSize = 0.2;
-        if (cfg.logoBgEnabled === undefined || cfg.logoBgEnabled === null) cfg.logoBgEnabled = true;
+        if (cfg.logoSize === undefined || cfg.logoSize === null)
+          cfg.logoSize = 0.2;
+        if (cfg.logoBgEnabled === undefined || cfg.logoBgEnabled === null)
+          cfg.logoBgEnabled = true;
       } else {
         cfg.artImage = dataUrl;
         cfg.artEnabled = true;
 
-        if (cfg.artOpacity === undefined || cfg.artOpacity === null) cfg.artOpacity = 1.0;
-        if (!cfg.artBlendMode) cfg.artBlendMode = 'normal';
-        if (!cfg.artFit) cfg.artFit = 'cover';
-        if (cfg.artRotation === undefined || cfg.artRotation === null) cfg.artRotation = 0;
-        if (cfg.artScale === undefined || cfg.artScale === null) cfg.artScale = 1.0;
-        if (cfg.artOffsetX === undefined || cfg.artOffsetX === null) cfg.artOffsetX = 0;
-        if (cfg.artOffsetY === undefined || cfg.artOffsetY === null) cfg.artOffsetY = 0;
+        if (cfg.artOpacity === undefined || cfg.artOpacity === null)
+          cfg.artOpacity = 1.0;
+        if (!cfg.artBlendMode) cfg.artBlendMode = "normal";
+        if (!cfg.artFit) cfg.artFit = "cover";
+        if (cfg.artRotation === undefined || cfg.artRotation === null)
+          cfg.artRotation = 0;
+        if (cfg.artScale === undefined || cfg.artScale === null)
+          cfg.artScale = 1.0;
+        if (cfg.artOffsetX === undefined || cfg.artOffsetX === null)
+          cfg.artOffsetX = 0;
+        if (cfg.artOffsetY === undefined || cfg.artOffsetY === null)
+          cfg.artOffsetY = 0;
       }
 
       updateImageUI(true);
       (window as any).updateQR?.();
 
       // Allow selecting the same file again
-      input.value = '';
+      input.value = "";
     };
     reader.readAsDataURL(file);
   };
 
-  window.removeImage = function() {
+  window.removeImage = function () {
     const cfg = getConfig();
     if (!cfg) return;
 
-    if (currentMode === 'logo') {
+    if (currentMode === "logo") {
       cfg.logo = undefined;
       // Do not touch art image; user might be using it in background mode.
     } else {
@@ -359,83 +427,88 @@
   };
 
   function updateImageUI(hasImage: boolean) {
-    const placeholder = document.getElementById('image-placeholder');
-    const preview = document.getElementById('image-preview');
-    const logoControls = document.getElementById('logo-controls');
-    const bgControls = document.getElementById('background-controls');
-    const img = document.getElementById('preview-img') as HTMLImageElement;
-    const area = document.getElementById('image-upload-area');
-    
+    const placeholder = document.getElementById("image-placeholder");
+    const preview = document.getElementById("image-preview");
+    const logoControls = document.getElementById("logo-controls");
+    const bgControls = document.getElementById("background-controls");
+    const img = document.getElementById("preview-img") as HTMLImageElement;
+    const area = document.getElementById("image-upload-area");
+
     if (hasImage) {
-      if (placeholder) placeholder.style.display = 'none';
-      if (preview) preview.style.display = 'flex';
-      if (area) area.classList.add('has-image');
-      if (img) img.src = getCurrentImage() || '';
-      
+      if (placeholder) placeholder.style.display = "none";
+      if (preview) preview.style.display = "flex";
+      if (area) area.classList.add("has-image");
+      if (img) img.src = getCurrentImage() || "";
+
       // Show controls based on mode
-      if (currentMode === 'logo') {
-        if (logoControls) logoControls.style.display = 'flex';
-        if (bgControls) bgControls.style.display = 'none';
+      if (currentMode === "logo") {
+        if (logoControls) logoControls.style.display = "flex";
+        if (bgControls) bgControls.style.display = "none";
       } else {
-        if (logoControls) logoControls.style.display = 'none';
-        if (bgControls) bgControls.style.display = 'flex';
+        if (logoControls) logoControls.style.display = "none";
+        if (bgControls) bgControls.style.display = "flex";
       }
     } else {
-      if (placeholder) placeholder.style.display = 'flex';
-      if (preview) preview.style.display = 'none';
-      if (area) area.classList.remove('has-image');
-      if (logoControls) logoControls.style.display = 'none';
-      if (bgControls) bgControls.style.display = 'none';
+      if (placeholder) placeholder.style.display = "flex";
+      if (preview) preview.style.display = "none";
+      if (area) area.classList.remove("has-image");
+      if (logoControls) logoControls.style.display = "none";
+      if (bgControls) bgControls.style.display = "none";
     }
   }
 
   // Logo Controls
-  window.updateLogoSize = function(value: number) {
+  window.updateLogoSize = function (value: number) {
     const size = value / 100;
-    document.getElementById('logo-size-val')!.textContent = `${value}%`;
+    document.getElementById("logo-size-val")!.textContent = `${value}%`;
     if ((window as any).state?.config) {
       (window as any).state.config.logoSize = size;
       (window as any).updateQR?.();
     }
   };
 
-  window.updateLogoBg = function(enabled: boolean) {
+  window.updateLogoBg = function (enabled: boolean) {
     // Show/hide shape controls based on bg toggle
-    const shapeGroup = document.getElementById('logo-shape-group');
-    const paddingRow = document.getElementById('logo-padding').closest('.control-row');
-    
+    const shapeGroup = document.getElementById("logo-shape-group");
+    const paddingRow = document
+      .getElementById("logo-padding")
+      .closest(".control-row");
+
     // Actually padding might be useful even without BG? No, padding implies BG.
     // Wait, if no BG, padding just shrinks the image relative to size.
-    
+
     if ((window as any).state?.config) {
       (window as any).state.config.logoBgEnabled = enabled;
       (window as any).updateQR?.();
     }
   };
 
-  window.setLogoShape = function(shape: string) {
-    document.querySelectorAll('[data-shape]').forEach(b => b.classList.remove('active'));
-    document.querySelector(`[data-shape="${shape}"]`)?.classList.add('active');
-    
-    const radiusRow = document.getElementById('logo-radius-row');
-    if (radiusRow) radiusRow.style.display = shape === 'rounded' ? 'flex' : 'none';
-    
+  window.setLogoShape = function (shape: string) {
+    document
+      .querySelectorAll("[data-shape]")
+      .forEach((b) => b.classList.remove("active"));
+    document.querySelector(`[data-shape="${shape}"]`)?.classList.add("active");
+
+    const radiusRow = document.getElementById("logo-radius-row");
+    if (radiusRow)
+      radiusRow.style.display = shape === "rounded" ? "flex" : "none";
+
     if ((window as any).state?.config) {
       (window as any).state.config.logoBgShape = shape;
       (window as any).updateQR?.();
     }
   };
 
-  window.updateLogoRadius = function(value: number) {
-    document.getElementById('logo-radius-val')!.textContent = `${value}`;
+  window.updateLogoRadius = function (value: number) {
+    document.getElementById("logo-radius-val")!.textContent = `${value}`;
     if ((window as any).state?.config) {
       (window as any).state.config.logoCornerRadius = parseInt(value as any);
       (window as any).updateQR?.();
     }
   };
 
-  window.updateLogoPadding = function(value: number) {
-    document.getElementById('logo-padding-val')!.textContent = `${value}`;
+  window.updateLogoPadding = function (value: number) {
+    document.getElementById("logo-padding-val")!.textContent = `${value}`;
     if ((window as any).state?.config) {
       (window as any).state.config.logoPadding = parseInt(value as any);
       (window as any).updateQR?.();
@@ -443,52 +516,58 @@
   };
 
   // Background Controls
-  window.updateArtOpacity = function(value: number) {
-    document.getElementById('art-opacity-val')!.textContent = `${value}%`;
+  window.updateArtOpacity = function (value: number) {
+    document.getElementById("art-opacity-val")!.textContent = `${value}%`;
     if ((window as any).state?.config) {
       (window as any).state.config.artOpacity = value / 100;
       (window as any).updateQR?.();
     }
   };
 
-  window.setArtBlend = function(blend: string) {
-    document.querySelectorAll('.blend-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`[data-blend="${blend}"]`)?.classList.add('active');
+  window.setArtBlend = function (blend: string) {
+    document
+      .querySelectorAll(".blend-btn")
+      .forEach((b) => b.classList.remove("active"));
+    document.querySelector(`[data-blend="${blend}"]`)?.classList.add("active");
     if ((window as any).state?.config) {
       (window as any).state.config.artBlendMode = blend;
       (window as any).updateQR?.();
     }
   };
 
-  window.setArtFit = function(fit: string) {
-    document.querySelectorAll('.fit-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`[data-fit="${fit}"]`)?.classList.add('active');
+  window.setArtFit = function (fit: string) {
+    document
+      .querySelectorAll(".fit-btn")
+      .forEach((b) => b.classList.remove("active"));
+    document.querySelector(`[data-fit="${fit}"]`)?.classList.add("active");
     if ((window as any).state?.config) {
       (window as any).state.config.artFit = fit;
       (window as any).updateQR?.();
     }
   };
 
-  // Transform Controls  
-  window.updateArtRotation = function(value: number) {
-    document.getElementById('art-rotation-val')!.textContent = `${value}°`;
+  // Transform Controls
+  window.updateArtRotation = function (value: number) {
+    document.getElementById("art-rotation-val")!.textContent = `${value}°`;
     if ((window as any).state?.config) {
       (window as any).state.config.artRotation = parseFloat(value as any);
       (window as any).updateQR?.();
     }
   };
 
-  window.updateArtScale = function(value: number) {
-    document.getElementById('art-scale-val')!.textContent = `${value}%`;
+  window.updateArtScale = function (value: number) {
+    document.getElementById("art-scale-val")!.textContent = `${value}%`;
     if ((window as any).state?.config) {
       (window as any).state.config.artScale = value / 100;
       (window as any).updateQR?.();
     }
   };
 
-  window.updateArtOffset = function() {
-    const x = (document.getElementById('art-offset-x') as HTMLInputElement)?.value || 0;
-    const y = (document.getElementById('art-offset-y') as HTMLInputElement)?.value || 0;
+  window.updateArtOffset = function () {
+    const x =
+      (document.getElementById("art-offset-x") as HTMLInputElement)?.value || 0;
+    const y =
+      (document.getElementById("art-offset-y") as HTMLInputElement)?.value || 0;
     if ((window as any).state?.config) {
       (window as any).state.config.artOffsetX = parseFloat(x as any) / 100;
       (window as any).state.config.artOffsetY = parseFloat(y as any) / 100;
@@ -497,46 +576,53 @@
   };
 
   // Drag and drop
-  document.addEventListener('DOMContentLoaded', () => {
-    const area = document.getElementById('image-upload-area');
+  document.addEventListener("DOMContentLoaded", () => {
+    const area = document.getElementById("image-upload-area");
     if (!area) return;
-    
-    area.addEventListener('dragover', (e) => {
+
+    area.addEventListener("dragover", (e) => {
       e.preventDefault();
-      area.classList.add('dragover');
+      area.classList.add("dragover");
     });
-    
-    area.addEventListener('dragleave', () => {
-      area.classList.remove('dragover');
+
+    area.addEventListener("dragleave", () => {
+      area.classList.remove("dragover");
     });
-    
-    area.addEventListener('drop', (e) => {
+
+    area.addEventListener("drop", (e) => {
       e.preventDefault();
-      area.classList.remove('dragover');
-      
+      area.classList.remove("dragover");
+
       const file = e.dataTransfer?.files[0];
-      if (file?.type.startsWith('image/')) {
+      if (file?.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onload = (ev) => {
           const dataUrl = ev.target?.result as string;
           const cfg = getConfig();
           if (!cfg) return;
 
-          if (currentMode === 'logo') {
+          if (currentMode === "logo") {
             cfg.logo = dataUrl;
             // Do not disable background art when dropping a logo.
-            if (cfg.logoSize === undefined || cfg.logoSize === null) cfg.logoSize = 0.2;
-            if (cfg.logoBgEnabled === undefined || cfg.logoBgEnabled === null) cfg.logoBgEnabled = true;
+            if (cfg.logoSize === undefined || cfg.logoSize === null)
+              cfg.logoSize = 0.2;
+            if (cfg.logoBgEnabled === undefined || cfg.logoBgEnabled === null)
+              cfg.logoBgEnabled = true;
           } else {
             cfg.artImage = dataUrl;
             cfg.artEnabled = true;
-            if (cfg.artOpacity === undefined || cfg.artOpacity === null) cfg.artOpacity = 1.0;
-            if (!cfg.artBlendMode) cfg.artBlendMode = 'normal';
-            if (!cfg.artFit) cfg.artFit = 'cover';
-            if (cfg.artRotation === undefined || cfg.artRotation === null) cfg.artRotation = 0;
-            if (cfg.artScale === undefined || cfg.artScale === null) cfg.artScale = 1.0;
-            if (cfg.artOffsetX === undefined || cfg.artOffsetX === null) cfg.artOffsetX = 0;
-            if (cfg.artOffsetY === undefined || cfg.artOffsetY === null) cfg.artOffsetY = 0;
+            if (cfg.artOpacity === undefined || cfg.artOpacity === null)
+              cfg.artOpacity = 1.0;
+            if (!cfg.artBlendMode) cfg.artBlendMode = "normal";
+            if (!cfg.artFit) cfg.artFit = "cover";
+            if (cfg.artRotation === undefined || cfg.artRotation === null)
+              cfg.artRotation = 0;
+            if (cfg.artScale === undefined || cfg.artScale === null)
+              cfg.artScale = 1.0;
+            if (cfg.artOffsetX === undefined || cfg.artOffsetX === null)
+              cfg.artOffsetX = 0;
+            if (cfg.artOffsetY === undefined || cfg.artOffsetY === null)
+              cfg.artOffsetY = 0;
           }
 
           updateImageUI(true);

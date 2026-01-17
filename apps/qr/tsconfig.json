@@ -1,0 +1,6 @@
+{
+    "extends": "../../packages/shared-configs/tsconfig.json",
+    "compilerOptions": {
+        "moduleResolution": "bundler"
+    }
+}

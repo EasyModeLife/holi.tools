@@ -9,6 +9,10 @@ import FriendModal from "./vault/modals/FriendModal.astro";
 import FriendInviteDialog from "./vault/modals/FriendInviteDialog.astro";
 import IdentityModal from "./vault/modals/IdentityModal.astro";
 import ProjectModals from "./vault/modals/ProjectModals.astro";
+
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <main

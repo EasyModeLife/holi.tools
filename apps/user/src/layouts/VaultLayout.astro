@@ -8,23 +8,30 @@ import ChangelogOverlay from "@holi/ui/components/ChangelogOverlay.astro";
 
 import InfoOverlay from "../components/InfoOverlay.astro";
 
-import { getTranslations, languages } from "../i18n/translations";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import { userAppChangelog } from "@holi/configs/changelogs";
 import pkg from "../../package.json";
+import { languages as languagesObj } from "../i18n/ui";
+
+const languages = Object.entries(languagesObj).map(([code, name]) => ({
+  code,
+  name,
+}));
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const { title = "Holi Identity Vault", description } = Astro.props;
-const lang = Astro.currentLocale || "en";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
-const homeHref = lang === "en" ? "/" : `/${lang}/`;
+const { title = t("nav.vault"), description } = Astro.props;
+
+const homeHref = lang === "en" ? "/en/" : `/${lang}/`;
 
 const version = (pkg as any).version as string | undefined;
 const history = (userAppChangelog as any)[lang] || userAppChangelog.en;
-const t = getTranslations(lang);
 ---
 
 <html lang={lang} class="dark bg-zinc-950 text-white">
@@ -71,22 +78,24 @@ const t = getTranslations(lang);
     <footer
       class="border-t border-white/10 py-6 text-center text-sm text-zinc-500"
     >
-      <p>Secure Identity Vault &copy; {new Date().getFullYear()}</p>
+      <p>{t("shared.copyright")} &copy; {new Date().getFullYear()}</p>
     </footer>
 
     {version && <VersionBadge version={version} changelogId="user" />}
-    {version && history && (
-      <ChangelogOverlay
-        id="user"
-        currentVersion={version}
-        history={history}
-        labels={{
-          title: t.changelog_title,
-          current: t.changelog_current,
-          footer: t.changelog_footer,
-        }}
-      />
-    )}
+    {
+      version && history && (
+        <ChangelogOverlay
+          id="user"
+          currentVersion={version}
+          history={history}
+          labels={{
+            title: t("changelog.title"),
+            current: t("changelog.current"),
+            footer: t("changelog.footer"),
+          }}
+        />
+      )
+    }
 
     <InfoOverlay lang={lang} />
   </body>

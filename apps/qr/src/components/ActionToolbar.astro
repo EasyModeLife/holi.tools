@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 /**
  * ActionToolbar.astro - Actions toolbar for QR Code
  *
@@ -12,7 +17,7 @@
 
 <div class="action-toolbar">
   <div class="download-wrapper">
-    <button class="action-btn" id="btn-download" title="Download">
+    <button class="action-btn" id="btn-download" title={t("toolbar.download")}>
       <span class="icon">download</span>
     </button>
     <div class="download-menu" id="download-menu">
@@ -28,17 +33,17 @@
       <!-- PDF Removed -->
     </div>
   </div>
-  <button class="action-btn" id="btn-copy" title="Copy">
+  <button class="action-btn" id="btn-copy" title={t("toolbar.copy")}>
     <span class="icon">content_copy</span>
   </button>
-  <button class="action-btn" id="btn-reset" title="Reset">
+  <button class="action-btn" id="btn-reset" title={t("toolbar.reset")}>
     <span class="icon">refresh</span>
   </button>
   <div class="sep-vertical"></div>
   <button
     class="action-btn status-btn"
     id="btn-verify"
-    title="Verification Status"
+    title={t("toolbar.verify")}
   >
     <span class="icon" id="verify-icon">verified_user</span>
   </button>
@@ -211,8 +216,12 @@
     const downloadMenu = document.getElementById("download-menu");
     if (downloadBtn && downloadMenu) {
       // Hover/focus prefetch for instant first export
-      downloadBtn.addEventListener("pointerenter", scheduleWasmPrefetchOnce, { passive: true });
-      downloadBtn.addEventListener("focus", scheduleWasmPrefetchOnce, { passive: true });
+      downloadBtn.addEventListener("pointerenter", scheduleWasmPrefetchOnce, {
+        passive: true,
+      });
+      downloadBtn.addEventListener("focus", scheduleWasmPrefetchOnce, {
+        passive: true,
+      });
 
       downloadBtn.addEventListener("click", function (e) {
         e.stopPropagation();

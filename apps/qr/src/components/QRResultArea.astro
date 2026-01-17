@@ -1,5 +1,9 @@
 ---
 import ActionToolbar from "./ActionToolbar.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 /**
  * QRResultArea.astro - Display area for the generated QR Code
@@ -26,25 +30,25 @@ import ActionToolbar from "./ActionToolbar.astro";
 
   <!-- Customization Tools BELOW QR -->
   <div class="tool-bar">
-    <button class="tool-btn" id="tool-color" title="Colors">
+    <button class="tool-btn" id="tool-color" title={t("panel.colors")}>
       <span class="icon">palette</span>
-      <span class="tool-label">Color</span>
+      <span class="tool-label">{t("panel.colors")}</span>
     </button>
-    <button class="tool-btn" id="tool-shapes" title="Shapes">
+    <button class="tool-btn" id="tool-shapes" title={t("panel.shapes")}>
       <span class="icon">category</span>
-      <span class="tool-label">Shapes</span>
+      <span class="tool-label">{t("editor.shapes")}</span>
     </button>
-    <button class="tool-btn" id="tool-effect" title="Effects">
+    <button class="tool-btn" id="tool-effect" title={t("panel.effects")}>
       <span class="icon">auto_awesome</span>
-      <span class="tool-label">Effects</span>
+      <span class="tool-label">{t("editor.style")}</span>
     </button>
-    <button class="tool-btn" id="tool-image" title="Image">
+    <button class="tool-btn" id="tool-image" title={t("panel.image")}>
       <span class="icon">add_photo_alternate</span>
-      <span class="tool-label">Image</span>
+      <span class="tool-label">{t("editor.image")}</span>
     </button>
-    <button class="tool-btn" id="tool-advanced" title="Advanced">
+    <button class="tool-btn" id="tool-advanced" title={t("panel.advanced")}>
       <span class="icon">settings</span>
-      <span class="tool-label">Advanced</span>
+      <span class="tool-label">{t("panel.advanced")}</span>
     </button>
   </div>
 </div>

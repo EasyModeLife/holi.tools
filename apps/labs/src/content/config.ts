@@ -8,6 +8,7 @@ const experimentsCollection = defineCollection({
         tags: z.array(z.string()),
         icon: z.string(),
         color: z.string(),
+        lang: z.enum(["en", "es"]).default("en"),
         order: z.number().optional().default(0),
     }),
 });

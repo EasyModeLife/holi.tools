@@ -4,6 +4,10 @@ import {
   EYE_FRAME_SHAPES,
   EYE_BALL_SHAPES,
 } from "../../lib/qr-styles-config";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 /**
  * ShapesPanel.astro - Geometry customization for QR Code
@@ -14,7 +18,7 @@ import {
 <div class="advanced-content">
   <!-- Body Shape -->
   <div class="shape-section">
-    <label class="section-label">Body Shape</label>
+    <label class="section-label">{t("shape.body")}</label>
     <div class="shape-grid">
       {
         BODY_SHAPES.map((shape) => (
@@ -22,7 +26,7 @@ import {
             class="shape-btn"
             data-bodyshape={shape.id}
             onclick={`setBodyShape('${shape.id}')`}
-            title={shape.label}
+            title={t(shape.label as any)}
           >
             <svg viewBox="0 0 20 20" set:html={shape.svgInner} />
           </button>
@@ -35,7 +39,7 @@ import {
 
   <!-- Eye Frame Shape -->
   <div class="shape-section">
-    <label class="section-label">Eye Frame</label>
+    <label class="section-label">{t("shape.eye")}</label>
     <div class="shape-grid">
       {
         EYE_FRAME_SHAPES.map((shape) => (
@@ -43,7 +47,7 @@ import {
             class="shape-btn"
             data-eyeframe={shape.id}
             onclick={`setEyeFrame('${shape.id}')`}
-            title={shape.label}
+            title={t(shape.label as any)}
           >
             <svg viewBox="0 0 20 20" set:html={shape.svgInner} />
           </button>
@@ -54,7 +58,7 @@ import {
 
   <!-- Eye Ball Shape -->
   <div class="shape-section">
-    <label class="section-label">Eye Ball</label>
+    <label class="section-label">{t("shape.eyeball")}</label>
     <div class="shape-grid">
       {
         EYE_BALL_SHAPES.map((shape) => (
@@ -62,7 +66,7 @@ import {
             class="shape-btn"
             data-eyeball={shape.id}
             onclick={`setEyeBall('${shape.id}')`}
-            title={shape.label}
+            title={t(shape.label as any)}
           >
             <svg viewBox="0 0 20 20" set:html={shape.svgInner} />
           </button>

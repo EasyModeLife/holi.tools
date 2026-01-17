@@ -1,5 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
 import { PRESETS } from "../../lib/qr-styles-config";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 /**
  * EffectPanel.astro - Effect customization (Liquid, Noise, Presets)
@@ -9,19 +13,19 @@ import { PRESETS } from "../../lib/qr-styles-config";
 
 <!-- Level 1: Presets -->
 <div class="shape-section">
-  <label class="section-label">Quick Styles (Presets)</label>
+  <label class="section-label">{t("effect.presets")}</label>
   <div class="preset-grid">
     {
-      PRESETS.map((preset) => (
+      PRESETS.map((preset: any) => (
         <button
           class="preset-btn"
           onclick={`applyPreset('${preset.config.body}', '${preset.config.frame}', '${preset.config.ball}', ${preset.config.effectLiquid || false})`}
-          title={preset.label}
+          title={t(preset.label as any)}
         >
           <div class="preset-icon">
             <svg viewBox="0 0 20 20" set:html={preset.icon} />
           </div>
-          <span class="preset-label">{preset.label}</span>
+          <span class="preset-label">{t(preset.label as any)}</span>
         </button>
       ))
     }
@@ -36,8 +40,8 @@ import { PRESETS } from "../../lib/qr-styles-config";
     <!-- Liquid Toggle -->
     <div class="effect-row">
       <label class="switch-label">
-        <span>Liquid Finish</span>
-        <small>Melts shapes together</small>
+        <span>{t("effect.liquid")}</span>
+        <small>{t("effect.liquid_desc")}</small>
       </label>
       <label class="switch">
         <input type="checkbox" id="effect-liquid-toggle" />
@@ -51,7 +55,7 @@ import { PRESETS } from "../../lib/qr-styles-config";
       style="display:none; flex-direction: column; gap: 12px; margin-top: 8px;"
     >
       <div class="range-control">
-        <label>Fluidity (Blur)</label>
+        <label>{t("effect.fluidity")}</label>
         <input
           type="range"
           min="0.1"
@@ -62,7 +66,7 @@ import { PRESETS } from "../../lib/qr-styles-config";
         />
       </div>
       <div class="range-control">
-        <label>Adhesion (Goo)</label>
+        <label>{t("effect.adhesion")}</label>
         <input
           type="range"
           min="1"
@@ -77,8 +81,8 @@ import { PRESETS } from "../../lib/qr-styles-config";
     <!-- Noise Toggle -->
     <div class="effect-row" style="margin-top: 16px;">
       <label class="switch-label">
-        <span>Noise / Grain</span>
-        <small>Adds texture to your QR</small>
+        <span>{t("effect.noise")}</span>
+        <small>{t("effect.noise_desc")}</small>
       </label>
       <label class="switch">
         <input type="checkbox" id="effect-noise-toggle" />
@@ -92,7 +96,7 @@ import { PRESETS } from "../../lib/qr-styles-config";
       style="display:none; flex-direction: column; gap: 12px; margin-top: 8px;"
     >
       <div class="range-control">
-        <label>Intensity</label>
+        <label>{t("effect.intensity")}</label>
         <input
           type="range"
           id="noise-amount"
@@ -104,7 +108,7 @@ import { PRESETS } from "../../lib/qr-styles-config";
         />
       </div>
       <div class="range-control">
-        <label>Grain Size</label>
+        <label>{t("effect.grain_size")}</label>
         <input
           type="range"
           id="noise-scale"

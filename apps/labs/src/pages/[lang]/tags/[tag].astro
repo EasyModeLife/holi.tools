@@ -2,33 +2,40 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@holi/ui/layouts/BaseLayout.astro";
 import GlassCard from "@holi/ui/components/GlassCard.astro";
-import { getTranslations, languages } from "../../i18n/translations";
-
 import SimpleBackground from "@holi/ui/components/SimpleBackground.astro";
+import {
+  getLangFromUrl,
+  useTranslations,
+  languages,
+} from "../../../i18n/utils";
 
-import "../../styles/app.css";
+import "/src/styles/app.css";
 
 export async function getStaticPaths() {
   const experiments = await getCollection("experiments");
   const allTags = [...new Set(experiments.flatMap((e) => e.data.tags))];
 
-  return allTags.map((tag) => ({
-    params: { tag },
-    props: {
-      tag,
-      experiments: experiments.filter((e) => e.data.tags.includes(tag)),
-    },
-  }));
+  return languages.flatMap((l) => {
+    return allTags.map((tag) => ({
+      params: { lang: l.code, tag },
+      props: {
+        tag,
+        experiments: experiments.filter(
+          (e) => e.data.tags.includes(tag) && e.data.lang === l.code
+        ),
+      },
+    }));
+  });
 }
 
 const { tag, experiments } = Astro.props;
-const lang = Astro.currentLocale || "en";
-const t = getTranslations(lang);
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <BaseLayout
-  title={`#${tag} - ${t.meta_title}`}
-  description={t.meta_description}
+  title={`#${tag} - ${t("meta_title")}`}
+  description={t("meta_description")}
   lang={lang}
   languages={languages}
   colorScheme="labs"
@@ -62,7 +69,7 @@ const t = getTranslations(lang);
               padding="lg"
               rounded="lg"
               accentColor={exp.data.color}
-              href={`/experiments/${exp.slug}`}
+              href={`/${lang}/experiments/${exp.slug.replace(/-[a-z]{2}$/, "")}`}
               class="group h-full"
             >
               <div

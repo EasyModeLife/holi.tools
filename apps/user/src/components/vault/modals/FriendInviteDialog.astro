@@ -1,5 +1,20 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../../i18n/utils";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
+const strings = {
+  invites_title: t("friends.invites_title"),
+  invites_desc: t("friends.invites_desc"),
+  btn_close: t("friends.btn_close"),
+  no_invites: t("friends.no_invites"),
+  msg_new_invite: t("friends.msg_new_invite"),
+  msg_accepted_by: t("friends.msg_accepted_by"),
+  btn_accept: t("friends.btn_accept"),
+  btn_ignore: t("friends.btn_ignore"),
+  msg_now_friends: t("friends.msg_now_friends"),
+  error_accept: t("friends.error_accept"),
+};
 ---
 
 <dialog
@@ -9,9 +24,9 @@
   <div class="space-y-5">
     <div class="flex items-start justify-between gap-4">
       <div>
-        <h3 class="text-xl font-bold text-white">Incoming Friend Requests</h3>
+        <h3 class="text-xl font-bold text-white">{strings.invites_title}</h3>
         <p class="text-xs text-zinc-500 mt-1">
-          People who added you by your Public Key appear here.
+          {strings.invites_desc}
         </p>
       </div>
       <button
@@ -19,17 +34,21 @@
         id="close-friend-invite-btn"
         class="px-3 py-1 text-zinc-400 hover:text-white transition-colors"
       >
-        Close
+        {strings.btn_close}
       </button>
     </div>
 
     <div class="space-y-2">
       <div id="friend-requests" class="space-y-2">
-        <p class="text-xs text-zinc-500 italic">No pending requests.</p>
+        <p class="text-xs text-zinc-500 italic">{strings.no_invites}</p>
       </div>
     </div>
   </div>
 </dialog>
+
+<script define:vars={{ strings }}>
+  window.friendInviteStrings = strings;
+</script>
 
 <script>
   import {
@@ -49,6 +68,7 @@
   import { generateDmConfig } from "../../../lib/friends/dm";
   import { toast } from "../../../lib/ui/toast";
 
+  const strings = (window as any).friendInviteStrings;
   let reqSub: { close: () => void } | null = null;
   let myPubkey = "";
   const incomingRequests = new Map<
@@ -100,7 +120,9 @@
           incomingRequests.set(data.requestId, { ...data, status: "pending" });
 
           renderRequests();
-          toast.info(`New Friend Request from ${data.name || "someone"}!`);
+          toast.info(
+            strings.msg_new_invite.replace("{name}", data.name || "someone")
+          );
 
           if (!dialog.open) {
             const pendingCount = Array.from(incomingRequests.values()).filter(
@@ -126,7 +148,7 @@
           // We should check if we already have this contact and if they are trusted.
 
           console.log("[FriendInvite] Accepted by:", data.name);
-          toast.success(`${data.name} accepted your friend request!`);
+          toast.success(strings.msg_accepted_by.replace("{name}", data.name));
 
           // Update their entry to Trusted/Active and save DM info
           await addContactWithNostrPubkey(data.name, data.pubkey);
@@ -147,8 +169,7 @@
     );
 
     if (pending.length === 0) {
-      list.innerHTML =
-        '<p class="text-xs text-zinc-500 italic">No pending requests.</p>';
+      list.innerHTML = `<p class="text-xs text-zinc-500 italic">${strings.no_invites}</p>`;
       return;
     }
 
@@ -168,7 +189,7 @@
       actions.className = "flex gap-2";
 
       const acceptBtn = document.createElement("button");
-      acceptBtn.textContent = "Accept";
+      acceptBtn.textContent = strings.btn_accept;
       acceptBtn.className =
         "px-3 py-1 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 text-xs font-medium";
       acceptBtn.onclick = async () => {
@@ -197,16 +218,16 @@
 
           incomingRequests.set(req.requestId, { ...req, status: "accepted" });
           renderRequests();
-          toast.success(`You are now friends with ${req.name}`);
+          toast.success(strings.msg_now_friends.replace("{name}", req.name));
           window.dispatchEvent(new Event("reload-contacts"));
         } catch (e) {
           console.error(e);
-          toast.error("Failed to accept");
+          toast.error(strings.error_accept);
         }
       };
 
       const denyBtn = document.createElement("button");
-      denyBtn.textContent = "Ignore";
+      denyBtn.textContent = strings.btn_ignore;
       denyBtn.className =
         "px-3 py-1 bg-white/5 text-zinc-400 rounded hover:bg-white/10 text-xs";
       denyBtn.onclick = () => {

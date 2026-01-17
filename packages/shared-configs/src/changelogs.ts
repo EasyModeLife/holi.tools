@@ -12,6 +12,7 @@ export const mainAppChangelog: LocalizedChangelog = {
             version: "0.1.1",
             date: "2026-01-12",
             changes: [
+                "i18n migration + English/Spanish support",
                 "Hotfix: Updated dependencies",
                 "Minor UI improvements"
             ]
@@ -31,6 +32,7 @@ export const mainAppChangelog: LocalizedChangelog = {
             version: "0.1.1",
             date: "2026-01-12",
             changes: [
+                "migración a i18 y soporte de español e inglés",
                 "Hotfix: Actualización de dependencias",
                 "Mejoras menores de UI"
             ]
@@ -53,6 +55,7 @@ export const qrAppChangelog: LocalizedChangelog = {
             version: "0.2.0",
             date: "2026-01-17",
             changes: [
+                "i18n migration + English/Spanish support",
                 "SVG export is now real vector SVG (not a PNG embedded in SVG)",
                 "Unified wasm-qr-svg loading with a single dynamic loader (removed mixed import warning)",
                 "Added JPEG download option and improved export pipeline consistency",
@@ -84,6 +87,7 @@ export const qrAppChangelog: LocalizedChangelog = {
             version: "0.2.0",
             date: "2026-01-17",
             changes: [
+                "migración a i18 y soporte de español e inglés",
                 "Export de SVG ahora es SVG vectorial real (no PNG embebido en SVG)",
                 "Carga unificada de wasm-qr-svg con loader dinámico único (se elimina warning por imports mixtos)",
                 "Añadida descarga en JPEG y mejoras de consistencia en el pipeline de export",
@@ -117,6 +121,7 @@ export const labsAppChangelog: VersionEntry[] = [
         version: "0.1.1",
         date: "2026-01-12",
         changes: [
+            "i18n migration + English/Spanish support",
             "Sync with core library updates",
             "General stability improvements"
         ]
@@ -150,6 +155,7 @@ export const userAppChangelog: LocalizedChangelog = {
             version: "0.0.1",
             date: "2026-01-17",
             changes: [
+                "i18n migration + English/Spanish support",
                 "Initial Holi Vault release",
                 "Added configuration menu + language routing support",
                 "Added versions (changelog) overlay"
@@ -161,6 +167,7 @@ export const userAppChangelog: LocalizedChangelog = {
             version: "0.0.1",
             date: "2026-01-17",
             changes: [
+                "migración a i18 y soporte de español e inglés",
                 "Release inicial de Holi Vault",
                 "Añadido menú de configuración + soporte de rutas por idioma",
                 "Añadido overlay de versiones (changelog)"

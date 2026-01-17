@@ -1,20 +1,36 @@
 ---
-import VaultLayout from "../layouts/VaultLayout.astro";
-import ChatPanel from "../components/ChatPanel.astro";
+import VaultLayout from "../../layouts/VaultLayout.astro";
+import ChatPanel from "../../components/ChatPanel.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { SUPPORTED_LANGS } from "@holi/configs/i18n";
 
-const lang = Astro.currentLocale || "en";
-const basePath = lang === "en" ? "" : `/${lang}`;
+export function getStaticPaths() {
+  return SUPPORTED_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const basePath = lang === "en" ? "/en" : `/${lang}`;
+const strings = {
+  copy: t("private.copy"),
+  copied: t("private.copied"),
+  waiting: t("private.waiting"),
+  connecting: t("private.connecting"),
+  instruction: t("private.instruction"),
+  connected: t("private.connected"),
+  failed: t("private.failed"),
+};
 ---
 
-<VaultLayout title="Private Chat">
+<VaultLayout title={t("private.title")}>
   <div class="max-w-2xl mx-auto space-y-6">
     <div class="text-center space-y-2">
-      <h1 class="text-3xl font-bold text-white">Private Chat</h1>
+      <h1 class="text-3xl font-bold text-white">{t("private.title")}</h1>
       <p class="text-zinc-400">
-        Share a one-time link to start a private P2P chat. Nostr is used only for signaling.
+        {t("private.desc")}
       </p>
       <p class="text-xs text-zinc-500">
-        Tip: If you open a vault, chat history can be saved under <span class="font-mono">.holi/dm/</span>.
+        {t("private.tip")}
       </p>
     </div>
 
@@ -24,14 +40,14 @@ const basePath = lang === "en" ? "" : `/${lang}`;
           id="create-link"
           class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors"
         >
-          Create chat link
+          {t("private.create_link")}
         </button>
         <button
           id="copy-link"
           class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors disabled:opacity-60"
           disabled
         >
-          Copy
+          {t("private.copy")}
         </button>
       </div>
 
@@ -40,14 +56,16 @@ const basePath = lang === "en" ? "" : `/${lang}`;
         type="text"
         readonly
         class="w-full px-4 py-2 bg-black/30 rounded-lg border border-white/10 text-white font-mono text-sm"
-        placeholder="Link will appear here"
+        placeholder={t("private.placeholder")}
       />
 
       <div id="status" class="text-sm text-zinc-300"></div>
     </div>
 
     <div class="text-center">
-      <a href={`${basePath}/`} class="text-sm text-zinc-500 hover:text-white">Back to Dashboard</a>
+      <a href={`${basePath}/`} class="text-sm text-zinc-500 hover:text-white"
+        >{t("nav.dashboard")}</a
+      >
     </div>
 
     <div id="chat-wrap" class="hidden">
@@ -64,22 +82,42 @@ const basePath = lang === "en" ? "" : `/${lang}`;
   }
 </style>
 
-<script>
-  import { ChatManager } from "../lib/p2p/chat";
-  import type { ChatEvent } from "../lib/p2p/chat";
-  import { connectFriendDmChannel } from "../lib/friends/p2p";
-  import { generateDmConfig, dmKeyBytes } from "../lib/friends/dm";
-  import { getActiveHandle, getLastVault, checkAccess, restoreSession } from "../lib/workspace";
-  import { listDmMessages, saveDmMessage } from "../lib/friends/dm";
+<script define:vars={{ strings }}>
+  window.privateStrings = strings;
+</script>
 
-  const btnCreate = document.getElementById('create-link') as HTMLButtonElement | null;
-  const btnCopy = document.getElementById('copy-link') as HTMLButtonElement | null;
-  const linkInput = document.getElementById('chat-link') as HTMLInputElement | null;
-  const statusEl = document.getElementById('status');
-  const chatWrap = document.getElementById('chat-wrap');
+<script>
+  import { ChatManager } from "../../lib/p2p/chat";
+  import type { ChatEvent } from "../../lib/p2p/chat";
+  import { connectFriendDmChannel } from "../../lib/friends/p2p";
+  import { generateDmConfig, dmKeyBytes } from "../../lib/friends/dm";
+  import {
+    getActiveHandle,
+    getLastVault,
+    checkAccess,
+    restoreSession,
+  } from "../../lib/workspace";
+  import { listDmMessages, saveDmMessage } from "../../lib/friends/dm";
+
+  const strings = (window as any).privateStrings;
+  const btnCreate = document.getElementById(
+    "create-link"
+  ) as HTMLButtonElement | null;
+  const btnCopy = document.getElementById(
+    "copy-link"
+  ) as HTMLButtonElement | null;
+  const linkInput = document.getElementById(
+    "chat-link"
+  ) as HTMLInputElement | null;
+  const statusEl = document.getElementById("status");
+  const chatWrap = document.getElementById("chat-wrap");
 
   let chatManager: ChatManager | null = null;
-  let current = null as null | { sessionId: string; keyB64Url: string; isInitiator: boolean };
+  let current = null as null | {
+    sessionId: string;
+    keyB64Url: string;
+    isInitiator: boolean;
+  };
 
   function setStatus(text: string) {
     if (statusEl) statusEl.textContent = text;
@@ -91,9 +129,9 @@ const basePath = lang === "en" ? "" : `/${lang}`;
 
   function parseLinkHash(): { sessionId: string; keyB64Url: string } | null {
     const hash = window.location.hash.slice(1);
-    if (!hash.startsWith('pc=')) return null;
+    if (!hash.startsWith("pc=")) return null;
     const rest = hash.slice(3);
-    const [sessionId, keyB64Url] = rest.split('.', 2);
+    const [sessionId, keyB64Url] = rest.split(".", 2);
     if (!sessionId || !keyB64Url) return null;
     return { sessionId, keyB64Url };
   }
@@ -103,9 +141,9 @@ const basePath = lang === "en" ? "" : `/${lang}`;
     const last = await getLastVault();
     if (!last) return;
     const status = await checkAccess(last.id);
-    if (status === 'granted') {
+    if (status === "granted") {
       await restoreSession(last.id);
-      window.dispatchEvent(new CustomEvent('workspace-restored'));
+      window.dispatchEvent(new CustomEvent("workspace-restored"));
     }
   }
 
@@ -114,18 +152,18 @@ const basePath = lang === "en" ? "" : `/${lang}`;
   }
 
   async function loadHistory(sessionId: string) {
-    // Vault-backed if possible, else localStorage.
     try {
       if (getActiveHandle()) {
         const msgs = await listDmMessages(sessionId);
         for (const m of msgs) {
-          (window as any).addChatMessage?.(m.text, m.from === 'me' ? 'own' : 'peer');
+          (window as any).addChatMessage?.(
+            m.text,
+            m.from === "me" ? "own" : "peer"
+          );
         }
         return;
       }
-    } catch {
-      // fallthrough
-    }
+    } catch {}
 
     try {
       const raw = window.localStorage.getItem(localStorageKey(sessionId));
@@ -133,26 +171,28 @@ const basePath = lang === "en" ? "" : `/${lang}`;
       const data = JSON.parse(raw) as any;
       const msgs = Array.isArray(data?.messages) ? data.messages : [];
       for (const m of msgs) {
-        if (m && typeof m.text === 'string') {
-          (window as any).addChatMessage?.(m.text, m.from === 'me' ? 'own' : 'peer');
+        if (m && typeof m.text === "string") {
+          (window as any).addChatMessage?.(
+            m.text,
+            m.from === "me" ? "own" : "peer"
+          );
         }
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
   }
 
-  async function persistMessage(sessionId: string, from: 'me' | 'peer', text: string) {
+  async function persistMessage(
+    sessionId: string,
+    from: "me" | "peer",
+    text: string
+  ) {
     const msg = { id: crypto.randomUUID(), ts: Date.now(), from, text };
-
     try {
       if (getActiveHandle()) {
         await saveDmMessage(sessionId, msg as any);
         return;
       }
-    } catch {
-      // fallthrough
-    }
+    } catch {}
 
     try {
       const key = localStorageKey(sessionId);
@@ -160,102 +200,107 @@ const basePath = lang === "en" ? "" : `/${lang}`;
       const data = raw ? JSON.parse(raw) : { version: 1, messages: [] };
       const msgs = Array.isArray(data.messages) ? data.messages : [];
       msgs.push(msg);
-      window.localStorage.setItem(key, JSON.stringify({ version: 1, messages: msgs }));
-    } catch {
-      // ignore
-    }
+      window.localStorage.setItem(
+        key,
+        JSON.stringify({ version: 1, messages: msgs })
+      );
+    } catch {}
   }
 
-  async function connect(dm: { sessionId: string; keyB64Url: string }, isInitiator: boolean) {
+  async function connect(
+    dm: { sessionId: string; keyB64Url: string },
+    isInitiator: boolean
+  ) {
     if (chatManager) return;
     current = { ...dm, isInitiator };
+    if (chatWrap) chatWrap.classList.remove("hidden");
 
-    if (chatWrap) chatWrap.classList.remove('hidden');
+    setStatus(isInitiator ? strings.waitingText : strings.connectingText);
 
-    setStatus(isInitiator ? 'Waiting for the other person to open the link…' : 'Connecting…');
-
-    // Best-effort restore so vault-backed identity/history works when available.
     await tryRestoreVault();
-
     await loadHistory(dm.sessionId);
 
-    const channel = await connectFriendDmChannel({ dm, isInitiator, timeoutMs: 2 * 60_000 });
+    const channel = await connectFriendDmChannel({
+      dm,
+      isInitiator,
+      timeoutMs: 2 * 60_000,
+    });
 
-    chatManager = new ChatManager(channel, `private:${dm.sessionId}`, {
+    chatManager = new ChatManager(channel as any, `private:${dm.sessionId}`, {
       sessionKeyBytes: dmKeyBytes(dm.keyB64Url),
       onIncomingFileOffer: async (offer) => {
         const sizeMb = (offer.size / (1024 * 1024)).toFixed(1);
         const ok = confirm(`Receive file "${offer.filename}" (${sizeMb} MB)?`);
-        return ok ? 'accept' : { decision: 'reject', reason: 'User rejected' };
+        return ok ? "accept" : { decision: "reject", reason: "User rejected" };
       },
     });
 
-    setStatus('P2P connected.');
+    setStatus(strings.connectedText);
 
     chatManager.on((event: ChatEvent) => {
-      if (event.type === 'message') {
+      if (event.type === "message") {
         const msg = event.message as any;
-        const from = msg.senderId === 'me' ? 'me' : 'peer';
-        const sender = from === 'me' ? 'own' : 'peer';
-        const text = msg.content || '';
+        const from = msg.senderId === "me" ? "me" : "peer";
+        const sender = from === "me" ? "own" : "peer";
+        const text = msg.content || "";
         if (!text) return;
         (window as any).addChatMessage?.(text, sender);
         void persistMessage(dm.sessionId, from, text);
       }
     });
 
-    const form = document.getElementById('chat-form');
-    const input = document.getElementById('msg-input') as HTMLInputElement | null;
-    form?.addEventListener('submit', (e) => {
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById(
+      "msg-input"
+    ) as HTMLInputElement | null;
+    form?.addEventListener("submit", (e) => {
       e.preventDefault();
-      const text = (input?.value || '').trim();
+      const text = (input?.value || "").trim();
       if (!text || !chatManager) return;
       chatManager.sendText(text);
-      (window as any).addChatMessage?.(text, 'own');
-      void persistMessage(dm.sessionId, 'me', text);
-      if (input) input.value = '';
+      (window as any).addChatMessage?.(text, "own");
+      void persistMessage(dm.sessionId, "me", text);
+      if (input) input.value = "";
     });
   }
 
-  // If opened via link, auto-connect as responder.
   const fromHash = parseLinkHash();
   if (fromHash) {
     if (linkInput) linkInput.value = makeLink(fromHash);
     if (btnCopy) btnCopy.disabled = false;
     void connect(fromHash, false).catch((e) => {
       console.error(e);
-      setStatus('Failed to connect: ' + ((e as Error)?.message || String(e)));
+      setStatus(
+        strings.failedText + " " + ((e as Error)?.message || String(e))
+      );
     });
   } else {
-    setStatus('Create a link and send it to the other person.');
+    setStatus(strings.instructionText);
   }
 
-  btnCreate?.addEventListener('click', async () => {
+  btnCreate?.addEventListener("click", async () => {
     try {
       const dm = generateDmConfig();
       const url = makeLink(dm);
       if (linkInput) linkInput.value = url;
       if (btnCopy) btnCopy.disabled = false;
-
-      // Set hash so refresh stays in this session.
       window.location.hash = `pc=${dm.sessionId}.${dm.keyB64Url}`;
-
       await connect(dm, true);
     } catch (e) {
       console.error(e);
-      setStatus('Failed: ' + ((e as Error)?.message || String(e)));
+      setStatus("Failed: " + ((e as Error)?.message || String(e)));
     }
   });
 
-  btnCopy?.addEventListener('click', async () => {
-    const v = (linkInput?.value || '').trim();
+  btnCopy?.addEventListener("click", async () => {
+    const v = (linkInput?.value || "").trim();
     if (!v) return;
     await navigator.clipboard.writeText(v);
     if (btnCopy) {
       const prev = btnCopy.textContent;
-      btnCopy.textContent = 'Copied!';
+      btnCopy.textContent = strings.copiedText;
       window.setTimeout(() => {
-        btnCopy.textContent = prev || 'Copy';
+        btnCopy.textContent = prev || strings.copyText;
       }, 1200);
     }
   });

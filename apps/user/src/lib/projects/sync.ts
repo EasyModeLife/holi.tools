@@ -1,6 +1,5 @@
 import * as Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
-import { getProject } from './manager';
 import { debugLog, redact } from '../debug';
 
 /**

@@ -1,4 +1,4 @@
-export const translations = {
+export const ui = {
     en: {
         meta_title: "Holi Labs - Experimental",
         meta_description: "Bleeding edge research, WebGPU experiments, and technical papers.",
@@ -12,6 +12,7 @@ export const translations = {
         exp_qr_desc: "Technical dive into high-performance QR generation in Rust.",
         exp_perf_title: "Performance",
         exp_perf_desc: "Benchmarking WASM against native JavaScript implementation.",
+        search_placeholder: "filter experiments...",
     },
     es: {
         meta_title: "Holi Labs - Experimental",
@@ -26,27 +27,8 @@ export const translations = {
         exp_qr_desc: "Inmersión técnica en la generación de QR de alto rendimiento en Rust.",
         exp_perf_title: "Rendimiento",
         exp_perf_desc: "Benchmarking de WASM frente a implementaciones en JavaScript nativo.",
+        search_placeholder: "filtrar experimentos...",
     },
 } as const;
 
-export type Language = "en" | "es" | "fr" | "de" | "pt" | "it" | "zh" | "ja" | "ko" | "ru";
-
-export const languages = [
-    { code: "en", name: "English" },
-    { code: "es", name: "Español" },
-    { code: "fr", name: "Français" },
-    { code: "de", name: "Deutsch" },
-    { code: "pt", name: "Português" },
-    { code: "it", name: "Italiano" },
-    { code: "zh", name: "中文" },
-    { code: "ja", name: "日本語" },
-    { code: "ko", name: "한국어" },
-    { code: "ru", name: "Русский" },
-] as const;
-
-export function getTranslations(lang: string) {
-    // Fallback to English if exact language missing or key missing
-    const t = translations[lang as keyof typeof translations] || translations.en;
-    // Merge with English to ensure all keys present if partial translation
-    return { ...translations.en, ...t };
-}
+export type TranslationKey = keyof (typeof ui)["en"];

@@ -4,7 +4,6 @@
  */
 
 import { dispatchQREvent, dispatchQREventThrottled, QREvents } from '../core/events';
-import type { EffectChangeEvent, NoiseChangeEvent, FilterTweakEvent } from '../core/types';
 
 // =============================================================================
 // STATE
@@ -22,8 +21,8 @@ interface NoiseState {
     scale: number;
 }
 
-let currentEffects: EffectsState = { liquid: false, blur: 0.55, thresh: 8 };
-let currentNoise: NoiseState = { enabled: false, amount: 30, scale: 100 };
+const currentEffects: EffectsState = { liquid: false, blur: 0.55, thresh: 8 };
+const currentNoise: NoiseState = { enabled: false, amount: 30, scale: 100 };
 
 // =============================================================================
 // LIQUID EFFECT

@@ -8,6 +8,10 @@
  * - generate button
  */
 import { getIconSvg } from "../lib/icons";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 // Pre-render initial icons
 const linkIcon = getIconSvg("link", 20);
@@ -21,7 +25,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
     <button
       class="type-switcher-btn"
       id="type-switcher-btn"
-      title="Change content type"
+      title={t("input.change_type")}
     >
       <span class="icon type-icon" id="current-type-icon" set:html={linkIcon} />
       <span class="type-label" id="current-type-label">URL</span>
@@ -31,74 +35,79 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
     <!-- Dropdown with ALL types -->
     <div class="type-dropdown" id="type-dropdown">
       <div class="dropdown-section">
-        <span class="dropdown-label">Basic</span>
+        <span class="dropdown-label">{t("input.basic")}</span>
         <button class="type-option active" data-type="url">
-          <span class="icon">link</span><span>URL</span>
+          <span class="icon">link</span><span>{t("type.url")}</span>
         </button>
         <button class="type-option" data-type="text">
-          <span class="icon">text_fields</span><span>Text</span>
+          <span class="icon">text_fields</span><span>{t("type.text")}</span>
         </button>
       </div>
 
       <div class="dropdown-section">
-        <span class="dropdown-label">Contact</span>
+        <span class="dropdown-label">{t("input.contact")}</span>
         <button class="type-option" data-type="phone">
-          <span class="icon">phone</span><span>Phone</span>
+          <span class="icon">phone</span><span>{t("type.phone")}</span>
         </button>
         <button class="type-option" data-type="email">
-          <span class="icon">email</span><span>Email</span>
+          <span class="icon">email</span><span>{t("type.email")}</span>
         </button>
         <button class="type-option" data-type="sms">
-          <span class="icon">sms</span><span>SMS</span>
+          <span class="icon">sms</span><span>{t("type.sms")}</span>
         </button>
         <button class="type-option" data-type="vcard">
-          <span class="icon">contact_page</span><span>vCard</span>
+          <span class="icon">contact_page</span><span>{t("type.vcard")}</span>
         </button>
       </div>
 
       <div class="dropdown-section">
-        <span class="dropdown-label">Utility</span>
+        <span class="dropdown-label">{t("input.utility")}</span>
         <button class="type-option" data-type="wifi">
-          <span class="icon">wifi</span><span>WiFi</span>
+          <span class="icon">wifi</span><span>{t("type.wifi")}</span>
         </button>
         <button class="type-option" data-type="location">
-          <span class="icon">location_on</span><span>Location</span>
+          <span class="icon">location_on</span><span>{t("type.location")}</span>
         </button>
         <button class="type-option" data-type="event">
-          <span class="icon">event</span><span>Event</span>
+          <span class="icon">event</span><span>{t("type.event")}</span>
         </button>
         <button class="type-option" data-type="bitcoin">
-          <span class="icon">account_balance_wallet</span><span>Bitcoin</span>
+          <span class="icon">account_balance_wallet</span><span
+            >{t("type.bitcoin")}</span
+          >
         </button>
       </div>
 
       <div class="dropdown-section">
-        <span class="dropdown-label">Social</span>
+        <span class="dropdown-label">{t("input.social")}</span>
         <button class="type-option" data-type="facebook">
-          <span class="icon">public</span><span>Facebook</span>
+          <span class="icon">public</span><span>{t("type.facebook")}</span>
         </button>
         <button class="type-option" data-type="twitter">
-          <span class="icon">chat_bubble</span><span>X / Twitter</span>
+          <span class="icon">chat_bubble</span><span>{t("type.twitter")}</span>
         </button>
         <button class="type-option" data-type="youtube">
-          <span class="icon">smart_display</span><span>YouTube</span>
+          <span class="icon">smart_display</span><span>{t("type.youtube")}</span
+          >
         </button>
       </div>
 
       <div class="dropdown-section">
-        <span class="dropdown-label">App Stores</span>
+        <span class="dropdown-label">{t("input.appstores")}</span>
         <button class="type-option" data-type="appstore">
-          <span class="icon">apple</span><span>App Store</span>
+          <span class="icon">apple</span><span>{t("type.appstore")}</span>
         </button>
         <button class="type-option" data-type="playstore">
-          <span class="icon">shop</span><span>Play Store</span>
+          <span class="icon">shop</span><span>{t("type.playstore")}</span>
         </button>
       </div>
 
       <div class="dropdown-section">
-        <span class="dropdown-label">Tools</span>
+        <span class="dropdown-label">{t("input.tools")}</span>
         <button class="type-option" data-type="scan">
-          <span class="icon">qr_code_scanner</span><span>Scan QR</span>
+          <span class="icon">qr_code_scanner</span><span
+            >{t("input.scan_qr")}</span
+          >
         </button>
       </div>
     </div>
@@ -112,7 +121,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="text"
         id="input-url"
         class="input-field"
-        placeholder="https://your-site.com"
+        placeholder={t("input.placeholder.url")}
         autofocus
       />
     </div>
@@ -122,7 +131,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
       <textarea
         id="input-text"
         class="input-field textarea"
-        placeholder="Enter your text here..."
+        placeholder={t("input.placeholder.text")}
         rows="3"></textarea>
     </div>
 
@@ -133,18 +142,18 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="text"
           id="input-wifi-ssid"
           class="input-field"
-          placeholder="Network Name (SSID)"
+          placeholder={t("input.placeholder.wifi_ssid")}
         />
         <input
           type="password"
           id="input-wifi-pass"
           class="input-field"
-          placeholder="Password"
+          placeholder={t("input.placeholder.wifi_pass")}
         />
         <select id="input-wifi-enc" class="input-field select">
-          <option value="WPA">WPA/WPA2</option>
-          <option value="WEP">WEP</option>
-          <option value="nopass">No Password</option>
+          <option value="WPA">{t("input.wifi.wpa")}</option>
+          <option value="WEP">{t("input.wifi.wep")}</option>
+          <option value="nopass">{t("input.wifi.nopass")}</option>
         </select>
       </div>
     </div>
@@ -156,25 +165,25 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="text"
           id="input-vcard-name"
           class="input-field"
-          placeholder="Full Name"
+          placeholder={t("input.placeholder.name")}
         />
         <input
           type="tel"
           id="input-vcard-phone"
           class="input-field"
-          placeholder="Phone Number"
+          placeholder={t("input.placeholder.phone")}
         />
         <input
           type="email"
           id="input-vcard-email"
           class="input-field"
-          placeholder="Email Address"
+          placeholder={t("input.placeholder.email")}
         />
         <input
           type="text"
           id="input-vcard-company"
           class="input-field"
-          placeholder="Company (optional)"
+          placeholder={t("input.placeholder.company")}
         />
       </div>
     </div>
@@ -185,19 +194,19 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="email"
           id="input-email-addr"
           class="input-field"
-          placeholder="Email Address"
+          placeholder={t("input.placeholder.email")}
         />
         <input
           type="text"
           id="input-email-sub"
           class="input-field"
-          placeholder="Subject"
+          placeholder={t("input.placeholder.subject")}
         />
         <textarea
           id="input-email-body"
           class="input-field textarea"
           rows="2"
-          placeholder="Message Body"></textarea>
+          placeholder={t("input.placeholder.message")}></textarea>
       </div>
     </div>
 
@@ -207,7 +216,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="tel"
         id="input-phone"
         class="input-field"
-        placeholder="Phone Number (e.g. +1 555 123 4567)"
+        placeholder={t("input.placeholder.phone")}
       />
     </div>
 
@@ -218,13 +227,13 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="tel"
           id="input-sms-phone"
           class="input-field"
-          placeholder="Phone Number"
+          placeholder={t("input.placeholder.phone")}
         />
         <textarea
           id="input-sms-msg"
           class="input-field textarea"
           rows="2"
-          placeholder="Message"></textarea>
+          placeholder={t("input.placeholder.message")}></textarea>
       </div>
     </div>
 
@@ -235,13 +244,13 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="text"
           id="input-loc-lat"
           class="input-field"
-          placeholder="Latitude (e.g. 40.7128)"
+          placeholder={t("input.placeholder.lat")}
         />
         <input
           type="text"
           id="input-loc-long"
           class="input-field"
-          placeholder="Longitude (e.g. -74.0060)"
+          placeholder={t("input.placeholder.long")}
         />
       </div>
     </div>
@@ -253,7 +262,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="text"
           id="input-event-title"
           class="input-field"
-          placeholder="Event Title"
+          placeholder={t("input.placeholder.event_title")}
         />
         <input
           type="datetime-local"
@@ -271,7 +280,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="text"
           id="input-event-loc"
           class="input-field"
-          placeholder="Location"
+          placeholder={t("input.placeholder.location")}
         />
       </div>
     </div>
@@ -283,13 +292,13 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           type="text"
           id="input-btc-addr"
           class="input-field"
-          placeholder="Bitcoin Address"
+          placeholder={t("input.placeholder.btc_addr")}
         />
         <input
           type="text"
           id="input-btc-amount"
           class="input-field"
-          placeholder="Amount (BTC) - Optional"
+          placeholder={t("input.placeholder.btc_amount")}
         />
       </div>
     </div>
@@ -300,7 +309,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="text"
         id="input-appstore"
         class="input-field"
-        placeholder="App Store URL (https://apps.apple.com/...)"
+        placeholder={t("input.placeholder.appstore")}
       />
     </div>
 
@@ -310,7 +319,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="text"
         id="input-playstore"
         class="input-field"
-        placeholder="Play Store URL (https://play.google.com/store/...)"
+        placeholder={t("input.placeholder.playstore")}
       />
     </div>
 
@@ -321,7 +330,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="text"
         id="input-fb"
         class="input-field"
-        placeholder="Facebook Profile URL"
+        placeholder={t("input.placeholder.fb")}
       />
     </div>
     <div class="input-template" id="template-twitter">
@@ -329,7 +338,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="text"
         id="input-twitter"
         class="input-field"
-        placeholder="X / Twitter Username or URL"
+        placeholder={t("input.placeholder.twitter")}
       />
     </div>
     <div class="input-template" id="template-youtube">
@@ -337,7 +346,7 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         type="text"
         id="input-yt"
         class="input-field"
-        placeholder="YouTube Video or Channel URL"
+        placeholder={t("input.placeholder.yt")}
       />
     </div>
 
@@ -347,27 +356,35 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         <input type="file" id="scan-file-input" accept="image/*" hidden />
         <div class="scan-upload-content">
           <span class="scan-icon">📷</span>
-          <span class="scan-text">Drop image or click to upload</span>
-          <span class="scan-hint">PNG, JPG, or paste from clipboard</span>
+          <span class="scan-text">{t("input.scan.drop")}</span>
+          <span class="scan-hint">{t("input.scan.hint")}</span>
         </div>
       </div>
       <div class="scan-result" id="scan-result" style="display: none;">
         <div class="scan-result-header">
           <span class="scan-result-icon">✅</span>
-          <span class="scan-result-label">Decoded Content</span>
+          <span class="scan-result-label">{t("input.scan.decoded")}</span>
         </div>
         <div class="scan-result-content" id="scan-result-content"></div>
         <div class="scan-result-actions">
-          <button class="scan-action-btn" id="scan-copy-btn" title="Copy">
+          <button
+            class="scan-action-btn"
+            id="scan-copy-btn"
+            title={t("toolbar.copy")}
+          >
             <span class="icon">content_copy</span>
           </button>
-          <button class="scan-action-btn" id="scan-open-btn" title="Open URL">
+          <button
+            class="scan-action-btn"
+            id="scan-open-btn"
+            title={t("input.scan.open")}
+          >
             <span class="icon">open_in_new</span>
           </button>
           <button
             class="scan-action-btn"
             id="scan-reset-btn"
-            title="Scan Another"
+            title={t("toolbar.reset")}
           >
             <span class="icon">refresh</span>
           </button>
@@ -377,7 +394,11 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
   </div>
 
   <!-- Generate Button -->
-  <button class="btn-action" id="generate-btn" aria-label="Generate QR Code">
+  <button
+    class="btn-action"
+    id="generate-btn"
+    aria-label={t("toolbar.generate")}
+  >
     <span class="icon" set:html={arrowRightIcon} />
   </button>
 </div>
@@ -878,50 +899,6 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
     }
     initDropdownIcons();
 
-    // Type configuration
-    const typeConfig = {
-      url: { icon: "link", label: "URL" },
-      text: { icon: "text_fields", label: "Text" },
-      wifi: { icon: "wifi", label: "WiFi" },
-      vcard: { icon: "contact_page", label: "vCard" },
-      email: { icon: "email", label: "Email" },
-      phone: { icon: "phone", label: "Phone" },
-      sms: { icon: "sms", label: "SMS" },
-      appstore: { icon: "apple", label: "App Store" },
-      playstore: { icon: "shop", label: "Play Store" },
-      location: { icon: "location_on", label: "Location" },
-      event: { icon: "event", label: "Event" },
-      bitcoin: { icon: "account_balance_wallet", label: "Bitcoin" },
-      facebook: { icon: "public", label: "Facebook" },
-      twitter: { icon: "chat_bubble", label: "Twitter" },
-      youtube: { icon: "smart_display", label: "YouTube" },
-      scan: { icon: "qr_code_scanner", label: "Scan QR" },
-    };
-
-    // Current type state
-    window.currentContentType = "url";
-
-    // Toggle dropdown
-    if (typeSwitcherBtn) {
-      typeSwitcherBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        typeSwitcherBtn.classList.toggle("open");
-        typeDropdown.classList.toggle("open");
-      });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", function (e) {
-      if (
-        typeDropdown &&
-        !typeDropdown.contains(e.target) &&
-        !typeSwitcherBtn.contains(e.target)
-      ) {
-        typeSwitcherBtn.classList.remove("open");
-        typeDropdown.classList.remove("open");
-      }
-    });
-
     // Select type from dropdown
     typeOptions.forEach(function (opt) {
       opt.addEventListener("click", function (e) {
@@ -931,30 +908,37 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
           window.setContentType(type);
         }
         // Close dropdown
-        typeSwitcherBtn.classList.remove("open");
-        typeDropdown.classList.remove("open");
+        if (typeSwitcherBtn) typeSwitcherBtn.classList.remove("open");
+        if (typeDropdown) typeDropdown.classList.remove("open");
       });
     });
 
     // Set content type function
     window.setContentType = function (type) {
       window.currentContentType = type;
-      const config = typeConfig[type];
 
-      // Fallback if type not found
-      if (!config) {
-        console.warn("Unknown type:", type);
-        return;
-      }
+      // Auto-config icon/label from the dropdown option itself (supports localization)
+      const opt = document.querySelector(`.type-option[data-type="${type}"]`);
+      if (!opt) return;
+
+      const iconEl = opt.querySelector(".icon");
+      const labelEl = opt.querySelector("span:last-child");
+
+      const iconName =
+        opt.getAttribute("data-icon") ||
+        (iconEl ? iconEl.textContent.trim() : "link");
+      const labelText = labelEl
+        ? labelEl.textContent.trim()
+        : type.toUpperCase();
 
       // Update button display with SVG icon
-      if (typeIcon && window.getIconSvg)
-        typeIcon.innerHTML = window.getIconSvg(config.icon, 20);
-      if (typeLabel) typeLabel.textContent = config.label;
+      if (typeIcon && typeof window.getIconSvg === "function")
+        typeIcon.innerHTML = window.getIconSvg(iconName, 20);
+      if (typeLabel) typeLabel.textContent = labelText;
 
       // Update active states in dropdown (if it exists)
-      typeOptions.forEach(function (opt) {
-        opt.classList.toggle("active", opt.getAttribute("data-type") === type);
+      typeOptions.forEach(function (o) {
+        o.classList.toggle("active", o.getAttribute("data-type") === type);
       });
 
       // Switch template
@@ -962,16 +946,11 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
         tpl.classList.toggle("active", tpl.id === "template-" + type);
       });
 
-      // Focus first input in active template
-      var activeTemplate = document.getElementById("template-" + type);
       // Dispatch event for parent components to handle logic (like logo injection)
       const event = new CustomEvent("qr-type-changed", {
         detail: { type: type },
       });
       window.dispatchEvent(event);
-
-      // Also update global state for legacy support if needed
-      window.currentContentType = type;
     };
   })();
 </script>

@@ -12,14 +12,11 @@
 import GlassCard from "@holi/ui/components/GlassCard.astro";
 import Icon from "@holi/ui/components/Icon.astro";
 
-interface Props {
-  id: string;
-  title: string;
-  initialX?: number;
-  initialY?: number;
-}
-
 const { id, title, initialX = 100, initialY = 150 } = Astro.props;
+
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div
@@ -33,7 +30,7 @@ const { id, title, initialX = 100, initialY = 150 } = Astro.props;
       <button
         class="panel-close"
         onclick={`closePanel('${id}')`}
-        aria-label="Close"
+        aria-label={t("common.close")}
       >
         <Icon name="x" size={16} />
       </button>

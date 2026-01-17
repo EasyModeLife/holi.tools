@@ -1,12 +1,13 @@
 ---
-import { getTranslations } from "../i18n/translations";
-const lang = Astro.currentLocale || "es";
-const t = getTranslations(lang);
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div id="HeroTitle" class="title-section">
-  <h1 data-i18n="hero_title">{t.hero_title}</h1>
-  <p class="slogan" data-i18n="hero_slogan">{t.hero_slogan}</p>
+  <h1 data-i18n="hero_title">{t("hero_title")}</h1>
+  <p class="slogan" data-i18n="hero_slogan">{t("hero_slogan")}</p>
 </div>
 
 <style>
@@ -22,7 +23,11 @@ const t = getTranslations(lang);
   }
 
   h1 {
-    font-size: clamp(3rem, 15vw, 11rem); /* Slightly adjusted for better scaling */
+    font-size: clamp(
+      3rem,
+      15vw,
+      11rem
+    ); /* Slightly adjusted for better scaling */
     font-weight: 900;
     letter-spacing: -0.06em;
     margin: 0;
@@ -31,18 +36,18 @@ const t = getTranslations(lang);
     padding: 0.2rem 1.5rem; /* Large horizontal padding to avoid glyph clipping */
     overflow: visible;
     width: fit-content;
-    
+
     /* RGB Spectrum Gradient Logic */
     color: transparent;
     background-clip: text;
     -webkit-background-clip: text;
     background-image: linear-gradient(
       135deg,
-      #ff5e5e 0%,   /* Red */
-      #ffc75e 25%,  /* Yellow-ish */
-      #5eff8f 50%,  /* Green-ish */
-      #5ebaff 75%,  /* Blue-ish */
-      #c65eff 100%  /* Violet */
+      #ff5e5e 0%,
+      /* Red */ #ffc75e 25%,
+      /* Yellow-ish */ #5eff8f 50%,
+      /* Green-ish */ #5ebaff 75%,
+      /* Blue-ish */ #c65eff 100% /* Violet */
     );
     /* Alternative more subtle RGB: 
        background-image: linear-gradient(to right, #ff0000, #00ff00, #0000ff); 

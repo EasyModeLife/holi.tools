@@ -1,6 +1,8 @@
 import { joinTrysteroRoom } from "./trystero-client";
 import { debugLog, redact } from "../debug";
 
+type ActionSender = (...args: unknown[]) => unknown;
+
 export interface VaultEvents {
     onMessage?: (msg: any) => void;
     onFileReceived?: (fileId: string, meta: any, blob: Blob) => void;
@@ -32,15 +34,15 @@ export class TrysteroVaultManager {
     private secretKey: string | null = null;
 
     // Actions
-    private sendChatAction: Function | null = null;
-    private sendFileAction: Function | null = null;
-    private sendMetadataAction: Function | null = null;
-    private requestMetadataAction: Function | null = null;
-    private sendIdentityAction: Function | null = null;
-    private sendSyncAction: Function | null = null;
+    private sendChatAction: ActionSender | null = null;
+    private sendFileAction: ActionSender | null = null;
+    private sendMetadataAction: ActionSender | null = null;
+    private requestMetadataAction: ActionSender | null = null;
+    private sendIdentityAction: ActionSender | null = null;
+    private sendSyncAction: ActionSender | null = null;
 
-    private sendManifestAction: Function | null = null;
-    private requestFilesAction: Function | null = null;
+    private sendManifestAction: ActionSender | null = null;
+    private requestFilesAction: ActionSender | null = null;
 
     private peers: Set<string> = new Set();
 
@@ -113,7 +115,6 @@ export class TrysteroVaultManager {
             // Trystero action callback signatures vary a bit by strategy.
             // Normalize by detecting the blob-like payload, peerId, and metadata.
             const args = [a, b, c];
-            const peerId = args.find((x) => typeof x === 'string') as string | undefined;
 
             const meta = args.find(
                 (x) => x && typeof x === 'object' && !(x instanceof Blob) && 'name' in x && 'size' in x
@@ -140,11 +141,11 @@ export class TrysteroVaultManager {
             this.listeners.onFileReceived?.(fileId, safeMeta, blob);
         });
 
-        onFileProgress((progress: number, peerId: string, meta: any) => {
+        onFileProgress((progress: number, _peerId: string, meta: any) => {
             this.listeners.onFileProgress?.(progress, meta);
         });
 
-        getMeta((data: any, peerId: string) => {
+        getMeta((data: any, _peerId: string) => {
             this.listeners.onMetadata?.(data);
         });
 

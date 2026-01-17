@@ -1,5 +1,19 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../../i18n/utils";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
+const strings = {
+  edit_title: t("identity.edit_title"),
+  upload_img: t("identity.upload_img"),
+  change_img: t("identity.change_img"),
+  label_alias: t("identity.label_alias"),
+  placeholder_alias: t("identity.placeholder_alias"),
+  btn_cancel: t("identity.btn_cancel"),
+  btn_save: t("identity.btn_save"),
+  msg_updated: t("identity.msg_updated"),
+  error_update: t("identity.error_update"),
+};
 ---
 
 <dialog
@@ -7,7 +21,7 @@
   class="bg-zinc-900 rounded-2xl p-6 backdrop:bg-black/60 max-w-md w-full"
 >
   <form id="identity-form" class="space-y-4">
-    <h3 class="text-xl font-bold text-white">Edit Profile</h3>
+    <h3 class="text-xl font-bold text-white">{strings.edit_title}</h3>
 
     <div class="flex flex-col items-center gap-3">
       <div
@@ -16,12 +30,13 @@
       >
         <span
           class="text-zinc-500 text-xs text-center group-hover:opacity-0 transition-opacity"
-          >Upload<br />Image</span
         >
+          {strings.upload_img}
+        </span>
         <div
           class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-xs text-white"
         >
-          Change
+          {strings.change_img}
         </div>
         <input
           type="file"
@@ -35,7 +50,7 @@
 
     <div>
       <label for="identity-alias" class="block text-sm text-zinc-400 mb-1"
-        >Display Name</label
+        >{strings.label_alias}</label
       >
       <input
         type="text"
@@ -43,7 +58,7 @@
         name="alias"
         required
         class="w-full px-4 py-2 bg-white/10 rounded-lg border border-white/10 text-white focus:border-purple-500 focus:outline-none"
-        placeholder="Your Name"
+        placeholder={strings.placeholder_alias}
       />
     </div>
 
@@ -53,23 +68,28 @@
         id="cancel-identity-btn"
         class="px-4 py-2 text-zinc-400 hover:text-white transition-colors"
       >
-        Cancel
+        {strings.btn_cancel}
       </button>
       <button
         type="submit"
         class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors"
       >
-        Save Profile
+        {strings.btn_save}
       </button>
     </div>
   </form>
 </dialog>
+
+<script define:vars={{ strings }}>
+  window.identityModalStrings = strings;
+</script>
 
 <script>
   import { updateIdentity } from "../../../lib/identity/manager";
   import { identityStore } from "../../../lib/stores/identity";
   import { toast } from "../../../lib/ui/toast";
 
+  const strings = (window as any).identityModalStrings;
   const dialog = document.getElementById(
     "identity-dialog"
   ) as HTMLDialogElement;
@@ -87,14 +107,14 @@
   window.addEventListener("edit-identity", (async () => {
     const id = identityStore.get().identity;
     if (id) {
-      aliasInput.value = id.alias;
+      aliasInput.value = id.alias || "";
       if (id.avatar) {
         const url = URL.createObjectURL(id.avatar);
         if (avatarPreview) avatarPreview.style.backgroundImage = `url(${url})`;
         if (avatarPreview) avatarPreview.textContent = "";
       } else {
         if (avatarPreview) avatarPreview.style.backgroundImage = "";
-        if (avatarPreview) avatarPreview.textContent = "Upload Image";
+        if (avatarPreview) avatarPreview.textContent = strings.upload_img;
       }
     }
   }) as EventListener);
@@ -119,17 +139,18 @@
       const file = avatarInput.files?.[0];
       const alias = aliasInput.value;
 
-      await updateIdentity(id.id, {
+      await updateIdentity({
+        ...id,
         alias,
-        avatar: file,
+        avatar: file || id.avatar,
       });
 
-      toast.success("Profile updated");
+      toast.success(strings.msg_updated);
       identityStore.reload();
       dialog.close();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to update profile");
+      toast.error(strings.error_update);
     }
   });
 </script>

@@ -1,5 +1,9 @@
 ---
 // Sidebar.astro - Collapsible left navigation panel
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <aside class="sidebar" id="sidebar">
@@ -11,27 +15,27 @@
     <button
       class="sidebar-toggle"
       onclick="toggleSidebar()"
-      title="Toggle sidebar"
+      title={t("sidebar.toggle")}
     >
       <span class="icon">chevron_left</span>
     </button>
   </div>
 
   <nav class="nav-sec">
-    <div class="nav-head">Library</div>
+    <div class="nav-head">{t("sidebar.library")}</div>
     <a href="#" class="nav-item active" onclick="showCanvas()">
       <span class="icon">edit</span>
-      <span class="nav-item-text">Editor</span>
+      <span class="nav-item-text">{t("sidebar.editor")}</span>
     </a>
     <a href="#" class="nav-item" onclick="showRecent()">
       <span class="icon">history</span>
-      <span class="nav-item-text">Recent</span>
+      <span class="nav-item-text">{t("sidebar.recent")}</span>
     </a>
   </nav>
 
   <nav class="nav-sec">
     <div class="nav-head">
-      Collections
+      {t("sidebar.collections")}
       <button onclick="createCollection()" style="float:right">
         <span class="icon" style="font-size:14px">add</span>
       </button>
@@ -46,6 +50,7 @@
   >
     <button
       class="nav-item"
+      title={t("sidebar.theme")}
       style="flex:1; justify-content:center"
       onclick="toggleTheme()"
     >

@@ -3,11 +3,12 @@
  * SearchExperiments.astro
  * Client-side search for filtering experiment cards.
  */
-import { getTranslations } from "../i18n/translations";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 import Icon from "@holi/ui/components/Icon.astro";
 
-const lang = Astro.currentLocale || "en";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="search-container relative max-w-xl mx-auto mb-16">
@@ -24,7 +25,7 @@ const lang = Astro.currentLocale || "en";
     <input
       type="text"
       id="experiment-search"
-      placeholder="filter experiments..."
+      placeholder={t("search_placeholder") as string}
       class="w-full bg-white/[0.02] border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-white/20 transition-all placeholder:text-white/20 text-sm tracking-tight"
     />
     <div

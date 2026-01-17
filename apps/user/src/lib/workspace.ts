@@ -88,6 +88,10 @@ export function getActiveHandle(): FileSystemDirectoryHandle | null {
     return currentHandle;
 }
 
+export function getActiveVaultId(): string | null {
+    return currentVaultId;
+}
+
 // === Helper to init folders ===
 
 async function initVaultStructure(root: FileSystemDirectoryHandle) {
@@ -97,7 +101,7 @@ async function initVaultStructure(root: FileSystemDirectoryHandle) {
     // Check/Create holi.json
     try {
         await root.getFileHandle('holi.json');
-    } catch (e) {
+    } catch {
         // Create default config
         const file = await root.getFileHandle('holi.json', { create: true });
         const writable = await file.createWritable();

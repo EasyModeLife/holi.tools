@@ -437,7 +437,7 @@ export class VaultController {
                     this.appendChatMessage(`Project verified: ${meta.name}`, 'system');
                 }
             },
-            onMetadataRequest: (peerId) => {
+            onMetadataRequest: (_peerId) => {
                 const name = document.getElementById("project-name")?.textContent;
                 if (name && name !== "Loading Project...") {
                     this.vaultManager?.sendMetadata(name);

@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
+import { SUPPORTED_LANGS, DEFAULT_LANG } from "@holi/configs/i18n";
 
 export default defineConfig({
   integrations: [
@@ -8,10 +9,11 @@ export default defineConfig({
     }),
   ],
   i18n: {
-    defaultLocale: "en",
-    locales: ["en", "es", "fr", "de", "pt", "it", "zh", "ja", "ko", "ru"],
+    defaultLocale: DEFAULT_LANG,
+    locales: SUPPORTED_LANGS,
     routing: {
-      prefixDefaultLocale: false,
+      prefixDefaultLocale: true,
+      fallbackType: "redirect"
     },
   },
 });

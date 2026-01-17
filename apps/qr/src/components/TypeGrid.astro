@@ -8,59 +8,63 @@
 import GlassCard from "@holi/ui/components/GlassCard.astro";
 import Icon from "@holi/ui/components/Icon.astro";
 import { BRAND_ICONS } from "../lib/brand-logos";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const QR_TYPES = [
-  { id: "url", icon: "link", label: "URL" },
-  { id: "text", icon: "text_fields", label: "Text" },
-  { id: "email", icon: "email", label: "Email" },
-  { id: "phone", icon: "phone", label: "Phone" },
-  { id: "sms", icon: "sms", label: "SMS" },
-  { id: "vcard", icon: "contact_page", label: "vCard" },
-  { id: "wifi", icon: "wifi", label: "WiFi", image: BRAND_ICONS.wifi },
-  { id: "event", icon: "event", label: "Event" },
-  { id: "location", icon: "location_on", label: "Location" },
+  { id: "url", icon: "link", label: t("type.url") },
+  { id: "text", icon: "text_fields", label: t("type.text") },
+  { id: "email", icon: "email", label: t("type.email") },
+  { id: "phone", icon: "phone", label: t("type.phone") },
+  { id: "sms", icon: "sms", label: t("type.sms") },
+  { id: "vcard", icon: "contact_page", label: t("type.vcard") },
+  { id: "wifi", icon: "wifi", label: t("type.wifi"), image: BRAND_ICONS.wifi },
+  { id: "event", icon: "event", label: t("type.event") },
+  { id: "location", icon: "location_on", label: t("type.location") },
   {
     id: "facebook",
     icon: "public",
-    label: "Facebook",
+    label: t("type.facebook"),
     image: BRAND_ICONS.facebook,
   },
   {
     id: "twitter",
     icon: "chat_bubble",
-    label: "X (Twitter)",
+    label: t("type.twitter"),
     image: BRAND_ICONS.twitter,
   },
   {
     id: "youtube",
     icon: "smart_display",
-    label: "YouTube",
+    label: t("type.youtube"),
     image: BRAND_ICONS.youtube,
   },
   {
     id: "bitcoin",
     icon: "account_balance_wallet",
-    label: "Bitcoin",
+    label: t("type.bitcoin"),
     image: BRAND_ICONS.bitcoin,
   },
   {
     id: "appstore",
     icon: "apple",
-    label: "App Store",
+    label: t("type.appstore"),
     image: BRAND_ICONS.appstore,
   },
   {
     id: "playstore",
     icon: "shop",
-    label: "Play Store",
+    label: t("type.playstore"),
     image: BRAND_ICONS.playstore,
   },
-  { id: "scan", icon: "qr_code_scanner", label: "Scan QR" },
+  { id: "scan", icon: "qr_code_scanner", label: t("input.scan_qr") },
 ];
 ---
 
 <div class="type-grid-wrapper" id="type-grid-wrapper">
-  <p class="helper-text">Or choose a specific type</p>
+  <p class="helper-text">{t("typegrid.helper")}</p>
   <div class="type-grid">
     {
       QR_TYPES.map((type) => (
@@ -101,8 +105,8 @@ const QR_TYPES = [
         var type = card.getAttribute("data-type");
         console.log("[TypeGrid] Clicked type:", type);
 
-        if (window.setContentType) {
-          window.setContentType(type);
+        if (type && (window as any).setContentType) {
+          (window as any).setContentType(type);
           // Mobile: scroll to input
           if (window.innerWidth < 768) {
             var input = document.querySelector(".shared-input-container");

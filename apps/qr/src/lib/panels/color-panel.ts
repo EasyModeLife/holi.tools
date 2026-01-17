@@ -4,7 +4,6 @@
  */
 
 import { dispatchQREvent, QREvents } from '../core/events';
-import type { GradientChangeEvent, ColorChangeEvent } from '../core/types';
 
 // =============================================================================
 // COLOR HANDLING

@@ -586,7 +586,7 @@ export class WebGLLiquidRenderer {
      * Capture high-resolution snapshot for export
      * Since canvas is already at 2048px, we just capture it directly
      */
-    async captureHighRes(config: RenderConfig, targetSize: number = 2048): Promise<Blob | null> {
+    async captureHighRes(config: RenderConfig, _targetSize: number = 2048): Promise<Blob | null> {
         if (!this.gl || !this.canvas || !this.initialized) {
             console.error('WebGL captureHighRes: Not initialized');
             return null;

@@ -4,6 +4,7 @@ description: "Technical dive into high-performance QR generation in Rust."
 tags: ["paper", "rust", "wasm"]
 icon: "qr_code_2"
 color: "var(--palette-qr-accent)"
+lang: en
 order: 2
 ---
 

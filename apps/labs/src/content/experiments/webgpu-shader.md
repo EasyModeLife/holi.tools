@@ -4,6 +4,7 @@ description: "Real-time background rendering using wgpu-compatible pipelines."
 tags: ["prueba", "webgpu"]
 icon: "animation"
 color: "var(--palette-labs-accent)"
+lang: en
 order: 1
 ---
 

@@ -11,6 +11,7 @@ export type DmEvent =
     | { type: 'file_received'; fileId: string; fileName: string; blob: Blob };
 
 type DmEventHandler = (event: DmEvent) => void;
+type ActionSender = (...args: unknown[]) => unknown;
 
 function bufferToHex(buffer: Uint8Array): string {
     return Array.from(buffer).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -28,8 +29,8 @@ export class TrysteroDmManager {
     private listeners: DmEventHandler[] = [];
 
     // Action wrappers (Typed Send functions)
-    private sendChatAction: Function | null = null;
-    private sendFileAction: Function | null = null;
+    private sendChatAction: ActionSender | null = null;
+    private sendFileAction: ActionSender | null = null;
 
     public state: DmState = 'idle';
 

@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 /**
  * AdvancedPanel.astro - Advanced configuration for QR Code
  *
@@ -9,21 +14,21 @@
 ---
 
 <div class="option-row">
-  <label>Error Correction</label>
+  <label>{t("advanced.ecc")}</label>
   <select onchange="window.setEcc && window.setEcc(this.value)">
-    <option value="L">Low (7%)</option>
-    <option value="M" selected>Medium (15%)</option>
-    <option value="Q">Quartile (25%)</option>
-    <option value="H">High (30%)</option>
+    <option value="L">{t("advanced.ecc.low")}</option>
+    <option value="M" selected>{t("advanced.ecc.medium")}</option>
+    <option value="Q">{t("advanced.ecc.quartile")}</option>
+    <option value="H">{t("advanced.ecc.high")}</option>
   </select>
 </div>
 <div class="option-row">
-  <label>Mask Pattern</label>
+  <label>{t("advanced.mask")}</label>
   <select
     id="mask-select"
     onchange="window.setMaskPattern && window.setMaskPattern(this.value)"
   >
-    <option value="auto" selected>Auto (Best)</option>
+    <option value="auto" selected>{t("advanced.mask.auto")}</option>
     <option value="0">(i+j) mod 2 = 0</option>
     <option value="1">i mod 2 = 0</option>
     <option value="2">j mod 3 = 0</option>

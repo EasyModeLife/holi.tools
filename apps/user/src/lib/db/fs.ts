@@ -34,7 +34,7 @@ export async function getProjects(): Promise<Project[]> {
                 }
             }
         }
-    } catch (e) {
+    } catch {
         // projects folder might not exist yet
     }
 
@@ -144,7 +144,7 @@ export async function listProjectFiles(projectId: string): Promise<string[]> {
     try {
         const filesDir = await getProjectFilesRoot(projectId);
         await listFilesRecursive(filesDir, '', files);
-    } catch (e) { }
+    } catch { }
 
     return files.sort((a, b) => a.localeCompare(b));
 }

@@ -8,6 +8,7 @@
     "./tailwind.config": "./tailwind.config.js",
     "./tsconfig.json": "./tsconfig.json",
     "./changelogs": "./src/changelogs.ts",
+    "./i18n": "./src/i18n.ts",
     "./*": "./*"
   },
   "peerDependencies": {

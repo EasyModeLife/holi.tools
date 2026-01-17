@@ -1,8 +1,8 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
+import { SUPPORTED_LANGS, DEFAULT_LANG } from "@holi/configs/i18n";
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,10 +12,11 @@ export default defineConfig({
     inlineStylesheets: "always",
   },
   i18n: {
-    defaultLocale: "en",
-    locales: ["en", "es", "fr", "de", "pt", "it", "zh", "ja", "ko", "ru"],
+    defaultLocale: DEFAULT_LANG,
+    locales: SUPPORTED_LANGS,
     routing: {
-      prefixDefaultLocale: false,
+      prefixDefaultLocale: true,
+      fallbackType: "redirect"
     },
   },
   integrations: [

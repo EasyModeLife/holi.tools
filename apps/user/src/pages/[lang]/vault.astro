@@ -3,19 +3,29 @@
  * Project Detail Page - Shows project info and sharing options
  * Uses URL hash for project ID since we're in static mode
  */
-import VaultLayout from "../layouts/VaultLayout.astro";
-import ChatPanel from "../components/ChatPanel.astro";
-import StoragePanel from "../components/StoragePanel.astro";
+import VaultLayout from "../../layouts/VaultLayout.astro";
+import ChatPanel from "../../components/ChatPanel.astro";
+import StoragePanel from "../../components/StoragePanel.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { SUPPORTED_LANGS } from "@holi/configs/i18n";
 
-const lang = Astro.currentLocale || "en";
-const basePath = lang === "en" ? "" : `/${lang}`;
+export function getStaticPaths() {
+  return SUPPORTED_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const basePath = lang === "en" ? "/en" : `/${lang}`;
 ---
 
-<VaultLayout title="Project Vault">
+<VaultLayout title={t("nav.vault")}>
   <div class="max-w-4xl mx-auto space-y-8">
     <!-- Header -->
     <div class="flex items-center gap-4">
-      <a href={`${basePath}/`} class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+      <a
+        href={`${basePath}/`}
+        class="p-2 hover:bg-white/10 rounded-lg transition-colors"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -30,7 +40,7 @@ const basePath = lang === "en" ? "" : `/${lang}`;
       </a>
       <div>
         <h1 id="project-name" class="text-2xl font-bold text-white">
-          Loading...
+          {t("vault.loading")}
         </h1>
         <p id="project-role" class="text-sm text-zinc-400"></p>
       </div>
@@ -60,17 +70,18 @@ const basePath = lang === "en" ? "" : `/${lang}`;
                 y2="15"></line></svg
             >
           </div>
-          <h2 class="text-lg font-semibold text-white">Share Project</h2>
+          <h2 class="text-lg font-semibold text-white">
+            {t("project.share_title")}
+          </h2>
         </div>
         <p class="text-sm text-zinc-400">
-          Generate a secure invitation link to share this project with a
-          collaborator.
+          {t("project.share_desc")}
         </p>
         <button
           id="instant-link-btn"
           class="w-full py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors"
         >
-          Copy Instant Link (Owner)
+          {t("project.copy_link")}
         </button>
       </div>
 
@@ -94,10 +105,12 @@ const basePath = lang === "en" ? "" : `/${lang}`;
                 d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg
             >
           </div>
-          <h2 class="text-lg font-semibold text-white">Connected Peers</h2>
+          <h2 class="text-lg font-semibold text-white">
+            {t("project.peers_title")}
+          </h2>
         </div>
         <div id="peers-list" class="text-sm text-zinc-400">
-          <p>No peers connected yet.</p>
+          <p>{t("project.no_peers")}</p>
         </div>
       </div>
     </div>
@@ -105,8 +118,10 @@ const basePath = lang === "en" ? "" : `/${lang}`;
     <!-- Project Chat -->
     <div class="glass-card p-6 rounded-xl space-y-3">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-white">Project Chat</h2>
-        <p class="text-xs text-zinc-500">Messages persist per project</p>
+        <h2 class="text-lg font-semibold text-white">
+          {t("project.chat_title")}
+        </h2>
+        <p class="text-xs text-zinc-500">{t("project.chat_desc")}</p>
       </div>
       <div id="chat-container">
         <ChatPanel connected={false} embedded={true} />
@@ -143,19 +158,23 @@ const basePath = lang === "en" ? "" : `/${lang}`;
         >
       </div>
       <div>
-        <h2 class="text-2xl font-bold text-white mb-2">Vault Locked</h2>
+        <h2 class="text-2xl font-bold text-white mb-2">
+          {t("vault.locked_title")}
+        </h2>
         <p class="text-zinc-400">
-          Security check required to access your local project files.
+          {t("vault.locked_desc")}
         </p>
       </div>
       <button
         id="unlock-btn"
         class="w-full py-3 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg font-bold transition-colors"
       >
-        Unlock Vault
+        {t("vault.unlock_button")}
       </button>
-      <a href="/" class="block text-sm text-zinc-500 hover:text-white mt-4"
-        >Return to Dashboard</a
+      <a
+        href={`${basePath}/`}
+        class="block text-sm text-zinc-500 hover:text-white mt-4"
+        >{t("vault.return_dashboard")}</a
       >
     </div>
   </div>
@@ -170,7 +189,7 @@ const basePath = lang === "en" ? "" : `/${lang}`;
 </style>
 
 <script>
-  import { VaultController } from "../lib/vault/controller";
+  import { VaultController } from "../../lib/vault/controller";
 
   // Initialize Controller
   const controller = new VaultController();

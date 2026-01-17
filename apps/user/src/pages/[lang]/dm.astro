@@ -1,16 +1,31 @@
 ---
-import VaultLayout from "../layouts/VaultLayout.astro";
+import VaultLayout from "../../layouts/VaultLayout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { SUPPORTED_LANGS } from "@holi/configs/i18n";
 
-const lang = Astro.currentLocale || "en";
-const basePath = lang === "en" ? "" : `/${lang}`;
+export function getStaticPaths() {
+  return SUPPORTED_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const basePath = lang === "en" ? "/en" : `/${lang}`;
+const strings = {
+  dmWith: t("dm.with"),
+  dmNotFound: t("dm.not_found"),
+  dmNotSetup: t("dm.not_setup"),
+  dmError: t("dm.error_title"),
+  dmConnecting: t("dm.connecting"),
+  openVaultFirst: t("friend.open_vault_first"),
+};
 ---
 
-<VaultLayout title="DM">
+<VaultLayout title={t("dm.title")}>
   <div class="max-w-2xl mx-auto space-y-4">
     <div class="glass-card p-4 rounded-2xl flex items-center justify-between">
       <div class="min-w-0">
         <h1 id="dm-title" class="text-xl font-bold text-white truncate">
-          Direct Message
+          {t("dm.title")}
         </h1>
         <p id="dm-subtitle" class="text-xs text-zinc-500 font-mono truncate">
         </p>
@@ -19,12 +34,12 @@ const basePath = lang === "en" ? "" : `/${lang}`;
         <span
           id="dm-status"
           class="px-2 py-1 text-xs rounded-full bg-zinc-700 text-zinc-300"
-          >Connecting...</span
+          >{t("dm.connecting")}</span
         >
         <a
           href={`${basePath}/`}
           class="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
-          >Back</a
+          >{t("nav.back")}</a
         >
       </div>
     </div>
@@ -38,7 +53,7 @@ const basePath = lang === "en" ? "" : `/${lang}`;
         id="dm-retry-btn"
         class="mt-2 px-3 py-1 bg-red-500/20 hover:bg-red-500/30 rounded text-sm text-red-200"
       >
-        Retry Connection
+        {t("dm.retry")}
       </button>
     </div>
 
@@ -52,21 +67,19 @@ const basePath = lang === "en" ? "" : `/${lang}`;
       <input
         id="dm-input"
         class="flex-1 px-4 py-2 bg-white/10 rounded-lg border border-white/10 text-white focus:border-purple-500 focus:outline-none"
-        placeholder="Message…"
+        placeholder={t("dm.placeholder")}
         autocomplete="off"
       />
       <button
         type="submit"
         class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Send
+        {t("dm.send")}
       </button>
     </form>
 
     <p class="text-xs text-zinc-500">
-      DM messages are stored in your vault under <span class="font-mono"
-        >.holi/dm/</span
-      >.
+      {t("dm.storage_info")}
     </p>
   </div>
 </VaultLayout>
@@ -79,20 +92,24 @@ const basePath = lang === "en" ? "" : `/${lang}`;
   }
 </style>
 
+<script define:vars={{ strings }}>
+  window.dmStrings = strings;
+</script>
+
 <script>
   import {
     getActiveHandle,
     getLastVault,
     checkAccess,
     restoreSession,
-  } from "../lib/workspace";
-  import { findContactByNostrPubkey } from "../lib/contacts/store";
-  import { listDmMessages, saveDmMessage } from "../lib/friends/dm";
-  import { TrysteroDmManager } from "../lib/friends/trystero-dm";
-  import { friendsStore } from "../lib/friends/store";
-  import type { FriendDmConfig } from "../lib/friends/p2p";
-  import type { ChatEvent } from "../lib/p2p/chat";
-  import { getNostrPublicKey } from "../lib/p2p/nostr";
+  } from "../../lib/workspace";
+  import { findContactByNostrPubkey } from "../../lib/contacts/store";
+  import { listDmMessages, saveDmMessage } from "../../lib/friends/dm";
+  import { TrysteroDmManager } from "../../lib/friends/trystero-dm";
+  import { friendsStore } from "../../lib/friends/store";
+  import type { FriendDmConfig } from "../../lib/friends/p2p";
+  import type { ChatEvent } from "../../lib/p2p/chat";
+  import { getNostrPublicKey } from "../../lib/p2p/nostr";
 
   function parsePk(): string | null {
     const hash = window.location.hash.slice(1);
@@ -162,69 +179,60 @@ const basePath = lang === "en" ? "" : `/${lang}`;
     }
   }
 
-  let dmManager: DmManager | null = null;
+  let dmManager: TrysteroDmManager | null = null;
 
   async function run() {
-    const errBox = document.getElementById("dm-error");
-    const errMsg = document.getElementById("dm-error-msg");
+    // These should be set via define:vars if they are translated
+    const strings = (window as any).dmStrings || {
+      dmWith: "DM with",
+      dmNotFound: "Friend not found in this vault.",
+      dmNotSetup: "DM not set up for this friend yet.",
+      openVaultFirst: "Open your vault first",
+    };
+
     const titleEl = document.getElementById("dm-title");
     const subtitleEl = document.getElementById("dm-subtitle");
     const retryBtn = document.getElementById("dm-retry-btn");
 
     try {
-      console.log("[DM Page] Starting...");
       await ensureWorkspace();
-      if (!getActiveHandle())
-        throw new Error(
-          "Open your vault first (Dashboard → Open Local Folder)"
-        );
+      if (!getActiveHandle()) throw new Error(strings.openVaultFirst);
 
       const pk = parsePk();
       if (!pk)
         throw new Error("Missing pk in URL hash. Expected /dm#pk=<64-hex>.");
 
       const contact = await findContactByNostrPubkey(pk);
-      if (!contact) throw new Error("Friend not found in this vault.");
+      if (!contact) throw new Error(strings.dmNotFound);
 
-      if (titleEl) titleEl.textContent = `DM with ${contact.alias}`;
+      if (titleEl) titleEl.textContent = `${strings.dmWith} ${contact.alias}`;
       if (subtitleEl) subtitleEl.textContent = pk;
 
       const dm = (contact as any).dm;
       if (!dm?.sessionId || !dm?.keyB64Url) {
-        throw new Error(
-          "DM not set up for this friend yet. Re-add them via Friend Invite Link to enable DM."
-        );
+        throw new Error(strings.dmNotSetup);
       }
 
-      // Trystero Init Logic
       function startDm(config: FriendDmConfig) {
         if (dmManager) return;
-
-        console.log("[DM] Starting Trystero DM");
         dmManager = new TrysteroDmManager(config);
-
         dmManager.on(async (event) => {
           if (event.type === "status_change") {
             updateStatus(event.state, event.message);
           } else if (event.type === "message") {
             const msg: any = event.message;
             const content = msg.content || "";
-
-            // Avoid duplicates if we handled it locally
             if (msg.senderId === "me") return;
-
             addBubble(content, "peer");
             await saveDmMessage(dm.sessionId, {
               id: msg.id || crypto.randomUUID(),
               ts: msg.timestamp || Date.now(),
               from: "peer",
               text: content,
-              peerPubkey: pk,
+              peerPubkey: pk || undefined,
             });
           } else if (event.type === "file_received") {
             addBubble(`📁 Received file: ${event.fileName}`, "peer");
-
-            // Auto-download
             const url = URL.createObjectURL(event.blob);
             const a = document.createElement("a");
             a.href = url;
@@ -232,48 +240,37 @@ const basePath = lang === "en" ? "" : `/${lang}`;
             a.click();
           }
         });
-
         dmManager.start();
       }
 
-      // Retry button (Manual reconnect)
       retryBtn?.addEventListener("click", () => {
         if (dmManager) {
-          dmManager.destroy();
+          (dmManager as TrysteroDmManager).destroy();
           dmManager = null;
         }
         startDm({ ...dm, friendPubkey: pk });
       });
 
-      // Load history
       const history = await listDmMessages(dm.sessionId);
       for (const m of history) {
         addBubble(m.text, m.from === "me" ? "me" : "peer");
       }
 
-      // Start!
       startDm({ ...dm, friendPubkey: pk });
 
-      // Send handler
       const form = document.getElementById("dm-form");
       const input = document.getElementById(
         "dm-input"
       ) as HTMLInputElement | null;
-
       form?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const text = (input?.value || "").trim();
         if (!text) return;
         if (input) input.value = "";
-
-        if (!dmManager || dmManager.state !== "connected") {
-          console.warn("[DM Page] Cannot send - not connected");
-          return;
-        }
+        if (!dmManager || dmManager.state !== "connected") return;
 
         addBubble(text, "me");
-        dmManager.sendText(text);
-
+        (dmManager as TrysteroDmManager).sendText(text);
         await saveDmMessage(dm.sessionId, {
           id: crypto.randomUUID(),
           ts: Date.now(),
@@ -282,26 +279,19 @@ const basePath = lang === "en" ? "" : `/${lang}`;
         });
       });
     } catch (e) {
-      console.error("[DM Page] Failed:", e);
       updateStatus("error", (e as Error)?.message || String(e));
     }
   }
 
   run();
 
-  // Cleanup on navigation (Client-side routing or reload)
   function cleanup() {
     if (dmManager) {
-      console.log("[DM Page] Cleaning up DmManager...");
-      dmManager.destroy();
+      (dmManager as TrysteroDmManager).destroy();
       dmManager = null;
     }
   }
-
-  // Astro View Transitions event
   document.addEventListener("astro:before-swap", cleanup);
-
-  // Browser unload events (fallback)
   window.addEventListener("pagehide", cleanup);
   window.addEventListener("beforeunload", cleanup);
 </script>

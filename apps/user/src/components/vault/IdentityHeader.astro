@@ -1,5 +1,19 @@
 ---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const strings = {
+  loading: t("vault.loading"),
+  guest: t("vault.guest"),
+  permissionNeeded: t("vault.permission_needed"),
+  status: t("vault.status"),
+  status_label: t("vault.status_label"),
+  open_folder: t("vault.open_folder"),
+  edit_profile: t("vault.edit_profile"),
+  switch_vault: t("vault.switch_vault"),
+};
 ---
 
 <header
@@ -26,12 +40,12 @@
     </div>
     <div>
       <h2 id="vault-path" class="text-lg font-semibold text-white">
-        Browser Storage
+        {strings.status}
       </h2>
       <div class="flex items-center gap-2">
         <span id="connection-status" class="w-2 h-2 rounded-full bg-zinc-500"
         ></span>
-        <p class="text-xs text-zinc-400">Vault Status</p>
+        <p class="text-xs text-zinc-400">{strings.status_label}</p>
       </div>
     </div>
   </div>
@@ -42,7 +56,7 @@
       id="select-vault-btn"
       class="hidden md:block px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors"
     >
-      Open Local Folder
+      {strings.open_folder}
     </button>
 
     <div class="h-8 w-px bg-white/10 hidden md:block"></div>
@@ -50,7 +64,9 @@
     <!-- Identity Profile (Compact) -->
     <div id="identity-section" class="flex items-center gap-3">
       <div class="text-right hidden md:block">
-        <p id="identity-status" class="text-sm font-medium text-white">Guest</p>
+        <p id="identity-status" class="text-sm font-medium text-white">
+          {strings.guest}
+        </p>
         <p
           id="identity-badge"
           class="text-[10px] text-zinc-500 font-mono hidden"
@@ -82,19 +98,23 @@
             id="edit-identity-btn"
             class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm text-zinc-300 hidden"
           >
-            Edit Profile
+            {strings.edit_profile}
           </button>
           <button
             id="select-vault-mobile-btn"
             class="md:hidden w-full text-left px-4 py-3 hover:bg-white/5 text-sm text-zinc-300 border-t border-white/5"
           >
-            Switch Vault
+            {strings.switch_vault}
           </button>
         </div>
       </div>
     </div>
   </div>
 </header>
+
+<script define:vars={{ strings }}>
+  window.vaultStrings = strings;
+</script>
 
 <script>
   import { identityStore } from "../../lib/stores/identity";
@@ -138,8 +158,13 @@
     }
   })();
 
+  // Bridge for localized strings
+  const strings = (window as any).vaultStrings;
+
   function updateVaultUI(name: string, active: boolean) {
-    if (vaultPath) vaultPath.textContent = name;
+    if (vaultPath)
+      vaultPath.textContent =
+        name === "Permission Needed" ? strings.permissionNeeded : name;
     if (connStatus) {
       connStatus.classList.toggle("bg-green-500", active);
       connStatus.classList.toggle("bg-zinc-500", !active);
@@ -160,12 +185,14 @@
         avatarEl.textContent = "";
       } else {
         avatarEl.style.backgroundImage = "";
-        avatarEl.textContent = identity.alias.slice(0, 2).toUpperCase();
+        avatarEl.textContent = (identity.alias || "??")
+          .slice(0, 2)
+          .toUpperCase();
       }
       if (editBtn) editBtn.classList.remove("hidden");
       if (onlineIndicator) onlineIndicator.classList.remove("hidden"); // Assume "online" if identity exists for now
     } else {
-      statusEl.textContent = loading ? "Loading..." : "Guest";
+      statusEl.textContent = loading ? strings.loading : strings.guest;
       if (badgeEl) badgeEl.classList.add("hidden");
       avatarEl.style.backgroundImage = "";
       avatarEl.textContent = "?";
@@ -214,10 +241,9 @@
   document
     .getElementById("edit-identity-btn")
     ?.addEventListener("click", () => {
-      document.getElementById("identity-dialog")?.showModal();
+      (document.getElementById("identity-dialog") as any)?.showModal();
       // We'll need to populate the form form the store in the Dialog component
       // Dispatch event "edit-identity" to let the dialog know.
       window.dispatchEvent(new CustomEvent("edit-identity"));
     });
-
 </script>
