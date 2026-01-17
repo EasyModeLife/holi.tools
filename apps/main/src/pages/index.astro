@@ -1,1 +1,11 @@
-<meta http-equiv="refresh" content="0;url=/en/" />
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { getLangFromUrl } from "../i18n/utils";
+import { mainAppChangelog } from "@holi/configs/changelogs";
+
+const lang = getLangFromUrl(Astro.url);
+const history = mainAppChangelog[lang] || mainAppChangelog.en;
+const currentVersion = history[0]?.version || "0.0.0";
+---
+
+<MainLayout version={currentVersion} changelog={history} />

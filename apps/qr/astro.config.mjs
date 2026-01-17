@@ -12,6 +12,7 @@ export default defineConfig({
     locales: SUPPORTED_LANGS,
     routing: {
       prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
       fallbackType: "redirect"
     }
   },
