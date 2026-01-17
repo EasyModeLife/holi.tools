@@ -1,0 +1,18 @@
+{
+  "name": "@holi/wasm-p2p",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "pkg/**",
+    "README.md"
+  ],
+  "main": "./pkg/holi_wasm_p2p.js",
+  "module": "./pkg/holi_wasm_p2p.js",
+  "types": "./pkg/holi_wasm_p2p.d.ts",
+  "scripts": {
+    "build": "wasm-pack build --release --target web --out-dir pkg",
+    "dev": "wasm-pack build --dev --target web --out-dir pkg",
+    "test": "cargo test"
+  }
+}

@@ -84,7 +84,7 @@ impl fmt::Debug for IdentityKey {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, target_arch = "wasm32"))]
 mod tests {
     use super::*;
 

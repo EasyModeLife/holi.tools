@@ -11,12 +11,13 @@
     "deploy:paint": "turbo run build --filter=holi-paint && wrangler pages deploy ./apps/paint/dist --project-name paint-holi",
     "create-app": "node scripts/create-app.js",
     "deploy:calculator": "turbo run build --filter=holi-calculator && wrangler pages deploy ./apps/calculator/dist --project-name calculator-holi",
+    "deploy:user": "turbo run build --filter=holi-user && wrangler pages deploy ./apps/user/dist --project-name user-holi",
     "deploy:test": "turbo run build --filter=holi-test && wrangler pages deploy ./apps/test/dist --project-name test-holi",
     "lint": "eslint .",
     "format": "prettier --write .",
     "deploy:labs": "turbo run build --filter=holi-labs && wrangler pages deploy ./apps/labs/dist --project-name labs-holi",
     "deploy:qr": "turbo run build --filter=holi-qr && wrangler pages deploy ./apps/qr/dist --project-name qr-holi",
-    "build:wasm": "cd packages/wasm-qr && wasm-pack build --target web --release"
+    "build:wasm": "cd packages/wasm-qr-svg && wasm-pack build --target web --release"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

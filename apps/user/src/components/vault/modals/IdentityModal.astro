@@ -1,0 +1,135 @@
+---
+
+---
+
+<dialog
+  id="identity-dialog"
+  class="bg-zinc-900 rounded-2xl p-6 backdrop:bg-black/60 max-w-md w-full"
+>
+  <form id="identity-form" class="space-y-4">
+    <h3 class="text-xl font-bold text-white">Edit Profile</h3>
+
+    <div class="flex flex-col items-center gap-3">
+      <div
+        id="avatar-preview"
+        class="w-20 h-20 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center overflow-hidden bg-cover bg-center cursor-pointer hover:border-purple-500 transition-colors relative group"
+      >
+        <span
+          class="text-zinc-500 text-xs text-center group-hover:opacity-0 transition-opacity"
+          >Upload<br />Image</span
+        >
+        <div
+          class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-xs text-white"
+        >
+          Change
+        </div>
+        <input
+          type="file"
+          id="identity-avatar-input"
+          name="avatar"
+          accept="image/*"
+          class="absolute inset-0 opacity-0 cursor-pointer"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="identity-alias" class="block text-sm text-zinc-400 mb-1"
+        >Display Name</label
+      >
+      <input
+        type="text"
+        id="identity-alias"
+        name="alias"
+        required
+        class="w-full px-4 py-2 bg-white/10 rounded-lg border border-white/10 text-white focus:border-purple-500 focus:outline-none"
+        placeholder="Your Name"
+      />
+    </div>
+
+    <div class="flex gap-3 justify-end">
+      <button
+        type="button"
+        id="cancel-identity-btn"
+        class="px-4 py-2 text-zinc-400 hover:text-white transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors"
+      >
+        Save Profile
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  import { updateIdentity } from "../../../lib/identity/manager";
+  import { identityStore } from "../../../lib/stores/identity";
+  import { toast } from "../../../lib/ui/toast";
+
+  const dialog = document.getElementById(
+    "identity-dialog"
+  ) as HTMLDialogElement;
+  const form = document.getElementById("identity-form") as HTMLFormElement;
+  const cancelBtn = document.getElementById("cancel-identity-btn");
+  const aliasInput = document.getElementById(
+    "identity-alias"
+  ) as HTMLInputElement;
+  const avatarInput = document.getElementById(
+    "identity-avatar-input"
+  ) as HTMLInputElement;
+  const avatarPreview = document.getElementById("avatar-preview");
+
+  // Init form on open
+  window.addEventListener("edit-identity", (async () => {
+    const id = identityStore.get().identity;
+    if (id) {
+      aliasInput.value = id.alias;
+      if (id.avatar) {
+        const url = URL.createObjectURL(id.avatar);
+        if (avatarPreview) avatarPreview.style.backgroundImage = `url(${url})`;
+        if (avatarPreview) avatarPreview.textContent = "";
+      } else {
+        if (avatarPreview) avatarPreview.style.backgroundImage = "";
+        if (avatarPreview) avatarPreview.textContent = "Upload Image";
+      }
+    }
+  }) as EventListener);
+
+  cancelBtn?.addEventListener("click", () => dialog.close());
+
+  avatarInput?.addEventListener("change", () => {
+    const file = avatarInput.files?.[0];
+    if (file && avatarPreview) {
+      const url = URL.createObjectURL(file);
+      avatarPreview.style.backgroundImage = `url(${url})`;
+      avatarPreview.textContent = "";
+    }
+  });
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      const id = identityStore.get().identity;
+      if (!id) return;
+
+      const file = avatarInput.files?.[0];
+      const alias = aliasInput.value;
+
+      await updateIdentity(id.id, {
+        alias,
+        avatar: file,
+      });
+
+      toast.success("Profile updated");
+      identityStore.reload();
+      dialog.close();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update profile");
+    }
+  });
+</script>

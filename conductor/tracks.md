@@ -14,6 +14,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] Core + Adapters Architecture (2025-12-31) - holi-qr proof of concept
 
 ## Active Tracks
+- [/] Sovereign Identity & Secure Signaling (conductor/tracks/sovereign_identity_20260115/plan.md)
 - [/] WASM Modularization - Migrating to Core + Adapters pattern
   - [x] holi-qr core library
   - [x] wasm-qr adapter

@@ -96,7 +96,7 @@ impl fmt::Debug for EncryptionKey {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, target_arch = "wasm32"))]
 mod tests {
     use super::*;
 

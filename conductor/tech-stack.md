@@ -5,6 +5,10 @@
 - **Web = UI Only**: Browser apps are thin UI layers over WASM
 - **Zero Dependencies**: No JavaScript frameworks (React, Vue, etc.)
 
+Additional guidance for collaboration features:
+- **WebRTC is a Browser API**: connection wiring may be in JS/TS (or `web-sys`), but protocol/crypto must be Rust.
+- **Binary Protocols**: Avoid JSON/base64 over realtime channels; prefer compact binary frames.
+
 ## Architecture: Core + Adapters
 
 ```
@@ -36,6 +40,7 @@ packages/
 |-------|---------|--------------|
 | `holi-qr` | QR code generation | fast_qr, thiserror |
 | `holi-crypto` | Identity + encryption | ed25519-dalek, chacha20poly1305 |
+| `holi-p2p` | P2P protocol core (framing, policy, grants) | (TBD; keep minimal) |
 | `holi-renderer` | WebGPU rendering | (none - GPU bindings in adapter) |
 
 ## WASM Adapters
@@ -44,6 +49,7 @@ packages/
 |-------|-------|-------------|
 | `wasm-qr` | holi-qr | generate_qr_svg() |
 | `wasm-crypto` | holi-crypto | Vault, IdentityKey |
+| `wasm-p2p` | holi-p2p + holi-crypto | Session API for WebRTC DataChannel bytes |
 | `wasm-renderer` | holi-renderer + wgpu | start(), stop() |
 
 ## Frontend
@@ -70,7 +76,13 @@ packages/
 
 - **Ed25519 (ed25519-dalek)**: Digital signatures
 - **ChaCha20-Poly1305**: Authenticated encryption
+- **PAKE (Password Gate Default)**: Implement in Rust/WASM (no hash-based gates)
 - **Getrandom**: CSPRNG for WASM
+
+## P2P Collaboration (Rust-First)
+- **Crypto & Protocol**: Implement key management, PAKE, framing, and policy enforcement in Rust cores.
+- **WASM Adapters**: Expose a small, stable API to JS.
+- **Transport**: WebRTC + Nostr/WebSocket are transports; payload confidentiality is enforced by Rust/WASM.
 
 ## Infrastructure
 

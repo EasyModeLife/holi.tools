@@ -43,7 +43,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        app: [main, labs, paint, typst, calculator, qr]
+        app: [main, labs, paint, typst, calculator, qr, user]
     steps:
       - uses: actions/checkout@v4
       
@@ -84,11 +84,16 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             packages/wasm-core/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('packages/wasm-core/Cargo.lock') }}
+            packages/wasm-p2p/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('packages/wasm-core/Cargo.lock', 'packages/wasm-p2p/Cargo.lock') }}
           
       - name: Build WASM
         working-directory: packages/wasm-core
         run: wasm-pack build --target web --release
+
+      - name: Build WASM (P2P)
+        working-directory: packages/wasm-p2p
+        run: wasm-pack build --target web --release --out-dir pkg
 
   # ============================================
   # STAGE 4: Rust Tests (Unit tests for core)
@@ -110,11 +115,21 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             packages/wasm-core/target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('packages/wasm-core/Cargo.lock') }}
+            packages/wasm-p2p/target
+            packages/core/holi-p2p/target
+          key: ${{ runner.os }}-cargo-test-${{ hashFiles('packages/wasm-core/Cargo.lock', 'packages/wasm-p2p/Cargo.lock', 'packages/core/holi-p2p/Cargo.lock') }}
           
-      - name: Run Rust Tests
+      - name: Run Rust Tests (WASM Core)
         working-directory: packages/wasm-core
         run: cargo test --lib
+
+      - name: Run Rust Tests (P2P Core)
+        working-directory: packages/core/holi-p2p
+        run: cargo test
+
+      - name: Run Rust Tests (WASM P2P)
+        working-directory: packages/wasm-p2p
+        run: cargo test
 
   # ============================================
   # STAGE 5: App-Specific Tests (Future)

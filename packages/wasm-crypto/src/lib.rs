@@ -5,6 +5,7 @@
 
 pub mod identity;
 pub mod encryption;
+pub mod pake;
 pub mod vault;
 
 use wasm_bindgen::prelude::*;
