@@ -99,7 +99,12 @@ const bodyClasses = [
     <!-- Language Menu (if enabled) -->
     <!-- Floating Configuration Orb (Replaces Header) -->
     <div class="floating-menu-container">
-      <ConfigMenu currentLang={lang} languages={languages} homeHref="/" />
+      <ConfigMenu
+        currentLang={lang}
+        languages={languages}
+        homeHref="/"
+        changelogId={version && changelog ? colorScheme : undefined}
+      />
     </div>
 
     <!-- Main content slot -->

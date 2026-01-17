@@ -221,6 +221,49 @@
 <script>
   let currentMode = 'logo';
 
+  function getConfig() {
+    return (window as any).state?.config;
+  }
+
+  function getCurrentImage(): string | undefined {
+    const cfg = getConfig();
+    if (!cfg) return undefined;
+    return currentMode === 'background' ? cfg.artImage : cfg.logo;
+  }
+
+  // Public hook so other components (like the panel system) can force a UI sync
+  // after state changes (e.g. presets injecting a logo) or when the panel is opened.
+  window.refreshImagePanelUI = function () {
+    // Ensure mode button styles match currentMode
+    document
+      .getElementById('mode-logo')
+      ?.classList.toggle('active', currentMode === 'logo');
+    document
+      .getElementById('mode-background')
+      ?.classList.toggle('active', currentMode === 'background');
+
+    updateImageUI(!!getCurrentImage());
+  };
+
+  function tryInitImagePanelUI() {
+    // state/config might be attached after inline scripts run
+    const cfg = getConfig();
+    if (!cfg) {
+      setTimeout(tryInitImagePanelUI, 50);
+      return;
+    }
+    window.refreshImagePanelUI?.();
+  }
+
+  // Best-effort initial sync
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryInitImagePanelUI);
+  } else {
+    tryInitImagePanelUI();
+  }
+  // Also re-sync after Astro view transitions
+  document.addEventListener('astro:page-load', tryInitImagePanelUI);
+
   window.setImageMode = function(mode: 'logo' | 'background') {
     currentMode = mode;
     
@@ -228,7 +271,8 @@
     document.getElementById('mode-logo')?.classList.toggle('active', mode === 'logo');
     document.getElementById('mode-background')?.classList.toggle('active', mode === 'background');
     
-    const hasImage = !!(window as any).state?.config?.logo || !!(window as any).state?.config?.artImage;
+    const cfg = getConfig();
+    const hasImage = !!(mode === 'background' ? cfg?.artImage : cfg?.logo);
     
     // Show/hide mode-specific controls
     const logoControls = document.getElementById('logo-controls');
@@ -244,16 +288,14 @@
       }
     }
     
-    // Update state based on mode
-    if ((window as any).state?.config) {
-      if (mode === 'logo') {
-        // Disable art, enable logo
-        (window as any).state.config.artEnabled = false;
-        // Logo uses same image
-      } else {
-        // Enable art
-        (window as any).state.config.artEnabled = true;
+    // Update render mode without disabling background when editing logo.
+    // Background visibility should be controlled by `artEnabled`, not by the UI mode.
+    if (cfg) {
+      if (mode === 'background') {
+        // When entering background mode, auto-enable art if there's an image.
+        if (cfg.artImage) cfg.artEnabled = true;
       }
+      updateImageUI(hasImage);
       (window as any).updateQR?.();
     }
   };
@@ -266,43 +308,54 @@
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string;
-      
-      if ((window as any).state?.config) {
-        // Store in both logo and art slots
-        (window as any).state.config.logo = dataUrl;
-        (window as any).state.config.artImage = dataUrl;
-        
-        // Apply mode settings
-        if (currentMode === 'logo') {
-          (window as any).state.config.artEnabled = false;
-          (window as any).state.config.logoSize = 0.2;
-          (window as any).state.config.logoBgToggle = true;
-        } else {
-          (window as any).state.config.artEnabled = true;
-          (window as any).state.config.artOpacity = 1.0;
-          (window as any).state.config.artBlendMode = 'normal';
-          (window as any).state.config.artFit = 'cover';
-          (window as any).state.config.artRotation = 0;
-          (window as any).state.config.artScale = 1.0;
-          (window as any).state.config.artOffsetX = 0;
-          (window as any).state.config.artOffsetY = 0;
-        }
-        
-        updateImageUI(true);
-        (window as any).updateQR?.();
+
+      const cfg = getConfig();
+      if (!cfg) return;
+
+      // Store ONLY in the active slot
+      if (currentMode === 'logo') {
+        cfg.logo = dataUrl;
+        // Do not disable background art when uploading a logo.
+
+        // Set sensible defaults only if unset
+        if (cfg.logoSize === undefined || cfg.logoSize === null) cfg.logoSize = 0.2;
+        if (cfg.logoBgEnabled === undefined || cfg.logoBgEnabled === null) cfg.logoBgEnabled = true;
+      } else {
+        cfg.artImage = dataUrl;
+        cfg.artEnabled = true;
+
+        if (cfg.artOpacity === undefined || cfg.artOpacity === null) cfg.artOpacity = 1.0;
+        if (!cfg.artBlendMode) cfg.artBlendMode = 'normal';
+        if (!cfg.artFit) cfg.artFit = 'cover';
+        if (cfg.artRotation === undefined || cfg.artRotation === null) cfg.artRotation = 0;
+        if (cfg.artScale === undefined || cfg.artScale === null) cfg.artScale = 1.0;
+        if (cfg.artOffsetX === undefined || cfg.artOffsetX === null) cfg.artOffsetX = 0;
+        if (cfg.artOffsetY === undefined || cfg.artOffsetY === null) cfg.artOffsetY = 0;
       }
+
+      updateImageUI(true);
+      (window as any).updateQR?.();
+
+      // Allow selecting the same file again
+      input.value = '';
     };
     reader.readAsDataURL(file);
   };
 
   window.removeImage = function() {
-    if ((window as any).state?.config) {
-      (window as any).state.config.logo = undefined;
-      (window as any).state.config.artImage = undefined;
-      (window as any).state.config.artEnabled = false;
-      updateImageUI(false);
-      (window as any).updateQR?.();
+    const cfg = getConfig();
+    if (!cfg) return;
+
+    if (currentMode === 'logo') {
+      cfg.logo = undefined;
+      // Do not touch art image; user might be using it in background mode.
+    } else {
+      cfg.artImage = undefined;
+      cfg.artEnabled = false;
     }
+
+    updateImageUI(!!getCurrentImage());
+    (window as any).updateQR?.();
   };
 
   function updateImageUI(hasImage: boolean) {
@@ -317,7 +370,7 @@
       if (placeholder) placeholder.style.display = 'none';
       if (preview) preview.style.display = 'flex';
       if (area) area.classList.add('has-image');
-      if (img) img.src = (window as any).state.config.logo || (window as any).state.config.artImage;
+      if (img) img.src = getCurrentImage() || '';
       
       // Show controls based on mode
       if (currentMode === 'logo') {
@@ -466,12 +519,28 @@
         const reader = new FileReader();
         reader.onload = (ev) => {
           const dataUrl = ev.target?.result as string;
-          if ((window as any).state?.config) {
-            (window as any).state.config.logo = dataUrl;
-            (window as any).state.config.artImage = dataUrl;
-            updateImageUI(true);
-            (window as any).updateQR?.();
+          const cfg = getConfig();
+          if (!cfg) return;
+
+          if (currentMode === 'logo') {
+            cfg.logo = dataUrl;
+            // Do not disable background art when dropping a logo.
+            if (cfg.logoSize === undefined || cfg.logoSize === null) cfg.logoSize = 0.2;
+            if (cfg.logoBgEnabled === undefined || cfg.logoBgEnabled === null) cfg.logoBgEnabled = true;
+          } else {
+            cfg.artImage = dataUrl;
+            cfg.artEnabled = true;
+            if (cfg.artOpacity === undefined || cfg.artOpacity === null) cfg.artOpacity = 1.0;
+            if (!cfg.artBlendMode) cfg.artBlendMode = 'normal';
+            if (!cfg.artFit) cfg.artFit = 'cover';
+            if (cfg.artRotation === undefined || cfg.artRotation === null) cfg.artRotation = 0;
+            if (cfg.artScale === undefined || cfg.artScale === null) cfg.artScale = 1.0;
+            if (cfg.artOffsetX === undefined || cfg.artOffsetX === null) cfg.artOffsetX = 0;
+            if (cfg.artOffsetY === undefined || cfg.artOffsetY === null) cfg.artOffsetY = 0;
           }
+
+          updateImageUI(true);
+          (window as any).updateQR?.();
         };
         reader.readAsDataURL(file);
       }

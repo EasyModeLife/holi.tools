@@ -20,33 +20,42 @@ const BODY_SHAPES = [
     'arrow', 'arrow-left', 'heart', 'hexagon', 'octagon', 'cross', 'plus',
     'blob', 'clover', 'mini-square', 'tiny-dots', 'hash', 'leaf'
 ];
+#!/usr/bin/env node
+/**
+ * QR WASM (wasm-qr-svg) Verification Script
+ *
+ * Validates that the current wasm-qr-svg engine can:
+ * - initialize successfully
+ * - generate a QR matrix
+ * - generate an SVG for the supported shape ids
+ *
+ * Usage: node scripts/verify-wasm-shapes.mjs
+ */
 
-const EYE_FRAME_SHAPES = [
-    'square', 'circle', 'rounded', 'leaf', 'cushion', 'double',
-    'fancy', 'dots-square', 'heavy-rounded', 'clover-frame'
-];
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 
-const EYE_BALL_SHAPES = [
-    'square', 'circle', 'diamond', 'rounded', 'star', 'heart', 'hexagon',
-    'bars-h', 'bars-v', 'dots-grid', 'flower', 'clover', 'cushion', 'octagon'
-];
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// wasm-qr-svg supports a small set of shape ids in Rust (see packages/wasm-qr-svg/src/lib.rs)
+// 0 = square, 1 = dots, 2 = rounded, 3 = liquid/connected
+const SHAPE_IDS = [0, 1, 2, 3];
 
 async function loadWasm() {
-    // Script is at /apps/qr/scripts/
-    // WASM is at /packages/wasm-qr/pkg/
-    const wasmPath = join(__dirname, '..', '..', '..', 'packages', 'wasm-qr', 'pkg', 'holi_wasm_qr.js');
+    const wasmJsPath = join(__dirname, '..', '..', '..', 'packages', 'wasm-qr-svg', 'pkg', 'holi_qr_svg.js');
 
-    if (!existsSync(wasmPath)) {
-        console.error('❌ WASM module not found at:', wasmPath);
-        console.error('   Run: cd packages/wasm-qr && wasm-pack build --target nodejs');
+    if (!existsSync(wasmJsPath)) {
+        console.error('❌ WASM module not found at:', wasmJsPath);
+        console.error('   Run: cd packages/wasm-qr-svg && wasm-pack build --target nodejs');
         process.exit(1);
     }
 
-    // For Node.js target, wasm-pack generates CommonJS module that self-initializes
-    // We need to use createRequire to load it as CJS in ESM context
-    const { createRequire } = await import('module');
-    const require = createRequire(import.meta.url);
-    const mod = require(wasmPath);
+    const modUrl = pathToFileURL(wasmJsPath).href;
+    const mod = await import(modUrl);
+    if (typeof mod.default === 'function') {
+        await mod.default();
+    }
     return mod;
 }
 
@@ -58,23 +67,12 @@ function validateSvg(svg) {
         return { valid: false, issues };
     }
 
-    if (!svg.startsWith('<svg')) {
-        issues.push('Does not start with <svg');
-    }
+    if (!svg.startsWith('<svg')) issues.push('Does not start with <svg');
+    if (!svg.includes('</svg>')) issues.push('Missing </svg>');
+    if (svg.includes('NaN') || svg.includes('undefined')) issues.push('Contains NaN or undefined');
 
-    if (!svg.includes('</svg>')) {
-        issues.push('Missing </svg>');
-    }
-
-    if (svg.includes('NaN') || svg.includes('undefined')) {
-        issues.push('Contains NaN or undefined');
-    }
-
-    // Check for path elements
     const pathCount = (svg.match(/<path/g) || []).length;
-    if (pathCount === 0) {
-        issues.push('No path elements found');
-    }
+    if (pathCount === 0) issues.push('No path elements found');
 
     return {
         valid: issues.length === 0,
@@ -85,81 +83,54 @@ function validateSvg(svg) {
 }
 
 async function main() {
-    console.log('🔍 QR WASM Shape Verification\n');
+    console.log('🔍 QR WASM (wasm-qr-svg) Verification\n');
     console.log('='.repeat(60) + '\n');
 
-    // Load WASM
     console.log('📦 Loading WASM module...');
-    let wasm;
-    try {
-        wasm = await loadWasm();
-        console.log(`✅ WASM loaded: ${wasm.qr_version()}\n`);
-    } catch (e) {
-        console.error('❌ Failed to load WASM:', e.message);
-
-        // Try to build it
-        console.log('\n🔧 Attempting to build WASM...');
-        const { execSync } = await import('child_process');
-        try {
-            execSync('cd packages/wasm-qr && wasm-pack build --target nodejs', {
-                cwd: join(__dirname, '..', '..'),
-                stdio: 'inherit'
-            });
-            wasm = await loadWasm();
-        } catch (buildErr) {
-            console.error('❌ Build failed:', buildErr.message);
-            process.exit(1);
-        }
-    }
-
     const testText = 'https://holi.tools';
     const results = {
-        body: [],
-        eyeFrame: [],
+        wasm = await loadWasm();
+        console.log('✅ WASM loaded\n');
         eyeBall: [],
-        combos: []
-    };
+        console.error('❌ Failed to load WASM:', e?.message || e);
+        process.exit(1);
+
+
+    const testText = 'https://holi.tools';
+    const results = { shapes: [], matrix: null };
 
     const outputDir = join(__dirname, '..', 'test-output', 'wasm-shapes');
     mkdirSync(outputDir, { recursive: true });
 
-    // Test body shapes
-    console.log('📦 BODY SHAPES\n');
-    for (const shape of BODY_SHAPES) {
+    console.log('🧱 MATRIX\n');
+    try {
+        const raw = wasm.get_qr_matrix(testText, 'M', -1);
+        const ok = raw && raw.length > 1;
+        const size = ok ? raw[0] : 0;
+        console.log(ok ? `✅ Matrix OK (${size}x${size})` : '❌ Matrix failed');
+        results.matrix = { ok, size, length: raw?.length ?? 0 };
+    } catch (e) {
+        console.log(`❌ Matrix ERROR: ${e?.message || e}`);
+        results.matrix = { ok: false, error: e?.message || String(e) };
+    }
+
+    console.log('\n🧩 SVG (shape ids)\n');
+    for (const id of SHAPE_IDS) {
         try {
-            const options = JSON.stringify({
-                body_shape: shape,
-                fg_color: '#000000',
-                bg_color: '#FFFFFF'
-            });
-            const svg = wasm.generate_styled_svg(testText, options);
+            const svg = wasm.generate_svg(testText, id, 'M', -1);
             const validation = validateSvg(svg);
-
             const status = validation.valid ? '✅' : '❌';
-            console.log(`${status} ${shape.padEnd(18)} paths:${validation.pathCount} len:${svg.length}`);
-
-            results.body.push({
-                shape,
-                valid: validation.valid,
-                issues: validation.issues
-            });
-
-            // Save SVG
-            writeFileSync(join(outputDir, `body-${shape}.svg`), svg);
-
+            console.log(`${status} shapeId=${id} paths:${validation.pathCount} len:${svg.length}`);
+            results.shapes.push({ shapeId: id, valid: validation.valid, issues: validation.issues });
+            writeFileSync(join(outputDir, `shape-${id}.svg`), svg);
         } catch (e) {
-            console.log(`❌ ${shape.padEnd(18)} ERROR: ${e.message}`);
-            results.body.push({ shape, valid: false, issues: [e.message] });
+            console.log(`❌ shapeId=${id} ERROR: ${e?.message || e}`);
+            results.shapes.push({ shapeId: id, valid: false, issues: [e?.message || String(e)] });
         }
     }
 
-    console.log('\n🎯 EYE FRAME SHAPES\n');
-    for (const shape of EYE_FRAME_SHAPES) {
-        try {
-            const options = JSON.stringify({
-                eye_frame_shape: shape,
-                fg_color: '#000000',
-                bg_color: '#FFFFFF'
+    writeFileSync(join(outputDir, 'results.json'), JSON.stringify(results, null, 2));
+    console.log(`\n📝 Wrote results to ${join('apps', 'qr', 'test-output', 'wasm-shapes')}`);
             });
             const svg = wasm.generate_styled_svg(testText, options);
             const validation = validateSvg(svg);

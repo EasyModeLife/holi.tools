@@ -155,6 +155,12 @@ const panelSidesJson = JSON.stringify(panelSides);
         panel.style.top = pos.y + "px";
       }
       panel.style.display = "block";
+
+      // Ensure panel content reflects latest state when opening.
+      // The Image panel depends on global state (e.g. presets can inject a logo).
+      if (id === "image" && typeof window.refreshImagePanelUI === "function") {
+        window.refreshImagePanelUI();
+      }
     }
 
     const btn = document.getElementById("tool-" + id);

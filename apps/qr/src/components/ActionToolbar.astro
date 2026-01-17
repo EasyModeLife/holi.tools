@@ -22,7 +22,7 @@
       <button onclick="window.downloadAs && window.downloadAs('png')">
         <span class="icon">image</span> PNG
       </button>
-      <button onclick="window.downloadAs && window.downloadAs('jpg')">
+      <button onclick="window.downloadAs && window.downloadAs('jpeg')">
         <span class="icon">photo</span> JPG
       </button>
       <!-- PDF Removed -->
@@ -178,12 +178,46 @@
 
 <script is:inline>
   (function () {
+    // Prefetch WASM on first user intent (keeps initial load fast)
+    let wasmPrefetchPromise = null;
+    let wasmPrefetchScheduled = false;
+
+    function runWasmPrefetch() {
+      if (wasmPrefetchPromise) return wasmPrefetchPromise;
+      wasmPrefetchPromise = import("../lib/wasm-qr-svg-loader")
+        .then((m) => m.getHoliQrSvg())
+        .catch(() => null);
+      return wasmPrefetchPromise;
+    }
+
+    function scheduleWasmPrefetchOnce() {
+      if (wasmPrefetchPromise || wasmPrefetchScheduled) return;
+      wasmPrefetchScheduled = true;
+
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(
+          function () {
+            runWasmPrefetch();
+          },
+          { timeout: 1200 }
+        );
+      } else {
+        setTimeout(runWasmPrefetch, 200);
+      }
+    }
+
     // Download menu toggle
     const downloadBtn = document.getElementById("btn-download");
     const downloadMenu = document.getElementById("download-menu");
     if (downloadBtn && downloadMenu) {
+      // Hover/focus prefetch for instant first export
+      downloadBtn.addEventListener("pointerenter", scheduleWasmPrefetchOnce, { passive: true });
+      downloadBtn.addEventListener("focus", scheduleWasmPrefetchOnce, { passive: true });
+
       downloadBtn.addEventListener("click", function (e) {
         e.stopPropagation();
+        // On click, prefetch immediately so Export feels instant.
+        runWasmPrefetch();
         downloadMenu.classList.toggle("show");
       });
       // Close when clicking outside

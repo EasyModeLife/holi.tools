@@ -1,4 +1,4 @@
-import { state, initWasm, type BodyShape, type EyeFrameShape, type EyeBallShape } from './qr-engine';
+import { state, initWasm, getQrMatrix, type BodyShape, type EyeFrameShape, type EyeBallShape } from './qr-engine';
 import { getIconSvg, setIconContent } from './icons';
 import { scanVerifier } from './scan-verifier';
 import { qrScanner } from './qr-scanner';
@@ -413,10 +413,11 @@ export class QRController {
     }
 
     public async init() {
+        // Keep WASM lazy: only initialize eagerly if we already have content
+        // (e.g. restored state) that should render immediately.
+        if (!state.text) return;
         const ready = await initWasm();
-        if (ready && state.text) {
-            (window as any).updateQR();
-        }
+        if (ready) (window as any).updateQR();
     }
 
     /**
@@ -434,11 +435,9 @@ export class QRController {
 
         try {
             console.log("uploadMatrixToWebGL: Importing WASM module...");
-            // Import get_qr_matrix from WASM module
-            const wasmModule = await import('../../../../packages/wasm-qr-svg/pkg/holi_qr_svg.js');
             console.log("uploadMatrixToWebGL: Calling get_qr_matrix for:", state.text, state.config.ecc, state.config.mask);
             const maskVal = (state.config.mask === undefined || state.config.mask === null) ? -1 : state.config.mask;
-            const matrixData = wasmModule.get_qr_matrix(state.text, state.config.ecc || 'M', maskVal);
+            const matrixData = await getQrMatrix(state.text, state.config.ecc || 'M', maskVal);
 
             if (matrixData && matrixData.length > 1) {
                 const size = matrixData[0]; // First byte is size
@@ -472,12 +471,12 @@ export class QRController {
         // WEBGL IS ALWAYS PRIMARY for consistency
         // SVG is only used for export
 
-        // Ensure Art Image is loaded into WebGL Texture (if art active)
-        if (this.webglRenderer && state.config.artEnabled && state.config.artImage) {
-            await this.webglRenderer.setArtImage(state.config.artImage);
-        } else if (this.webglRenderer && state.config.logo) {
-            // Also ensure Logo loading for Logo mode
-            await this.webglRenderer.setLogo(state.config.logo);
+        // Keep textures in sync. Art and Logo can coexist.
+        if (this.webglRenderer) {
+            const artUrl = (state.config.artEnabled && state.config.artImage) ? state.config.artImage : null;
+            const logoUrl = state.config.logo ?? null;
+            await this.webglRenderer.setArtImage(artUrl);
+            await this.webglRenderer.setLogo(logoUrl);
         }
 
         // ALWAYS hide SVG container - WebGL is primary

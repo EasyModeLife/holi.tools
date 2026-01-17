@@ -808,6 +808,52 @@ const arrowRightIcon = getIconSvg("arrow-right", 24);
 <script is:inline>
   // === TYPE SWITCHER LOGIC ===
   (function () {
+    // Prefetch WASM when the user starts interacting with inputs.
+    // This keeps initial page load lighter, but avoids a delay on the first render/export.
+    var wasmPrefetchPromise = null;
+    var wasmPrefetchScheduled = false;
+
+    function scheduleWasmPrefetchOnce() {
+      if (wasmPrefetchScheduled) return;
+      wasmPrefetchScheduled = true;
+
+      var run = function () {
+        if (wasmPrefetchPromise) return wasmPrefetchPromise;
+        wasmPrefetchPromise = import("../lib/wasm-qr-svg-loader")
+          .then(function (m) {
+            return m.getHoliQrSvg();
+          })
+          .catch(function () {
+            return null;
+          });
+        return wasmPrefetchPromise;
+      };
+
+      // Prefer idle-time prefetch so we don't compete with the first render.
+      if (typeof window !== "undefined" && window.requestIdleCallback) {
+        window.requestIdleCallback(
+          function () {
+            run();
+          },
+          { timeout: 1200 }
+        );
+      } else {
+        // Fallback: slight delay yields to input/render.
+        setTimeout(run, 200);
+      }
+    }
+
+    document.addEventListener(
+      "focusin",
+      function (e) {
+        // Only trigger for this component's input area
+        var t = e && e.target;
+        if (!t || !t.closest) return;
+        if (t.closest(".shared-input-container")) scheduleWasmPrefetchOnce();
+      },
+      { passive: true }
+    );
+
     const typeSwitcherBtn = document.getElementById("type-switcher-btn");
     const typeDropdown = document.getElementById("type-dropdown");
     const typeIcon = document.getElementById("current-type-icon");

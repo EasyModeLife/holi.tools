@@ -3,7 +3,7 @@
  * Uses wasm-qr-svg (27KB) to generate optimized Path data
  */
 
-import init, { generate_svg } from '../../../../packages/wasm-qr-svg/pkg/holi_qr_svg.js';
+import { getHoliQrSvg } from './wasm-qr-svg-loader';
 import { drawAllFinderPatterns } from './shapes/finder-renderer';
 
 export interface RenderConfig {
@@ -47,7 +47,7 @@ export class WasmSvgRenderer {
     async init() {
         if (this.initialized) return;
         try {
-            await init(); // Load WASM module
+            await getHoliQrSvg(); // Load WASM module (dynamic, singleton)
             console.log("📐 WASM SVG Renderer Initialized (<10KB)");
             this.initialized = true;
         } catch (e) {
@@ -105,6 +105,8 @@ export class WasmSvgRenderer {
     async getSVG(content: string, config?: RenderConfig): Promise<string> {
         if (!this.initialized) await this.init();
 
+        const wasm = await getHoliQrSvg();
+
         // 1. Generate Base Path from WASM
         // Options: 0 = Square, 1 = Dots, 2 = Rounded, 3 = Diamond, 4 = Star, 5 = Clover, 6 = Tiny-Dot, 7 = H-Bars
         let shapeId = 0;
@@ -122,7 +124,7 @@ export class WasmSvgRenderer {
         // Generate raw SVG path from Rust
         const ecc = config?.ecc || 'M';
         const mask = (config?.mask === undefined || config?.mask === null) ? -1 : config.mask;
-        let svgString = generate_svg(content, shapeId, ecc, mask);
+        let svgString = wasm.generate_svg(content, shapeId, ecc, mask);
 
         // 2. Determine Filter Usage
         const useLiquidFilter = config?.effectLiquid ?? false;

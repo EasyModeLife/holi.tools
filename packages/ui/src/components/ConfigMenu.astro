@@ -17,9 +17,10 @@ interface Props {
   currentLang: string;
   languages: readonly Language[];
   homeHref?: string;
+  changelogId?: string;
 }
 
-const { currentLang, languages, homeHref = "/" } = Astro.props;
+const { currentLang, languages, homeHref = "/", changelogId } = Astro.props;
 
 import GlassCard from "./GlassCard.astro";
 import Icon from "./Icon.astro";
@@ -65,6 +66,17 @@ import Icon from "./Icon.astro";
         <Icon name="article" size={16} />
         <span>Papers</span>
       </a>
+      {
+        changelogId && (
+          <button
+            class="menu-item"
+            onclick={`window.openOverlay && window.openOverlay('changelog', '${changelogId}')`}
+          >
+            <Icon name="history" size={16} />
+            <span>Versions</span>
+          </button>
+        )
+      }
       <button
         class="menu-item"
         onclick="window.openOverlay && window.openOverlay('info', 'about')"

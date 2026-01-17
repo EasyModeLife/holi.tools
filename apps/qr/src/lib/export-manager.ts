@@ -1,4 +1,4 @@
-import { state, generateSVG, downloadBlob, exportPNG } from './qr-engine';
+import { downloadBlob } from './qr-engine';
 
 /**
  * ExportManager - Handles downloading QR codes in various formats
@@ -9,26 +9,17 @@ export class ExportManager {
     constructor() { }
 
     /**
-     * Download QR as SVG (WebGL snapshot embedded in SVG wrapper)
+     * Download QR as real vector SVG
      */
     public async downloadSVG() {
-        // @ts-ignore
-        const pngBlob = await window.qrController?.getHighResSnapshot(2048);
-        if (!pngBlob) {
-            console.error("ExportManager: Failed to capture WebGL snapshot");
+        const svgString = await (window as any).qrController?.getSVGForExport?.();
+
+        if (!svgString || typeof svgString !== 'string' || svgString.length === 0) {
+            console.error('ExportManager: Failed to generate vector SVG');
             return;
         }
 
-        // Convert PNG blob to base64
-        const base64 = await this.blobToBase64(pngBlob);
-
-        // Create SVG wrapper with embedded PNG for scalability
-        const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2048" height="2048" viewBox="0 0 2048 2048">
-  <rect width="100%" height="100%" fill="${state.config.bg || 'transparent'}"/>
-  <image href="${base64}" width="2048" height="2048"/>
-</svg>`;
-
-        const blob = new Blob([svgWrapper], { type: "image/svg+xml;charset=utf-8" });
+        const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
         downloadBlob(blob, `qr-code-${Date.now()}.svg`);
     }
 
@@ -45,33 +36,88 @@ export class ExportManager {
         downloadBlob(blob, `qr-code-${Date.now()}.png`);
     }
 
+    /**
+     * Download QR as JPEG (raster) derived from the WebGL snapshot.
+     * JPEG doesn't support alpha; defaults to a white background.
+     */
+    public async downloadJPEG() {
+        // @ts-ignore
+        const pngBlob = await window.qrController?.getHighResSnapshot(2048);
+        if (!pngBlob) {
+            console.error('ExportManager: Failed to capture WebGL snapshot');
+            return;
+        }
+
+        const bg = (window as any).state?.config?.bg;
+        const backgroundColor = (typeof bg === 'string' && bg.length > 0 && bg !== 'transparent') ? bg : '#ffffff';
+
+        const jpegBlob = await this.convertImageBlob(pngBlob, 'image/jpeg', 0.92, backgroundColor);
+        downloadBlob(jpegBlob, `qr-code-${Date.now()}.jpg`);
+    }
+
     // PDF Export Removed as per user request to save bundle size
 
     /**
      * Handle download button click (Format selection)
      */
-    public handleDownloadAction(format: 'svg' | 'png' | 'pdf' | 'jpeg' | 'webp') {
+    public handleDownloadAction(format: 'svg' | 'png' | 'pdf' | 'jpeg' | 'jpg' | 'webp') {
         switch (format) {
             case 'svg':
                 this.downloadSVG();
                 break;
             case 'png':
+                this.downloadPNG();
+                break;
+            case 'jpg':
+            case 'jpeg':
+                this.downloadJPEG();
+                break;
             default:
                 this.downloadPNG();
                 break;
         }
     }
 
-    /**
-     * Helper: Convert Blob to Base64 data URL
-     */
-    private async blobToBase64(blob: Blob): Promise<string> {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
+    private async convertImageBlob(
+        blob: Blob,
+        mimeType: 'image/jpeg' | 'image/webp',
+        quality: number,
+        backgroundColor: string
+    ): Promise<Blob> {
+        const img = await this.loadImageFromBlob(blob);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas context not available');
+
+        // Fill background because JPEG/WebP may not preserve alpha as expected.
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        return await new Promise<Blob>((resolve, reject) => {
+            canvas.toBlob(
+                (out) => (out ? resolve(out) : reject(new Error('Failed to create output blob'))),
+                mimeType,
+                quality
+            );
         });
+    }
+
+    private async loadImageFromBlob(blob: Blob): Promise<HTMLImageElement> {
+        const url = URL.createObjectURL(blob);
+        try {
+            return await new Promise<HTMLImageElement>((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => reject(new Error('Failed to load image blob'));
+                img.src = url;
+            });
+        } finally {
+            URL.revokeObjectURL(url);
+        }
     }
 }
 
